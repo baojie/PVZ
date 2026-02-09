@@ -4,26 +4,32 @@ export class Plant extends Entity {
     constructor(x, y, type) {
         super(x, y, 80, 100);
         this.type = type;
-        this.health = 100;
         this.timer = 0;
-        
+
+        if (type === 'wallnut') {
+            this.health = 400;
+            this.maxHealth = 400;
+        } else {
+            this.health = 100;
+            this.maxHealth = 100;
+        }
+
         // Visuals
         let icon = '';
-        if (type === 'peashooter') icon = '🌱'; // Placeholder
+        if (type === 'peashooter') icon = '🌱';
         if (type === 'sunflower') icon = '🌻';
         if (type === 'wallnut') icon = '🌰';
-        
+
         this.createDOM(`entity plant ${type}`, `<div class="plant-inner">${icon}</div>`);
     }
-    
+
     update(game) {
-        this.timer++;
-        
+        this.timer += game.deltaTime;
+
         if (this.type === 'peashooter') {
-            // Shoot every 2 seconds (approx 120 frames at 60fps)
-            if (this.timer % 120 === 0) {
-                // Check if there is a zombie in the lane
-                const hasZombie = game.zombies.some(z => 
+            if (this.timer >= 2000) {
+                this.timer = 0;
+                const hasZombie = game.zombies.some(z =>
                     z.y === this.y && z.x > this.x
                 );
                 if (hasZombie) {
@@ -31,10 +37,10 @@ export class Plant extends Entity {
                 }
             }
         }
-        
+
         if (this.type === 'sunflower') {
-            // Produce sun every 10 seconds
-            if (this.timer % 600 === 0) {
+            if (this.timer >= 10000) {
+                this.timer = 0;
                 game.spawnSun(this.x, this.y, 25);
             }
         }
@@ -45,8 +51,14 @@ export class Plant extends Entity {
         if (this.health <= 0) {
             this.remove();
         } else {
-            // Visual feedback?
-            this.element.style.opacity = this.health / 100;
+            this.element.style.opacity = 0.3 + (this.health / this.maxHealth) * 0.7;
+            if (this.type === 'wallnut') {
+                if (this.health < this.maxHealth * 0.33) {
+                    this.element.querySelector('.plant-inner').textContent = '💀';
+                } else if (this.health < this.maxHealth * 0.66) {
+                    this.element.querySelector('.plant-inner').textContent = '🥜';
+                }
+            }
         }
     }
 }

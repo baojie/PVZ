@@ -16,18 +16,24 @@
         </div>
 
         <div id="seed-bank">
-          <!-- Seeds will be injected here by JS -->
           <div class="seed-packet" data-plant="peashooter">
+            <div class="cooldown-overlay"></div>
             <div class="seed-icon">🌱</div>
             <div class="seed-cost">100</div>
           </div>
           <div class="seed-packet" data-plant="sunflower">
+            <div class="cooldown-overlay"></div>
             <div class="seed-icon">🌻</div>
             <div class="seed-cost">50</div>
           </div>
           <div class="seed-packet" data-plant="wallnut">
+            <div class="cooldown-overlay"></div>
             <div class="seed-icon">🌰</div>
             <div class="seed-cost">50</div>
+          </div>
+          <div id="shovel-btn" class="seed-packet" title="铲子 - 移除植物">
+            <div class="seed-icon">🪏</div>
+            <div class="seed-cost">铲</div>
           </div>
         </div>
 
@@ -41,7 +47,6 @@
 
       <!-- Game World -->
       <div id="game-board">
-        <!-- Grid and entities will be rendered here -->
         <div id="background-layer"></div>
         <div id="grid-layer"></div>
         <div id="entity-layer"></div>
@@ -51,12 +56,19 @@
       <!-- Overlays -->
       <div id="start-screen" class="overlay">
         <h1>植物大战僵尸</h1>
+        <p class="subtitle">Web 版 - 6 波僵尸等你来战!</p>
         <button id="start-btn">开始游戏</button>
       </div>
 
       <div id="game-over-screen" class="overlay hidden">
-        <h1>僵尸要把你的脑子吃掉了！</h1>
+        <h1>僵尸吃掉了你的脑子!</h1>
         <button id="restart-btn">重新开始</button>
+      </div>
+
+      <div id="victory-screen" class="overlay hidden">
+        <h1>胜利!</h1>
+        <p class="subtitle">你成功击退了所有僵尸!</p>
+        <button id="play-again-btn">再来一局</button>
       </div>
     </div>
 
