@@ -12,24 +12,65 @@
       <div id="ui-layer">
         <div id="sun-counter">
           <span id="sun-icon">☀️</span>
-          <span id="sun-amount">50</span>
+          <span id="sun-amount">∞</span>
         </div>
+        <button id="sound-toggle" title="音效开关">🔊</button>
 
         <div id="seed-bank">
           <div class="seed-packet" data-plant="peashooter">
             <div class="cooldown-overlay"></div>
             <div class="seed-icon">🌱</div>
-            <div class="seed-cost">100</div>
+            <div class="seed-cost">0</div>
           </div>
           <div class="seed-packet" data-plant="sunflower">
             <div class="cooldown-overlay"></div>
             <div class="seed-icon">🌻</div>
-            <div class="seed-cost">50</div>
+            <div class="seed-cost">0</div>
           </div>
           <div class="seed-packet" data-plant="wallnut">
             <div class="cooldown-overlay"></div>
             <div class="seed-icon">🌰</div>
-            <div class="seed-cost">50</div>
+            <div class="seed-cost">0</div>
+          </div>
+          <div class="seed-packet" data-plant="iceshooter">
+            <div class="cooldown-overlay"></div>
+            <div class="seed-icon">❄️</div>
+            <div class="seed-cost">0</div>
+          </div>
+          <div class="seed-packet" data-plant="doubleshooter">
+            <div class="cooldown-overlay"></div>
+            <div class="seed-icon">🌿</div>
+            <div class="seed-cost">0</div>
+          </div>
+          <div class="seed-packet" data-plant="cherry">
+            <div class="cooldown-overlay"></div>
+            <div class="seed-icon">🍒</div>
+            <div class="seed-cost">0</div>
+          </div>
+          <div class="seed-packet" data-plant="potato">
+            <div class="cooldown-overlay"></div>
+            <div class="seed-icon">🥔</div>
+            <div class="seed-cost">0</div>
+          </div>
+          <div class="seed-packet" data-plant="glue">
+            <div class="cooldown-overlay"></div>
+            <div class="seed-icon">🧿</div>
+            <div class="seed-cost">0</div>
+          </div>
+          <div class="seed-packet" data-plant="obsidian">
+            <div class="cooldown-overlay"></div>
+            <div class="seed-icon">🗿</div>
+            <div class="seed-cost">0</div>
+          </div>
+          <div class="seed-packet" data-plant="pitcher">
+            <div class="cooldown-overlay"></div>
+            <div class="seed-icon">🎯</div>
+            <div class="seed-cost">0</div>
+          </div>
+          <div class="seed-packet" data-plant="gatling">
+            <div class="cooldown-overlay"></div>
+            <div class="seed-icon">🔫</div>
+            <div class="seed-cost">0</div>
           </div>
           <div id="shovel-btn" class="seed-packet" title="铲子 - 移除植物">
             <div class="seed-icon">🪏</div>
@@ -65,10 +106,23 @@
             <li>🌻 <b>向日葵</b>(50) — 每 10 秒产出额外阳光</li>
             <li>🌱 <b>豌豆射手</b>(100) — 向同行僵尸发射豌豆</li>
             <li>🌰 <b>坚果墙</b>(50) — 高血量挡住僵尸前进</li>
+            <li>❄️ <b>寒冰射手</b>(175) — 冰冻豌豆，命中减速50%</li>
+            <li>🌿 <b>双发射手</b>(200) — 同时发射两颗豌豆</li>
+            <li>🍒 <b>樱桃炸弹</b>(150) — 种下即爆，3×3范围秒杀</li>
+            <li>🥔 <b>土豆地雷</b>(25) — 3秒准备后，僵尸踩上即炸</li>
+            <li>🧿 <b>黑曜石胶神</b>(300) — 发射黑胶弹，穿透并永久冻结僵尸</li>
+            <li>🗿 <b>黑曜石战神</b>(500) — 三方向扫射黑曜石弹，毁天灭地</li>
+            <li>🎯 <b>超级投手</b>(200) — 投掷穿透弹，贯穿整行僵尸</li>
+            <li>🔫 <b>究极机枪炮台</b>(0) — 超高速4连射，随机扫射三行</li>
             <li>🪏 点击<b>铲子</b>可以移除已种植的植物</li>
             <li>🚜 每行有一个<b>割草机</b>，僵尸突破时自动清场（仅一次）</li>
             <li>🧟 击退全部 <b>6 波僵尸</b>即可获胜！</li>
           </ul>
+        </div>
+        <div class="speed-setting">
+          <label for="zombie-speed">僵尸速度:</label>
+          <input type="range" id="zombie-speed" min="0.5" max="3" step="0.5" value="1" />
+          <span id="speed-label">正常</span>
         </div>
         <button id="start-btn">开始游戏</button>
       </div>

@@ -46,47 +46,69 @@ body {
   top: 0;
   left: 0;
   width: 100%;
-  height: 80px;
+  height: 60px;
   z-index: 100;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 20px;
+  padding: 0 10px;
   pointer-events: none;
+  gap: 6px;
 }
 
 #sun-counter {
   background: rgba(0, 0, 0, 0.5);
   color: white;
-  padding: 5px 15px;
-  border-radius: 20px;
-  font-size: 24px;
+  padding: 3px 10px;
+  border-radius: 16px;
+  font-size: 18px;
   font-weight: bold;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 6px;
   pointer-events: auto;
   border: 2px solid #fdcb6e;
   backdrop-filter: blur(5px);
 }
 
+#sound-toggle {
+  pointer-events: auto;
+  margin: 0;
+  padding: 2px 8px;
+  font-size: 16px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 2px solid #888;
+  border-radius: 16px;
+  color: white;
+  cursor: pointer;
+  box-shadow: none;
+  backdrop-filter: blur(5px);
+  min-width: 36px;
+  text-align: center;
+}
+
+#sound-toggle:active {
+  transform: scale(0.95);
+  box-shadow: none;
+}
+
 #seed-bank {
   display: flex;
-  gap: 10px;
+  gap: 4px;
   background: #6d4c41;
-  padding: 5px 10px;
-  border-radius: 0 0 10px 10px;
+  padding: 4px 6px;
+  border-radius: 0 0 8px 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
   pointer-events: auto;
 }
 
 .seed-packet {
   position: relative;
-  width: 60px;
-  height: 70px;
+  width: 44px;
+  height: 52px;
   background: #a1887f;
   border: 2px solid #3e2723;
-  border-radius: 5px;
+  border-radius: 4px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
@@ -124,12 +146,12 @@ body {
 }
 
 .seed-icon {
-  font-size: 30px;
+  font-size: 20px;
   z-index: 1;
 }
 
 .seed-cost {
-  font-size: 14px;
+  font-size: 11px;
   font-weight: bold;
   color: white;
   text-shadow: 1px 1px 0 #000;
@@ -169,7 +191,7 @@ body {
 /* Game Board */
 #game-board {
   position: absolute;
-  top: 80px;
+  top: 60px;
   left: 20px;
   width: var(--board-width);
   height: var(--board-height);
@@ -212,6 +234,44 @@ body {
   border-radius: 50%;
   z-index: 25;
   box-shadow: 0 0 5px #00ff00;
+}
+
+.projectile.gatling {
+  width: 14px;
+  height: 14px;
+  background: #ff0;
+  border: 1px solid #f90;
+  box-shadow: 0 0 6px #ff0, 0 0 12px #f90;
+}
+
+.projectile.ice {
+  width: 20px;
+  height: 20px;
+  background: #00e5ff;
+  box-shadow: 0 0 8px #00e5ff, 0 0 16px #0091ea;
+}
+
+.projectile.piercing {
+  width: 28px;
+  height: 28px;
+  background: #ff6600;
+  box-shadow: 0 0 10px #ff6600, 0 0 20px #ff3300;
+}
+
+.projectile.glue {
+  width: 24px;
+  height: 24px;
+  background: #0a0a2e;
+  border: 2px solid #00bcd4;
+  box-shadow: 0 0 10px #00bcd4, 0 0 20px #006064;
+}
+
+.projectile.obsidian {
+  width: 32px;
+  height: 32px;
+  background: #1a0033;
+  border: 2px solid #9b59b6;
+  box-shadow: 0 0 12px #9b59b6, 0 0 25px #8e44ad, 0 0 40px #6c3483;
 }
 
 /* Lawnmower */
@@ -330,6 +390,41 @@ body {
   font-size: 13px;
   line-height: 1.7;
   color: #ddd;
+}
+
+/* Speed Setting */
+.speed-setting {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 15px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 10px 20px;
+  border-radius: 8px;
+}
+
+.speed-setting label {
+  font-size: 16px;
+  color: #f1c40f;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.speed-setting input[type="range"] {
+  width: 140px;
+  accent-color: #8bc34a;
+  cursor: pointer;
+  -webkit-user-select: auto;
+  user-select: auto;
+  touch-action: auto;
+}
+
+#speed-label {
+  font-size: 16px;
+  color: #fff;
+  font-weight: bold;
+  min-width: 40px;
+  text-align: center;
 }
 
 .hidden {

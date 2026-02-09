@@ -1,18 +1,18 @@
 import { Entity } from './Entity.js';
 
 const ZOMBIE_CONFIG = {
-    normal: { health: 100, speed: 0.2, icon: '🧟' },
-    cone:   { health: 200, speed: 0.2, icon: '🧟‍♂️' },
-    bucket: { health: 400, speed: 0.15, icon: '🧟‍♀️' },
+    normal: { health: 9876543221, speed: 0.2, icon: '🧟' },
+    cone:   { health: 9876543221, speed: 0.2, icon: '🧟‍♂️' },
+    bucket: { health: 9876543221, speed: 0.15, icon: '🧟‍♀️' },
 };
 
 export class Zombie extends Entity {
-    constructor(gameWidth, y, type = 'normal') {
+    constructor(gameWidth, y, type = 'normal', speedMultiplier = 1) {
         super(gameWidth, y, 80, 100);
         const cfg = ZOMBIE_CONFIG[type] || ZOMBIE_CONFIG.normal;
         this.type = type;
-        this.baseSpeed = cfg.speed;
-        this.speed = cfg.speed;
+        this.baseSpeed = cfg.speed * speedMultiplier;
+        this.speed = this.baseSpeed;
         this.health = cfg.health;
         this.maxHealth = cfg.health;
         this.damage = 0.5;

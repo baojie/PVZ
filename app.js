@@ -1,6 +1,7 @@
 import { Plant } from './classes/Plant.js';
 import { Zombie } from './classes/Zombie.js';
 import { Projectile } from './classes/Projectile.js';
+import { SoundManager } from './classes/SoundManager.js';
 
 /**
  * Plant vs Zombies - Web Version
@@ -8,15 +9,31 @@ import { Projectile } from './classes/Projectile.js';
  */
 
 const PLANT_COSTS = {
-    peashooter: 100,
-    sunflower: 50,
-    wallnut: 50,
+    peashooter: 0,
+    sunflower: 0,
+    wallnut: 0,
+    iceshooter: 0,
+    doubleshooter: 0,
+    cherry: 0,
+    potato: 0,
+    pitcher: 0,
+    glue: 0,
+    obsidian: 0,
+    gatling: 0,
 };
 
 const PLANT_COOLDOWNS = {
-    peashooter: 5000,
-    sunflower: 5000,
-    wallnut: 20000,
+    peashooter: 0,
+    sunflower: 0,
+    wallnut: 0,
+    iceshooter: 0,
+    doubleshooter: 0,
+    cherry: 0,
+    potato: 0,
+    pitcher: 0,
+    glue: 0,
+    obsidian: 0,
+    gatling: 0,
 };
 
 class Game {
@@ -31,7 +48,7 @@ class Game {
         this.cellHeight = 100;
         this.boardWidth = this.width * this.cellWidth;
 
-        this.suns = 50;
+        this.suns = Infinity;
         this.deltaTime = 0;
         this.lastTime = 0;
         this.timeSinceLastSun = 0;
@@ -48,18 +65,29 @@ class Game {
 
         this.selectedPlant = null;
         this.shovelMode = false;
+        this.zombieSpeedMultiplier = 1;
+        this.sound = new SoundManager();
+        this.firstGame = true;
 
         // Cooldown timers
         this.cooldowns = {
             peashooter: 0,
             sunflower: 0,
             wallnut: 0,
+            iceshooter: 0,
+            doubleshooter: 0,
+            cherry: 0,
+            potato: 0,
+            pitcher: 0,
+            glue: 0,
+            obsidian: 0,
+            gatling: 0,
         };
 
         // Wave system
         this.waves = this.generateWaves();
         this.waveIndex = 0;
-        this.waveTimer = 5000; // Initial delay before first wave
+        this.waveTimer = 50; // Initial delay before first wave
         this.zombiesSpawnedInWave = 0;
         this.waveSpawnTimer = 0;
 
@@ -68,12 +96,12 @@ class Game {
 
     generateWaves() {
         return [
-            { zombies: [{ type: 'normal', count: 3 }], interval: 5000 },
-            { zombies: [{ type: 'normal', count: 5 }], interval: 4000 },
-            { zombies: [{ type: 'normal', count: 3 }, { type: 'cone', count: 2 }], interval: 4000 },
-            { zombies: [{ type: 'normal', count: 4 }, { type: 'cone', count: 3 }], interval: 3500 },
-            { zombies: [{ type: 'normal', count: 3 }, { type: 'cone', count: 2 }, { type: 'bucket', count: 1 }], interval: 3000 },
-            { zombies: [{ type: 'normal', count: 5 }, { type: 'cone', count: 3 }, { type: 'bucket', count: 2 }], interval: 2500 },
+            { zombies: [{ type: 'normal', count: 500 }], interval: 50 },
+            { zombies: [{ type: 'normal', count: 1000 }], interval: 40 },
+            { zombies: [{ type: 'normal', count: 800 }, { type: 'cone', count: 700 }], interval: 40 },
+            { zombies: [{ type: 'normal', count: 800 }, { type: 'cone', count: 1200 }], interval: 35 },
+            { zombies: [{ type: 'normal', count: 600 }, { type: 'cone', count: 800 }, { type: 'bucket', count: 600 }], interval: 30 },
+            { zombies: [{ type: 'normal', count: 1000 }, { type: 'cone', count: 1000 }, { type: 'bucket', count: 1000 }], interval: 25 },
         ];
     }
 
@@ -125,6 +153,24 @@ class Game {
         document.getElementById('restart-btn').addEventListener('click', () => this.restart());
         document.getElementById('play-again-btn').addEventListener('click', () => this.restart());
 
+        // Sound toggle
+        const soundBtn = document.getElementById('sound-toggle');
+        if (soundBtn) {
+            soundBtn.addEventListener('click', () => {
+                this.sound.toggleMute();
+                soundBtn.textContent = this.sound.muted ? '🔇' : '🔊';
+            });
+        }
+
+        const speedSlider = document.getElementById('zombie-speed');
+        const speedLabel = document.getElementById('speed-label');
+        const speedNames = { '0.5': '很慢', '1': '正常', '1.5': '快', '2': '很快', '2.5': '极快', '3': '噩梦' };
+        if (speedSlider) {
+            speedSlider.addEventListener('input', () => {
+                speedLabel.textContent = speedNames[speedSlider.value] || `×${speedSlider.value}`;
+            });
+        }
+
         this.board.addEventListener('click', (e) => {
             if (!this.isRunning) return;
 
@@ -133,11 +179,21 @@ class Game {
                 return;
             }
 
+            // Try grid cell first, then calculate from click coordinates
             const cell = e.target.closest('.grid-cell');
-            if (!cell) return;
-
-            const row = parseInt(cell.dataset.row);
-            const col = parseInt(cell.dataset.col);
+            let row, col;
+            if (cell) {
+                row = parseInt(cell.dataset.row);
+                col = parseInt(cell.dataset.col);
+            } else {
+                // Calculate row/col from click position relative to board
+                const rect = this.board.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                col = Math.floor(x / this.cellWidth);
+                row = Math.floor(y / this.cellHeight);
+                if (row < 0 || row >= this.height || col < 0 || col >= this.width) return;
+            }
 
             if (this.shovelMode) {
                 this.removePlant(row, col);
@@ -151,6 +207,7 @@ class Game {
 
         // Seed Selection
         document.querySelectorAll('.seed-packet').forEach(packet => {
+            if (packet.id === 'shovel-btn') return;
             packet.addEventListener('click', () => {
                 if (packet.classList.contains('cooldown')) return;
                 this.shovelMode = false;
@@ -173,16 +230,39 @@ class Game {
     }
 
     start() {
+        const speedSlider = document.getElementById('zombie-speed');
+        if (speedSlider) {
+            this.zombieSpeedMultiplier = parseFloat(speedSlider.value);
+        }
         document.getElementById('start-screen').classList.add('hidden');
         document.getElementById('game-over-screen').classList.add('hidden');
         document.getElementById('victory-screen').classList.add('hidden');
         this.isRunning = true;
         this.lastTime = performance.now();
+        this.sound.startBGM();
         this.setupLawnmowers();
+
+        // Auto-win first game
+        if (this.firstGame) {
+            this.firstGame = false;
+            this.waveIndex = this.waves.length;
+            this.updateProgressBar();
+            setTimeout(() => this.victory(), 500);
+        }
+
+        // Auto-place random plants in the first column
+        const plantTypes = ['peashooter', 'wallnut', 'pitcher', 'glue', 'obsidian'];
+        for (let row = 0; row < this.height; row++) {
+            if (!this.grid[row][0]) {
+                const type = plantTypes[Math.floor(Math.random() * plantTypes.length)];
+                this.spawnPlant(row, 0, type);
+            }
+        }
         requestAnimationFrame((timestamp) => this.gameLoop(timestamp));
     }
 
     restart() {
+        this.sound.stopBGM();
         this.plants.forEach(p => p.remove());
         this.zombies.forEach(z => z.remove());
         this.projectiles.forEach(p => p.remove());
@@ -198,14 +278,14 @@ class Game {
         this.fallingSuns = [];
         this.lawnmowers = [];
         this.grid = Array(this.height).fill().map(() => Array(this.width).fill(null));
-        this.suns = 50;
+        this.suns = Infinity;
         this.won = false;
         this.waveIndex = 0;
         this.waveTimer = 5000;
         this.zombiesSpawnedInWave = 0;
         this.waveSpawnTimer = 0;
         this.timeSinceLastSun = 0;
-        this.cooldowns = { peashooter: 0, sunflower: 0, wallnut: 0 };
+        this.cooldowns = { peashooter: 0, sunflower: 0, wallnut: 0, iceshooter: 0, doubleshooter: 0, cherry: 0, potato: 0, pitcher: 0, glue: 0, obsidian: 0, gatling: 0 };
 
         this.updateSunDisplay();
         this.updateProgressBar();
@@ -255,6 +335,7 @@ class Game {
                 this.zombies.forEach(z => {
                     if (z.y === lm.row * this.cellHeight && Math.abs(z.x - lm.x) < 50) {
                         z.remove();
+                        this.sound.playZombieDie();
                     }
                 });
                 if (lm.x > this.boardWidth + 50) {
@@ -305,7 +386,7 @@ class Game {
             if (this.zombies.length === 0) {
                 this.waveIndex++;
                 this.zombiesSpawnedInWave = 0;
-                this.waveTimer = 8000; // Delay between waves
+                this.waveTimer = 80; // Delay between waves
                 this.updateProgressBar();
             }
         }
@@ -361,6 +442,7 @@ class Game {
             this.updateSunDisplay();
             this.spawnPlant(row, col, this.selectedPlant);
             this.cooldowns[this.selectedPlant] = PLANT_COOLDOWNS[this.selectedPlant];
+            this.sound.playPlant();
         } else {
             this.showNotEnoughFeedback('阳光不足!');
         }
@@ -395,12 +477,34 @@ class Game {
 
     spawnZombie(row, type = 'normal') {
         const y = row * this.cellHeight;
-        const zombie = new Zombie(this.boardWidth, y, type);
+        const zombie = new Zombie(this.boardWidth, y, type, this.zombieSpeedMultiplier);
         this.zombies.push(zombie);
     }
 
-    spawnProjectile(x, y) {
-        const proj = new Projectile(x, y);
+    cherryBomb(plantX, plantY) {
+        // Kill all zombies in 3x3 area around the plant
+        const centerRow = Math.floor(plantY / this.cellHeight);
+        const centerCol = Math.floor(plantX / this.cellWidth);
+        for (const zombie of this.zombies) {
+            const zRow = Math.floor(zombie.y / this.cellHeight);
+            const zCol = Math.floor((zombie.x + 40) / this.cellWidth);
+            if (Math.abs(zRow - centerRow) <= 1 && Math.abs(zCol - centerCol) <= 1) {
+                zombie.health = 0;
+                zombie.remove();
+            }
+        }
+        this.sound.playExplosion();
+        // Visual explosion effect
+        const el = document.createElement('div');
+        el.className = 'flash-message';
+        el.style.background = 'rgba(255, 100, 0, 0.9)';
+        el.textContent = '💥 BOOM!';
+        document.getElementById('game-container').appendChild(el);
+        setTimeout(() => el.remove(), 1500);
+    }
+
+    spawnProjectile(x, y, type = 'normal') {
+        const proj = new Projectile(x, y, type);
         this.projectiles.push(proj);
     }
 
@@ -420,15 +524,17 @@ class Game {
             sun.style.top = `${targetY}px`;
         }, 100);
 
+        // Auto-collect after 1 second
         setTimeout(() => {
-            if (sun.parentNode) sun.remove();
-        }, 10000);
+            if (sun.parentNode) this.collectSun(sun);
+        }, 1000);
     }
 
     collectSun(sunEl) {
         const value = parseInt(sunEl.dataset.value);
         this.suns += value;
         this.updateSunDisplay();
+        this.sound.playCollectSun();
 
         sunEl.style.transition = 'all 0.5s ease-in';
         sunEl.style.top = '0px';
@@ -441,13 +547,14 @@ class Game {
     }
 
     updateSunDisplay() {
-        this.sunCounter.innerText = Math.floor(this.suns);
+        this.sunCounter.innerText = this.suns === Infinity ? '∞' : Math.floor(this.suns);
     }
 
     triggerLawnmower(row) {
         const lm = this.lawnmowers.find(l => l.row === row && !l.active);
         if (lm) {
             lm.active = true;
+            this.sound.playLawnmower();
         } else {
             this.gameOver();
         }
@@ -455,11 +562,33 @@ class Game {
 
     gameOver() {
         this.isRunning = false;
+        this.sound.playGameOver();
         document.getElementById('game-over-screen').classList.remove('hidden');
     }
 
     victory() {
         this.isRunning = false;
+        this.sound.playVictory();
+        // Spawn 100 random plants across the board as celebration
+        const allTypes = ['peashooter', 'sunflower', 'wallnut', 'iceshooter', 'doubleshooter', 'pitcher', 'glue', 'obsidian'];
+        let planted = 0;
+        const emptyCells = [];
+        for (let r = 0; r < this.height; r++) {
+            for (let c = 0; c < this.width; c++) {
+                if (!this.grid[r][c]) emptyCells.push({ r, c });
+            }
+        }
+        // Shuffle
+        for (let i = emptyCells.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [emptyCells[i], emptyCells[j]] = [emptyCells[j], emptyCells[i]];
+        }
+        const count = Math.min(100, emptyCells.length);
+        for (let i = 0; i < count; i++) {
+            const { r, c } = emptyCells[i];
+            const type = allTypes[Math.floor(Math.random() * allTypes.length)];
+            this.spawnPlant(r, c, type);
+        }
         document.getElementById('victory-screen').classList.remove('hidden');
     }
 }
