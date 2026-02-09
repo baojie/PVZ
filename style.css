@@ -303,6 +303,35 @@ body {
   color: #ccc;
 }
 
+/* How to Play */
+.how-to-play {
+  margin-top: 15px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 12px 20px;
+  max-width: 480px;
+  text-align: left;
+}
+
+.how-to-play h2 {
+  font-size: 18px;
+  margin-bottom: 8px;
+  text-align: center;
+  color: #f1c40f;
+}
+
+.how-to-play ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.how-to-play li {
+  font-size: 13px;
+  line-height: 1.7;
+  color: #ddd;
+}
+
 .hidden {
   display: none;
 }
