@@ -1,0 +1,242 @@
+:root {
+  --cell-width: 80px;
+  --cell-height: 100px;
+  --grid-rows: 5;
+  --grid-cols: 9;
+  --board-width: calc(var(--cell-width) * var(--grid-cols));
+  --board-height: calc(var(--cell-height) * var(--grid-rows));
+  --primary-font: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #222;
+  font-family: var(--primary-font);
+  overflow: hidden;
+}
+
+#game-container {
+  position: relative;
+  width: 900px;
+  height: 600px;
+  background: #4a4; /* Fallback green */
+  background: linear-gradient(
+    to right,
+    #76c7c0 15%,
+    #5a9e5a 15%
+  ); /* House area vs Lawn */
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+/* UI Layer */
+#ui-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 80px;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  pointer-events: none; /* Let clicks pass through to board where not clickable */
+}
+
+#sun-counter {
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 5px 15px;
+  border-radius: 20px;
+  font-size: 24px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  pointer-events: auto;
+  border: 2px solid #fdcb6e;
+  backdrop-filter: blur(5px);
+}
+
+#seed-bank {
+  display: flex;
+  gap: 10px;
+  background: #6d4c41;
+  padding: 5px 10px;
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  pointer-events: auto;
+}
+
+.seed-packet {
+  width: 60px;
+  height: 70px;
+  background: #a1887f;
+  border: 2px solid #3e2723;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s;
+}
+
+.seed-packet:hover {
+  transform: scale(1.05);
+  background: #bcaaa4;
+}
+
+.seed-packet.disabled {
+  filter: grayscale(100%) brightness(0.7);
+  cursor: not-allowed;
+}
+
+.seed-packet.selected {
+  border: 3px solid #ffeb3b;
+  box-shadow: 0 0 10px #ffeb3b;
+  transform: scale(1.1);
+}
+
+.seed-icon {
+  font-size: 30px;
+}
+
+.seed-cost {
+  font-size: 14px;
+  font-weight: bold;
+  color: white;
+  text-shadow: 1px 1px 0 #000;
+}
+
+/* Game Board */
+#game-board {
+  position: absolute;
+  top: 80px;
+  left: 20px; /* Offset for house/lawnmowers */
+  width: var(--board-width);
+  height: var(--board-height);
+  /* background: repeating-linear-gradient(
+        0deg,
+        rgba(0,0,0,0.05) 0px,
+        rgba(0,0,0,0.05) var(--cell-height),
+        transparent var(--cell-height),
+        transparent calc(var(--cell-height) * 2)
+    ); */
+}
+
+.grid-cell {
+  position: absolute;
+  width: var(--cell-width);
+  height: var(--cell-height);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  /* Debugging grid */
+}
+
+.entity {
+  position: absolute;
+  width: var(--cell-width);
+  height: var(--cell-height);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* transition: top 0.2s, left 0.2s; */
+  z-index: 10;
+}
+
+.plant {
+  z-index: 20;
+  font-size: 40px;
+}
+
+.zombie {
+  z-index: 30;
+  color: #8c9eff;
+  font-size: 40px;
+  transition: left 0 linear; /* Smooth linear movement handled by JS */
+}
+
+.projectile {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: #00ff00;
+  border-radius: 50%;
+  z-index: 25;
+  box-shadow: 0 0 5px #00ff00;
+}
+
+/* Suns */
+.sun {
+  position: absolute;
+  font-size: 40px;
+  cursor: pointer;
+  z-index: 50;
+  animation: rotate 5s linear infinite;
+  filter: drop-shadow(0 0 10px yellow);
+  transition:
+    top 0.5s ease-in,
+    opacity 0.5s;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Overlays */
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.hidden {
+  display: none;
+}
+
+button {
+  margin-top: 20px;
+  padding: 15px 40px;
+  font-size: 24px;
+  background: #8bc34a;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 5px #558b2f;
+  transition: transform 0.1s;
+  font-family: inherit;
+  font-weight: bold;
+}
+
+button:active {
+  transform: translateY(4px);
+  box-shadow: 0 1px #558b2f;
+}

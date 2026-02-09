@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>植物大战僵尸 Web 版</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="game-container">
+      <!-- HUD Layer -->
+      <div id="ui-layer">
+        <div id="sun-counter">
+          <span id="sun-icon">☀️</span>
+          <span id="sun-amount">50</span>
+        </div>
+
+        <div id="seed-bank">
+          <!-- Seeds will be injected here by JS -->
+          <div class="seed-packet" data-plant="peashooter">
+            <div class="seed-icon">🌱</div>
+            <div class="seed-cost">100</div>
+          </div>
+          <div class="seed-packet" data-plant="sunflower">
+            <div class="seed-icon">🌻</div>
+            <div class="seed-cost">50</div>
+          </div>
+          <div class="seed-packet" data-plant="wallnut">
+            <div class="seed-icon">🌰</div>
+            <div class="seed-cost">50</div>
+          </div>
+        </div>
+
+        <div id="level-progress">
+          <div id="progress-bar">
+            <div id="progress-fill"></div>
+            <span id="flag-marker">🚩</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Game World -->
+      <div id="game-board">
+        <!-- Grid and entities will be rendered here -->
+        <div id="background-layer"></div>
+        <div id="grid-layer"></div>
+        <div id="entity-layer"></div>
+        <div id="projectile-layer"></div>
+      </div>
+
+      <!-- Overlays -->
+      <div id="start-screen" class="overlay">
+        <h1>植物大战僵尸</h1>
+        <button id="start-btn">开始游戏</button>
+      </div>
+
+      <div id="game-over-screen" class="overlay hidden">
+        <h1>僵尸要把你的脑子吃掉了！</h1>
+        <button id="restart-btn">重新开始</button>
+      </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
