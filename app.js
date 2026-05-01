@@ -96,6 +96,7 @@ class Game {
 
         this.selectedPlant = null;
         this.shovelMode = false;
+        this.plantCount = 100;
         this.zombieSpeedMultiplier = 1;
         this.sound = new SoundManager();
         this.firstGame = true;
@@ -186,10 +187,42 @@ class Game {
         }
     }
 
+    togglePause() {
+        if (!this.isRunning && !this.paused) return;
+        this.paused = !this.paused;
+        if (this.paused) {
+            this.isRunning = false;
+            this.sound.stopBGM();
+            let overlay = document.getElementById('pause-overlay');
+            if (!overlay) {
+                overlay = document.createElement('div');
+                overlay.id = 'pause-overlay';
+                overlay.textContent = '⏸ 已暂停  按空格继续';
+                document.getElementById('game-container').appendChild(overlay);
+            }
+            overlay.style.display = 'flex';
+        } else {
+            this.isRunning = true;
+            this.lastTime = performance.now();
+            this.sound.startBGM();
+            const overlay = document.getElementById('pause-overlay');
+            if (overlay) overlay.style.display = 'none';
+            requestAnimationFrame((ts) => this.gameLoop(ts));
+        }
+    }
+
     setupEventListeners() {
-        document.getElementById('start-btn').addEventListener('click', () => this.start());
+        document.getElementById('start-btn').addEventListener('click', () => { this.fusionMode = false; this.start(); });
+        document.getElementById('start-fusion-btn').addEventListener('click', () => { this.fusionMode = true; this.start(); });
         document.getElementById('restart-btn').addEventListener('click', () => this.restart());
         document.getElementById('play-again-btn').addEventListener('click', () => this.restart());
+
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' && document.getElementById('start-screen').classList.contains('hidden')) {
+                e.preventDefault();
+                this.togglePause();
+            }
+        });
 
         // Sound toggle
         const soundBtn = document.getElementById('sound-toggle');
@@ -230,9 +263,9 @@ class Game {
         }
 
         this.board.addEventListener('click', (e) => {
-            if (!this.isRunning) return;
+            if (!this.isRunning && !this.paused) return;
 
-            if (e.target.classList.contains('sun')) {
+            if (!this.paused && e.target.classList.contains('sun')) {
                 this.collectSun(e.target);
                 return;
             }
@@ -289,6 +322,22 @@ class Game {
                 setEmojiCursor(null);
             }
         });
+
+        // Plant count control
+        const countInput = document.getElementById('plant-count-input');
+        document.getElementById('plant-count-dec').addEventListener('click', () => {
+            this.plantCount = Math.max(1, this.plantCount - 1);
+            countInput.value = this.plantCount;
+        });
+        document.getElementById('plant-count-inc').addEventListener('click', () => {
+            this.plantCount = Math.min(100, this.plantCount + 1);
+            countInput.value = this.plantCount;
+        });
+        countInput.addEventListener('change', () => {
+            this.plantCount = Math.min(100, Math.max(1, parseInt(countInput.value) || 1));
+            countInput.value = this.plantCount;
+        });
+        countInput.addEventListener('click', (e) => e.stopPropagation());
     }
 
     readSettings() {
@@ -523,10 +572,26 @@ class Game {
             return;
         }
 
-        if (this.suns >= cost) {
-            this.suns -= cost;
+        const n = this.plantCount ?? 1;
+        const totalCost = cost * n;
+
+        if (this.suns >= totalCost) {
+            this.suns -= totalCost;
             this.updateSunDisplay();
-            this.spawnPlant(row, col, this.selectedPlant);
+            const stack = this.grid[row][col];
+            const top = stack[stack.length - 1];
+            if (top && !top.markedForDeletion && top.type === this.selectedPlant) {
+                if (this.fusionMode) {
+                    for (let i = 0; i < n; i++) top.levelUpFusion();
+                } else {
+                    top.count = Math.min(100, top.count + n);
+                    top._updateBadge();
+                }
+            } else {
+                const plant = this.spawnPlant(row, col, this.selectedPlant);
+                plant.count = Math.min(100, n);
+                plant._updateBadge();
+            }
             this.cooldowns[this.selectedPlant] = PLANT_COOLDOWNS[this.selectedPlant];
             this.sound.playPlant();
         } else {
@@ -547,19 +612,6 @@ class Game {
         stack.forEach((p, i) => {
             if (p.element) p.element.style.visibility = i === stack.length - 1 ? '' : 'hidden';
         });
-        const cellEl = this.board.querySelector(`.grid-cell[data-row="${row}"][data-col="${col}"]`);
-        if (!cellEl) return;
-        let badge = cellEl.querySelector('.stack-badge');
-        if (stack.length > 1) {
-            if (!badge) {
-                badge = document.createElement('div');
-                badge.className = 'stack-badge';
-                cellEl.appendChild(badge);
-            }
-            badge.textContent = `×${stack.length}`;
-        } else if (badge) {
-            badge.remove();
-        }
     }
 
     removePlant(row, col) {
@@ -581,6 +633,7 @@ class Game {
         this.grid[row][col].push(plant);
         this.plants.push(plant);
         this.updateCellDisplay(row, col);
+        return plant;
     }
 
     spawnZombie(row, type = 'normal') {

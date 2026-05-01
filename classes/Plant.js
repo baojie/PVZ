@@ -7,8 +7,8 @@ export class Plant extends Entity {
         this.timer = 0;
 
         if (type === 'wallnut') {
-            this.health = 400;
-            this.maxHealth = 400;
+            this.health = Infinity;
+            this.maxHealth = Infinity;
         } else if (type === 'glue') {
             this.health = 600;
             this.maxHealth = 600;
@@ -22,6 +22,9 @@ export class Plant extends Entity {
             this.health = 100;
             this.maxHealth = 100;
         }
+
+        this.count = 1;
+        this.fusionLevel = 1;
 
         // Potato mine: starts unarmed, arms after 3 seconds
         this.armed = type !== 'potato';
@@ -38,8 +41,22 @@ export class Plant extends Entity {
         this.createDOM(`entity plant ${type}`, `<div class="plant-inner">${icon}</div>`);
     }
 
+    levelUpFusion() {
+        this.fusionLevel++;
+        if (this.element) {
+            let badge = this.element.querySelector('.fusion-badge');
+            if (!badge) {
+                badge = document.createElement('div');
+                badge.className = 'fusion-badge';
+                this.element.appendChild(badge);
+            }
+            badge.textContent = `⭐${this.fusionLevel}`;
+            this.element.style.filter = `brightness(${1 + (this.fusionLevel - 1) * 0.3}) drop-shadow(0 0 ${this.fusionLevel * 4}px gold)`;
+        }
+    }
+
     update(game) {
-        this.timer += game.deltaTime;
+        this.timer += game.deltaTime * this.fusionLevel;
 
         if (this.type === 'peashooter') {
             if (this.timer >= 100) {
@@ -177,18 +194,34 @@ export class Plant extends Entity {
     }
 
     takeDamage(amount) {
+        if (this.type === 'wallnut') return;
         this.health -= amount;
         if (this.health <= 0) {
-            this.remove();
+            this.count--;
+            if (this.count <= 0) {
+                this.remove();
+            } else {
+                this.health = this.maxHealth;
+                this.element.style.opacity = 1;
+                this._updateBadge();
+            }
         } else {
             this.element.style.opacity = 0.3 + (this.health / this.maxHealth) * 0.7;
-            if (this.type === 'wallnut') {
-                if (this.health < this.maxHealth * 0.33) {
-                    this.element.querySelector('.plant-inner').textContent = '💀';
-                } else if (this.health < this.maxHealth * 0.66) {
-                    this.element.querySelector('.plant-inner').textContent = '🥜';
-                }
+        }
+    }
+
+    _updateBadge() {
+        if (!this.element) return;
+        let badge = this.element.querySelector('.plant-count-badge');
+        if (this.count > 1) {
+            if (!badge) {
+                badge = document.createElement('div');
+                badge.className = 'plant-count-badge';
+                this.element.appendChild(badge);
             }
+            badge.textContent = `×${this.count}`;
+        } else if (badge) {
+            badge.remove();
         }
     }
 }

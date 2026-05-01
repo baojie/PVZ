@@ -95,11 +95,61 @@ body {
 #seed-bank {
   display: flex;
   gap: 4px;
+  align-items: center;
   background: #6d4c41;
   padding: 4px 6px;
   border-radius: 0 0 8px 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
   pointer-events: auto;
+}
+
+#plant-count-ctrl {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: rgba(0,0,0,0.3);
+  border-radius: 6px;
+  padding: 2px 4px;
+  margin-left: 2px;
+}
+
+#plant-count-ctrl button {
+  margin: 0;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 1;
+  background: rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  box-shadow: none;
+}
+
+#plant-count-ctrl button:hover {
+  background: rgba(255,255,255,0.35);
+}
+
+#plant-count-input {
+  width: 36px;
+  height: 20px;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 4px;
+  color: white;
+  padding: 0 2px;
+  -moz-appearance: textfield;
+}
+
+#plant-count-input::-webkit-outer-spin-button,
+#plant-count-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
 }
 
 .seed-packet {
@@ -204,10 +254,11 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.stack-badge {
+.stack-badge,
+.plant-count-badge {
   position: absolute;
   bottom: 4px;
-  right: 4px;
+  right: 2px;
   background: rgba(0, 0, 0, 0.75);
   color: #f1c40f;
   font-size: 11px;
@@ -319,6 +370,21 @@ body {
 }
 
 /* Flash Messages */
+#pause-overlay {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 28px;
+  font-weight: bold;
+  justify-content: center;
+  align-items: center;
+  z-index: 400;
+  letter-spacing: 0.05em;
+  pointer-events: none;
+}
+
 .flash-message {
   position: absolute;
   top: 50%;
@@ -525,6 +591,46 @@ button {
 button:active {
   transform: translateY(4px);
   box-shadow: 0 1px #558b2f;
+}
+
+.mode-select {
+  display: flex;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.mode-btn {
+  margin-top: 0;
+  padding: 14px 30px;
+  font-size: 20px;
+}
+
+.fusion-btn {
+  background: #7b1fa2;
+  box-shadow: 0 5px #4a148c;
+}
+
+.fusion-btn:hover {
+  background: #9c27b0;
+}
+
+.fusion-btn:active {
+  box-shadow: 0 1px #4a148c;
+}
+
+.fusion-badge {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  font-size: 12px;
+  font-weight: bold;
+  background: rgba(0, 0, 0, 0.7);
+  color: gold;
+  padding: 1px 4px;
+  border-radius: 4px;
+  pointer-events: none;
+  z-index: 26;
+  line-height: 1.4;
 }
 
 /* Victory screen special */

@@ -76,6 +76,11 @@
             <div class="seed-icon">🪏</div>
             <div class="seed-cost">铲</div>
           </div>
+          <div id="plant-count-ctrl">
+            <button id="plant-count-dec">−</button>
+            <input id="plant-count-input" type="number" min="1" max="100" value="100" />
+            <button id="plant-count-inc">+</button>
+          </div>
         </div>
 
         <div id="level-progress">
@@ -162,7 +167,10 @@
             </div>
           </div>
         </div>
-        <button id="start-btn">开始游戏</button>
+        <div class="mode-select">
+          <button id="start-btn" class="mode-btn normal-btn">🌿 普通版</button>
+          <button id="start-fusion-btn" class="mode-btn fusion-btn">⚗️ 融合版</button>
+        </div>
       </div>
 
       <div id="game-over-screen" class="overlay hidden">
