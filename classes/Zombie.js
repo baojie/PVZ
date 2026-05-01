@@ -35,17 +35,13 @@ export class Zombie extends Entity {
         const col = Math.floor((this.x + 40) / 80);
         const row = Math.floor(this.y / 100);
 
-        const plant = game.grid[row] && game.grid[row][col];
+        const stack = game.grid[row] && game.grid[row][col];
+        const plant = stack && stack.length > 0 ? stack[stack.length - 1] : null;
 
-        if (plant) {
+        if (plant && !plant.markedForDeletion) {
             this.eating = true;
             this.speed = 0;
             plant.takeDamage(this.damage);
-            if (plant.markedForDeletion) {
-                this.eating = false;
-                this.speed = this.baseSpeed;
-                game.grid[row][col] = null;
-            }
         } else {
             this.eating = false;
             this.speed = this.baseSpeed;

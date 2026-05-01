@@ -8,6 +8,37 @@ import { SoundManager } from './classes/SoundManager.js';
  * Core Game Engine
  */
 
+const PLANT_EMOJI = {
+    peashooter: '🌱',
+    sunflower: '🌻',
+    wallnut: '🌰',
+    iceshooter: '❄️',
+    doubleshooter: '🌿',
+    cherry: '🍒',
+    potato: '🥔',
+    pitcher: '🎯',
+    glue: '🧿',
+    obsidian: '🗿',
+    gatling: '🔫',
+    shovel: '🪏',
+};
+
+function setEmojiCursor(emoji) {
+    if (!emoji) {
+        document.body.style.cursor = '';
+        return;
+    }
+    const canvas = document.createElement('canvas');
+    canvas.width = 40;
+    canvas.height = 40;
+    const ctx = canvas.getContext('2d');
+    ctx.font = '28px serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(emoji, 20, 22);
+    document.body.style.cursor = `url(${canvas.toDataURL()}) 20 20, auto`;
+}
+
 const PLANT_COSTS = {
     peashooter: 0,
     sunflower: 0,
@@ -61,7 +92,7 @@ class Game {
         this.fallingSuns = [];
         this.lawnmowers = [];
 
-        this.grid = Array(this.height).fill().map(() => Array(this.width).fill(null));
+        this.grid = Array(this.height).fill(null).map(() => Array(this.width).fill(null).map(() => []));
 
         this.selectedPlant = null;
         this.shovelMode = false;
@@ -242,6 +273,7 @@ class Game {
                 document.querySelectorAll('.seed-packet').forEach(p => p.classList.remove('selected'));
                 this.selectedPlant = packet.dataset.plant;
                 packet.classList.add('selected');
+                setEmojiCursor(PLANT_EMOJI[this.selectedPlant]);
             });
         });
 
@@ -252,6 +284,9 @@ class Game {
             if (this.shovelMode) {
                 this.selectedPlant = null;
                 document.querySelectorAll('.seed-packet').forEach(p => p.classList.remove('selected'));
+                setEmojiCursor(PLANT_EMOJI.shovel);
+            } else {
+                setEmojiCursor(null);
             }
         });
     }
@@ -297,7 +332,7 @@ class Game {
         // Auto-place random plants in the first column
         const plantTypes = ['peashooter', 'wallnut', 'pitcher', 'glue', 'obsidian'];
         for (let row = 0; row < this.height; row++) {
-            if (!this.grid[row][0]) {
+            if (this.grid[row][0].length === 0) {
                 const type = plantTypes[Math.floor(Math.random() * plantTypes.length)];
                 this.spawnPlant(row, 0, type);
             }
@@ -321,8 +356,11 @@ class Game {
         this.projectiles = [];
         this.fallingSuns = [];
         this.lawnmowers = [];
-        this.grid = Array(this.height).fill().map(() => Array(this.width).fill(null));
+        this.grid = Array(this.height).fill(null).map(() => Array(this.width).fill(null).map(() => []));
         this.won = false;
+        this.selectedPlant = null;
+        this.shovelMode = false;
+        setEmojiCursor(null);
         this.waveIndex = 0;
         this.waveTimer = 5000;
         this.zombiesSpawnedInWave = 0;
@@ -359,6 +397,13 @@ class Game {
         this.projectiles.forEach(p => p.update(this));
         this.projectiles = clean(this.projectiles);
         this.plants = clean(this.plants);
+        for (let r = 0; r < this.height; r++) {
+            for (let c = 0; c < this.width; c++) {
+                const before = this.grid[r][c].length;
+                this.grid[r][c] = this.grid[r][c].filter(p => !p.markedForDeletion);
+                if (this.grid[r][c].length !== before) this.updateCellDisplay(r, c);
+            }
+        }
 
         // Natural Sun
         this.timeSinceLastSun += deltaTime;
@@ -471,8 +516,6 @@ class Game {
     }
 
     handleGridClick(row, col) {
-        if (this.grid[row][col]) return;
-
         const cost = PLANT_COSTS[this.selectedPlant] || 0;
 
         if (this.cooldowns[this.selectedPlant] > 0) {
@@ -499,11 +542,32 @@ class Game {
         setTimeout(() => el.remove(), 1500);
     }
 
+    updateCellDisplay(row, col) {
+        const stack = this.grid[row][col];
+        stack.forEach((p, i) => {
+            if (p.element) p.element.style.visibility = i === stack.length - 1 ? '' : 'hidden';
+        });
+        const cellEl = this.board.querySelector(`.grid-cell[data-row="${row}"][data-col="${col}"]`);
+        if (!cellEl) return;
+        let badge = cellEl.querySelector('.stack-badge');
+        if (stack.length > 1) {
+            if (!badge) {
+                badge = document.createElement('div');
+                badge.className = 'stack-badge';
+                cellEl.appendChild(badge);
+            }
+            badge.textContent = `×${stack.length}`;
+        } else if (badge) {
+            badge.remove();
+        }
+    }
+
     removePlant(row, col) {
-        const plant = this.grid[row][col];
-        if (plant) {
+        const stack = this.grid[row][col];
+        if (stack && stack.length > 0) {
+            const plant = stack.pop();
             plant.remove();
-            this.grid[row][col] = null;
+            this.updateCellDisplay(row, col);
         }
         this.shovelMode = false;
         document.getElementById('shovel-btn').classList.remove('selected');
@@ -514,8 +578,9 @@ class Game {
         const y = row * this.cellHeight;
         const plant = new Plant(x, y, type);
 
-        this.grid[row][col] = plant;
+        this.grid[row][col].push(plant);
         this.plants.push(plant);
+        this.updateCellDisplay(row, col);
     }
 
     spawnZombie(row, type = 'normal') {
@@ -618,7 +683,7 @@ class Game {
         const emptyCells = [];
         for (let r = 0; r < this.height; r++) {
             for (let c = 0; c < this.width; c++) {
-                if (!this.grid[r][c]) emptyCells.push({ r, c });
+                emptyCells.push({ r, c });
             }
         }
         // Shuffle

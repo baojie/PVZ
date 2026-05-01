@@ -121,12 +121,6 @@ export class Plant extends Entity {
         if (this.type === 'cherry') {
             // Cherry bomb: explode immediately on placement
             game.cherryBomb(this.x, this.y);
-            // Find grid position and clear it
-            const row = Math.floor(this.y / 100);
-            const col = Math.floor(this.x / 80);
-            if (game.grid[row] && game.grid[row][col] === this) {
-                game.grid[row][col] = null;
-            }
             this.remove();
             return;
         }
@@ -150,9 +144,6 @@ export class Plant extends Entity {
                     if (zRow === myRow && zCol === myCol) {
                         zombie.health = 0;
                         zombie.remove();
-                        if (game.grid[myRow] && game.grid[myRow][myCol] === this) {
-                            game.grid[myRow][myCol] = null;
-                        }
                         this.remove();
                         return;
                     }
