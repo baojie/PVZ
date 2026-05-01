@@ -1,9 +1,12 @@
 import { Entity } from './Entity.js';
 
 const ZOMBIE_CONFIG = {
-    normal: { health: 9876543221, speed: 0.2, icon: '🧟' },
-    cone:   { health: 9876543221, speed: 0.2, icon: '🧟‍♂️' },
-    bucket: { health: 9876543221, speed: 0.15, icon: '🧟‍♀️' },
+    normal:    { health: 9876543221, speed: 0.2,  icon: '🧟' },
+    cone:      { health: 9876543221, speed: 0.2,  icon: '🧟‍♂️' },
+    bucket:    { health: 9876543221, speed: 0.15, icon: '🧟‍♀️' },
+    newspaper: { health: 9876543221, speed: 0.2,  icon: '📰🧟' },
+    polevault: { health: 9876543221, speed: 0.35, icon: '🎿🧟' },
+    door:      { health: 9876543221, speed: 0.12, icon: '🚪🧟' },
 };
 
 export class Zombie extends Entity {
@@ -13,27 +16,73 @@ export class Zombie extends Entity {
         this.type = type;
         this.gameWidth = gameWidth;
         this.wanderer = wanderer;
-        this.baseSpeed = cfg.speed * speedMultiplier;
+        this.baseSpeed = wanderer ? 1.2 : cfg.speed * speedMultiplier;
         this.speed = this.baseSpeed;
-        this.health = wanderer ? 9999 : cfg.health;
+        this.health = wanderer ? 9_999_999 : cfg.health;
         this.maxHealth = this.health;
-        this.damage = 0.5;
+        this.damage = wanderer ? 200 : 0.5;
         this.eating = false;
 
+        // 报纸僵尸：报纸护盾，破损后加速
+        if (type === 'newspaper') {
+            this.newspaperHealth = 1;
+        }
+
+        // 撑杆跳僵尸：首次遇到植物时跳过
+        if (type === 'polevault') {
+            this.vaulted = false;
+        }
+
+        // 铁门僵尸：铁门护盾，破损后变普通
+        if (type === 'door') {
+            this.doorHealth = 2;
+        }
+
         if (wanderer) {
-            this.verticalSpeed = 0.6;
+            this.verticalSpeed = 2.5;
             this.verticalDir = 1;
             this.color = Zombie.randomColor();
         }
 
         let label = wanderer ? '👾' : cfg.icon;
-        if (!wanderer && type === 'cone') label = '🔶🧟';
+        if (!wanderer && type === 'cone')   label = '🔶🧟';
         if (!wanderer && type === 'bucket') label = '🪣🧟';
 
         this.createDOM(`entity zombie zombie-${type}${wanderer ? ' wanderer' : ''}`, `<div class="zombie-inner">${label}</div>`);
         if (wanderer && this.element) {
             this.element.style.setProperty('--wcolor', this.color);
             this.element.style.filter = `drop-shadow(0 0 12px ${this.color}) drop-shadow(0 0 24px ${this.color})`;
+        }
+    }
+
+    // 统一伤害入口，支持盾牌机制
+    takeDamage(amount) {
+        if (this.type === 'newspaper' && this.newspaperHealth > 0) {
+            this.newspaperHealth -= 1;
+            if (this.newspaperHealth <= 0) {
+                this.baseSpeed *= 2.5;
+                this.speed = this.eating ? 0 : this.baseSpeed;
+                this._setLabel('😡🧟');
+            }
+            return true;
+        }
+
+        if (this.type === 'door' && this.doorHealth > 0) {
+            this.doorHealth -= 1;
+            if (this.doorHealth <= 0) {
+                this._setLabel('🧟');
+            }
+            return true;
+        }
+
+        this.health -= amount;
+        return false;
+    }
+
+    _setLabel(label) {
+        if (this.element) {
+            const inner = this.element.querySelector('.zombie-inner');
+            if (inner) inner.textContent = label;
         }
     }
 
@@ -51,9 +100,20 @@ export class Zombie extends Entity {
 
         const col = Math.floor((this.x + 40) / 80);
         const row = Math.floor(this.y / 100);
-
         const stack = game.grid[row] && game.grid[row][col];
         const plant = stack && stack.length > 0 ? stack[stack.length - 1] : null;
+
+        // 撑杆跳：首次遇到植物时跃过
+        if (this.type === 'polevault' && !this.vaulted && plant && !plant.markedForDeletion) {
+            this.vaulted = true;
+            this.x -= 160; // 跳过这格，落到前一格
+            this.baseSpeed = 0.25;
+            this.speed = this.baseSpeed;
+            this._setLabel('🧟');
+            this.eating = false;
+            this.draw();
+            return;
+        }
 
         if (plant && !plant.markedForDeletion) {
             this.eating = true;
@@ -74,25 +134,19 @@ export class Zombie extends Entity {
     }
 
     _updateWanderer(game) {
-        // Death check
         if (this.health <= 0) {
             this.remove();
             game.spawnWanderer();
             return;
         }
 
-        // Wrap around when reaching left edge
-        if (this.x < -80) {
-            this.x = this.gameWidth;
-        }
+        if (this.x < -80) this.x = this.gameWidth;
 
-        // Vertical bounce
         this.y += this.verticalSpeed * this.verticalDir;
         const maxY = (game.height - 1) * game.cellHeight;
         if (this.y >= maxY) { this.y = maxY; this.verticalDir = -1; }
         if (this.y <= 0)    { this.y = 0;    this.verticalDir = 1; }
 
-        // Eat plants in current cell
         const col = Math.floor((this.x + 40) / 80);
         const row = Math.floor((this.y + 50) / game.cellHeight);
         const stack = game.grid[row] && game.grid[row][col];
@@ -107,7 +161,6 @@ export class Zombie extends Entity {
             this.speed = this.baseSpeed;
         }
 
-        // Health bar tint
         if (this.element) {
             const ratio = this.health / this.maxHealth;
             this.element.style.opacity = 0.4 + ratio * 0.6;

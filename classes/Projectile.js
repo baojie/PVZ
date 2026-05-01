@@ -20,6 +20,9 @@ export class Projectile extends Entity {
         } else if (type === 'piercing') {
             this.speed = 6;
             this.damage = DMG;
+        } else if (type === 'waterdrop') {
+            this.speed = 4;
+            this.damage = Infinity;
         } else {
             this.speed = 5;
             this.damage = DMG;
@@ -30,6 +33,7 @@ export class Projectile extends Entity {
         if (type === 'piercing') cssClass = 'projectile piercing';
         if (type === 'glue') cssClass = 'projectile glue';
         if (type === 'obsidian') cssClass = 'projectile obsidian';
+        if (type === 'waterdrop') cssClass = 'projectile waterdrop';
         this.createDOM(cssClass, '');
     }
 
@@ -51,27 +55,25 @@ export class Projectile extends Entity {
                 this.y < zombie.y + zombie.height &&
                 this.y + this.height > zombie.y
             ) {
-                zombie.health -= this.damage;
-                if (this.type === 'ice') {
-                    zombie.baseSpeed = zombie.baseSpeed * 0.5;
-                    zombie.speed = zombie.baseSpeed;
-                    if (zombie.element) {
-                        zombie.element.style.filter = 'brightness(0.8) hue-rotate(180deg)';
+                const absorbed = zombie.takeDamage(this.damage);
+                if (!absorbed) {
+                    if (this.type === 'ice') {
+                        zombie.baseSpeed = zombie.baseSpeed * 0.5;
+                        zombie.speed = zombie.baseSpeed;
+                        if (zombie.element) zombie.element.style.filter = 'brightness(0.8) hue-rotate(180deg)';
+                    }
+                    if (this.type === 'glue') {
+                        zombie.baseSpeed = 0.01;
+                        zombie.speed = 0.01;
+                        if (zombie.element) zombie.element.style.filter = 'brightness(0.3) sepia(1) hue-rotate(220deg)';
+                    }
+                    if (zombie.health <= 0) {
+                        zombie.remove();
+                        if (game.sound) game.sound.playZombieDie();
                     }
                 }
-                if (this.type === 'glue') {
-                    zombie.baseSpeed = 0.01;
-                    zombie.speed = 0.01;
-                    if (zombie.element) {
-                        zombie.element.style.filter = 'brightness(0.3) sepia(1) hue-rotate(220deg)';
-                    }
-                }
-                if (zombie.health <= 0) {
-                    zombie.remove();
-                    if (game.sound) game.sound.playZombieDie();
-                }
-                // Piercing/glue/obsidian projectiles don't stop
-                if (this.type !== 'piercing' && this.type !== 'obsidian' && this.type !== 'glue') {
+                // Piercing/glue/obsidian/waterdrop projectiles don't stop
+                if (this.type !== 'piercing' && this.type !== 'obsidian' && this.type !== 'glue' && this.type !== 'waterdrop') {
                     this.remove();
                     break;
                 }

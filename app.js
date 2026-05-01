@@ -20,6 +20,7 @@ const PLANT_EMOJI = {
     glue: '🧿',
     obsidian: '🗿',
     gatling: '🔫',
+    waterdrop: '💧',
     shovel: '🪏',
 };
 
@@ -51,6 +52,7 @@ const PLANT_COSTS = {
     glue: 0,
     obsidian: 0,
     gatling: 0,
+    waterdrop: 0,
 };
 
 const PLANT_COOLDOWNS = {
@@ -65,6 +67,7 @@ const PLANT_COOLDOWNS = {
     glue: 0,
     obsidian: 0,
     gatling: 0,
+    waterdrop: 0,
 };
 
 class Game {
@@ -132,14 +135,14 @@ class Game {
         const sc = (v) => Math.max(1, Math.round(v * m));
         const allWaves = [
             { zombies: [{ type: 'normal', count: sc(500) }], interval: 50 },
-            { zombies: [{ type: 'normal', count: sc(800) }], interval: 45 },
-            { zombies: [{ type: 'normal', count: sc(800) }, { type: 'cone', count: sc(500) }], interval: 40 },
-            { zombies: [{ type: 'normal', count: sc(800) }, { type: 'cone', count: sc(800) }], interval: 38 },
-            { zombies: [{ type: 'normal', count: sc(600) }, { type: 'cone', count: sc(800) }, { type: 'bucket', count: sc(400) }], interval: 33 },
-            { zombies: [{ type: 'normal', count: sc(1000) }, { type: 'cone', count: sc(1000) }, { type: 'bucket', count: sc(1000) }], interval: 25 },
-            { zombies: [{ type: 'normal', count: sc(1200) }, { type: 'cone', count: sc(1200) }, { type: 'bucket', count: sc(600) }], interval: 22 },
-            { zombies: [{ type: 'normal', count: sc(800) }, { type: 'cone', count: sc(1500) }, { type: 'bucket', count: sc(1200) }], interval: 20 },
-            { zombies: [{ type: 'normal', count: sc(2000) }, { type: 'cone', count: sc(2000) }, { type: 'bucket', count: sc(2000) }], interval: 18 },
+            { zombies: [{ type: 'normal', count: sc(800) }, { type: 'newspaper', count: sc(300) }], interval: 45 },
+            { zombies: [{ type: 'normal', count: sc(800) }, { type: 'cone', count: sc(500) }, { type: 'polevault', count: sc(200) }], interval: 40 },
+            { zombies: [{ type: 'normal', count: sc(800) }, { type: 'cone', count: sc(800) }, { type: 'newspaper', count: sc(400) }], interval: 38 },
+            { zombies: [{ type: 'normal', count: sc(600) }, { type: 'cone', count: sc(800) }, { type: 'bucket', count: sc(400) }, { type: 'polevault', count: sc(300) }], interval: 33 },
+            { zombies: [{ type: 'normal', count: sc(1000) }, { type: 'cone', count: sc(1000) }, { type: 'bucket', count: sc(1000) }, { type: 'door', count: sc(300) }], interval: 25 },
+            { zombies: [{ type: 'normal', count: sc(1200) }, { type: 'cone', count: sc(1200) }, { type: 'bucket', count: sc(600) }, { type: 'newspaper', count: sc(500) }, { type: 'door', count: sc(400) }], interval: 22 },
+            { zombies: [{ type: 'normal', count: sc(800) }, { type: 'cone', count: sc(1500) }, { type: 'bucket', count: sc(1200) }, { type: 'polevault', count: sc(600) }, { type: 'door', count: sc(600) }], interval: 20 },
+            { zombies: [{ type: 'normal', count: sc(2000) }, { type: 'cone', count: sc(2000) }, { type: 'bucket', count: sc(2000) }, { type: 'newspaper', count: sc(1000) }, { type: 'polevault', count: sc(800) }, { type: 'door', count: sc(800) }], interval: 18 },
         ];
         return allWaves.slice(0, n);
     }
@@ -391,9 +394,7 @@ class Game {
         // Wanderer mode: one immortal zombie that roams up and down
         if (this.wandererMode) {
             this.waveIndex = this.waves.length; // skip waves
-            const midY = Math.floor(this.height / 2) * this.cellHeight;
-            const zombie = new Zombie(this.boardWidth, midY, 'normal', this.zombieSpeedMultiplier, true);
-            this.zombies.push(zombie);
+            this.spawnWanderer();
         }
 
         requestAnimationFrame((timestamp) => this.gameLoop(timestamp));
@@ -450,7 +451,20 @@ class Game {
 
         const clean = (arr) => arr.filter(e => !e.markedForDeletion);
 
-        this.plants.forEach(p => p.update(this));
+        // 只更新每格栈顶植物，栈深度作为速率乘数传入
+        // 跳过被压住的植物：从 O(总植物数) 降到 O(格子数=45)
+        for (let r = 0; r < this.height; r++) {
+            for (let c = 0; c < this.width; c++) {
+                const stack = this.grid[r][c];
+                if (stack.length === 0) continue;
+                const top = stack[stack.length - 1];
+                if (!top.markedForDeletion) {
+                    top._stackMult = stack.length;
+                    top.update(this);
+                }
+            }
+        }
+
         this.zombies.forEach(z => z.update(this));
         this.zombies = clean(this.zombies);
         this.projectiles.forEach(p => p.update(this));
@@ -590,17 +604,14 @@ class Game {
             this.updateSunDisplay();
             const stack = this.grid[row][col];
             const top = stack[stack.length - 1];
-            if (top && !top.markedForDeletion && top.type === this.selectedPlant) {
-                if (this.fusionMode) {
-                    for (let i = 0; i < n; i++) top.levelUpFusion();
-                } else {
-                    top.count = Math.min(100, top.count + n);
-                    top._updateBadge();
-                }
+            if (this.fusionMode && top && !top.markedForDeletion && top.type === this.selectedPlant) {
+                // 融合版：同类型升级
+                for (let i = 0; i < n; i++) top.levelUpFusion();
             } else {
-                const plant = this.spawnPlant(row, col, this.selectedPlant);
-                plant.count = Math.min(100, n);
-                plant._updateBadge();
+                // 普通版 / 不同类型：始终创建新植物入栈
+                for (let i = 0; i < n; i++) {
+                    this.spawnPlant(row, col, this.selectedPlant);
+                }
             }
             this.cooldowns[this.selectedPlant] = PLANT_COOLDOWNS[this.selectedPlant];
             this.sound.playPlant();
@@ -622,6 +633,19 @@ class Game {
         stack.forEach((p, i) => {
             if (p.element) p.element.style.visibility = i === stack.length - 1 ? '' : 'hidden';
         });
+        const cellEl = this.board.querySelector(`.grid-cell[data-row="${row}"][data-col="${col}"]`);
+        if (!cellEl) return;
+        let badge = cellEl.querySelector('.stack-badge');
+        if (stack.length > 1) {
+            if (!badge) {
+                badge = document.createElement('div');
+                badge.className = 'stack-badge';
+                cellEl.appendChild(badge);
+            }
+            badge.textContent = `×${stack.length}`;
+        } else if (badge) {
+            badge.remove();
+        }
     }
 
     removePlant(row, col) {
@@ -644,6 +668,12 @@ class Game {
         this.plants.push(plant);
         this.updateCellDisplay(row, col);
         return plant;
+    }
+
+    spawnWanderer() {
+        const midY = Math.floor(this.height / 2) * this.cellHeight;
+        const zombie = new Zombie(this.boardWidth, midY, 'normal', this.zombieSpeedMultiplier, true);
+        this.zombies.push(zombie);
     }
 
     spawnZombie(row, type = 'normal') {

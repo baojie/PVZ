@@ -18,6 +18,9 @@ export class Plant extends Entity {
         } else if (type === 'gatling') {
             this.health = 1000;
             this.maxHealth = 1000;
+        } else if (type === 'waterdrop') {
+            this.health = 300;
+            this.maxHealth = 300;
         } else {
             this.health = 100;
             this.maxHealth = 100;
@@ -34,7 +37,7 @@ export class Plant extends Entity {
         const icons = {
             peashooter: '🌱', sunflower: '🌻', wallnut: '🌰',
             iceshooter: '❄️', doubleshooter: '🌿', cherry: '🍒', potato: '🥔',
-            pitcher: '🎯', glue: '🧿', obsidian: '🗿', gatling: '🔫',
+            pitcher: '🎯', glue: '🧿', obsidian: '🗿', gatling: '🔫', waterdrop: '💧',
         };
         let icon = icons[type] || '';
 
@@ -56,7 +59,8 @@ export class Plant extends Entity {
     }
 
     update(game) {
-        this.timer += game.deltaTime * this.fusionLevel;
+        const stackMult = this._stackMult || 1;
+        this.timer += game.deltaTime * this.fusionLevel * stackMult;
 
         if (this.type === 'peashooter') {
             if (this.timer >= 100) {
@@ -189,6 +193,18 @@ export class Plant extends Entity {
             if (this.timer >= 10) {
                 this.timer = 0;
                 game.spawnSun(this.x, this.y, 25);
+            }
+        }
+
+        if (this.type === 'waterdrop') {
+            if (this.timer >= 1000) {
+                this.timer = 0;
+                const hasZombie = game.zombies.some(z =>
+                    Math.floor(z.y / 100) === Math.floor(this.y / 100) && z.x > this.x
+                );
+                if (hasZombie) {
+                    game.spawnProjectile(this.x + 40, this.y + 20, 'waterdrop');
+                }
             }
         }
     }
