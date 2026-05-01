@@ -95,14 +95,21 @@ class Game {
     }
 
     generateWaves() {
-        return [
-            { zombies: [{ type: 'normal', count: 500 }], interval: 50 },
-            { zombies: [{ type: 'normal', count: 1000 }], interval: 40 },
-            { zombies: [{ type: 'normal', count: 800 }, { type: 'cone', count: 700 }], interval: 40 },
-            { zombies: [{ type: 'normal', count: 800 }, { type: 'cone', count: 1200 }], interval: 35 },
-            { zombies: [{ type: 'normal', count: 600 }, { type: 'cone', count: 800 }, { type: 'bucket', count: 600 }], interval: 30 },
-            { zombies: [{ type: 'normal', count: 1000 }, { type: 'cone', count: 1000 }, { type: 'bucket', count: 1000 }], interval: 25 },
+        const m = this.zombieCountMultiplier ?? 1;
+        const n = this.waveCountSetting ?? 6;
+        const sc = (v) => Math.max(1, Math.round(v * m));
+        const allWaves = [
+            { zombies: [{ type: 'normal', count: sc(500) }], interval: 50 },
+            { zombies: [{ type: 'normal', count: sc(800) }], interval: 45 },
+            { zombies: [{ type: 'normal', count: sc(800) }, { type: 'cone', count: sc(500) }], interval: 40 },
+            { zombies: [{ type: 'normal', count: sc(800) }, { type: 'cone', count: sc(800) }], interval: 38 },
+            { zombies: [{ type: 'normal', count: sc(600) }, { type: 'cone', count: sc(800) }, { type: 'bucket', count: sc(400) }], interval: 33 },
+            { zombies: [{ type: 'normal', count: sc(1000) }, { type: 'cone', count: sc(1000) }, { type: 'bucket', count: sc(1000) }], interval: 25 },
+            { zombies: [{ type: 'normal', count: sc(1200) }, { type: 'cone', count: sc(1200) }, { type: 'bucket', count: sc(600) }], interval: 22 },
+            { zombies: [{ type: 'normal', count: sc(800) }, { type: 'cone', count: sc(1500) }, { type: 'bucket', count: sc(1200) }], interval: 20 },
+            { zombies: [{ type: 'normal', count: sc(2000) }, { type: 'cone', count: sc(2000) }, { type: 'bucket', count: sc(2000) }], interval: 18 },
         ];
+        return allWaves.slice(0, n);
     }
 
     getTotalZombiesInWave(wave) {
@@ -161,6 +168,26 @@ class Game {
                 soundBtn.textContent = this.sound.muted ? '🔇' : '🔊';
             });
         }
+
+        // Tab switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+                btn.classList.add('active');
+                document.getElementById(`tab-${btn.dataset.tab}`).classList.remove('hidden');
+            });
+        });
+
+        // Option button groups
+        document.querySelectorAll('.btn-group').forEach(group => {
+            group.querySelectorAll('.opt-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    group.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                });
+            });
+        });
 
         const speedSlider = document.getElementById('zombie-speed');
         const speedLabel = document.getElementById('speed-label');
@@ -229,11 +256,28 @@ class Game {
         });
     }
 
-    start() {
+    readSettings() {
         const speedSlider = document.getElementById('zombie-speed');
         if (speedSlider) {
             this.zombieSpeedMultiplier = parseFloat(speedSlider.value);
         }
+
+        const sunBtn = document.querySelector('#sun-setting .opt-btn.active');
+        const sunVal = sunBtn ? sunBtn.dataset.value : 'Infinity';
+        this.suns = sunVal === 'Infinity' ? Infinity : parseInt(sunVal);
+
+        const waveBtn = document.querySelector('#wave-setting .opt-btn.active');
+        this.waveCountSetting = waveBtn ? parseInt(waveBtn.dataset.value) : 6;
+
+        const zombieBtn = document.querySelector('#zombie-count-setting .opt-btn.active');
+        this.zombieCountMultiplier = zombieBtn ? parseFloat(zombieBtn.dataset.value) : 1;
+
+        this.waves = this.generateWaves();
+    }
+
+    start() {
+        this.readSettings();
+        this.updateSunDisplay();
         document.getElementById('start-screen').classList.add('hidden');
         document.getElementById('game-over-screen').classList.add('hidden');
         document.getElementById('victory-screen').classList.add('hidden');
@@ -278,7 +322,6 @@ class Game {
         this.fallingSuns = [];
         this.lawnmowers = [];
         this.grid = Array(this.height).fill().map(() => Array(this.width).fill(null));
-        this.suns = Infinity;
         this.won = false;
         this.waveIndex = 0;
         this.waveTimer = 5000;

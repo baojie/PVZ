@@ -97,32 +97,70 @@
       <!-- Overlays -->
       <div id="start-screen" class="overlay">
         <h1>植物大战僵尸</h1>
-        <p class="subtitle">Web 版 - 6 波僵尸等你来战!</p>
-        <div class="how-to-play">
-          <h2>怎么玩</h2>
-          <ul>
-            <li>☀️ 点击收集掉落的<b>阳光</b>，阳光是种植植物的货币</li>
-            <li>🌱 点击上方<b>种子卡</b>选择植物，再点击草坪格子种下</li>
-            <li>🌻 <b>向日葵</b>(50) — 每 10 秒产出额外阳光</li>
-            <li>🌱 <b>豌豆射手</b>(100) — 向同行僵尸发射豌豆</li>
-            <li>🌰 <b>坚果墙</b>(50) — 高血量挡住僵尸前进</li>
-            <li>❄️ <b>寒冰射手</b>(175) — 冰冻豌豆，命中减速50%</li>
-            <li>🌿 <b>双发射手</b>(200) — 同时发射两颗豌豆</li>
-            <li>🍒 <b>樱桃炸弹</b>(150) — 种下即爆，3×3范围秒杀</li>
-            <li>🥔 <b>土豆地雷</b>(25) — 3秒准备后，僵尸踩上即炸</li>
-            <li>🧿 <b>黑曜石胶神</b>(300) — 发射黑胶弹，穿透并永久冻结僵尸</li>
-            <li>🗿 <b>黑曜石战神</b>(500) — 三方向扫射黑曜石弹，毁天灭地</li>
-            <li>🎯 <b>超级投手</b>(200) — 投掷穿透弹，贯穿整行僵尸</li>
-            <li>🔫 <b>究极机枪炮台</b>(0) — 超高速4连射，随机扫射三行</li>
-            <li>🪏 点击<b>铲子</b>可以移除已种植的植物</li>
-            <li>🚜 每行有一个<b>割草机</b>，僵尸突破时自动清场（仅一次）</li>
-            <li>🧟 击退全部 <b>6 波僵尸</b>即可获胜！</li>
-          </ul>
+        <p class="subtitle">Web 版 - 僵尸大军等你来战!</p>
+        <div class="start-tabs">
+          <button class="tab-btn active" data-tab="howto">怎么玩</button>
+          <button class="tab-btn" data-tab="settings">游戏设置</button>
         </div>
-        <div class="speed-setting">
-          <label for="zombie-speed">僵尸速度:</label>
-          <input type="range" id="zombie-speed" min="0.5" max="3" step="0.5" value="1" />
-          <span id="speed-label">正常</span>
+
+        <div class="tab-content" id="tab-howto">
+          <div class="how-to-play">
+            <ul>
+              <li>☀️ 点击收集掉落的<b>阳光</b>，阳光是种植植物的货币</li>
+              <li>🌱 点击上方<b>种子卡</b>选择植物，再点击草坪格子种下</li>
+              <li>🌻 <b>向日葵</b>(50) — 每 10 秒产出额外阳光</li>
+              <li>🌱 <b>豌豆射手</b>(100) — 向同行僵尸发射豌豆</li>
+              <li>🌰 <b>坚果墙</b>(50) — 高血量挡住僵尸前进</li>
+              <li>❄️ <b>寒冰射手</b>(175) — 冰冻豌豆，命中减速50%</li>
+              <li>🌿 <b>双发射手</b>(200) — 同时发射两颗豌豆</li>
+              <li>🍒 <b>樱桃炸弹</b>(150) — 种下即爆，3×3范围秒杀</li>
+              <li>🥔 <b>土豆地雷</b>(25) — 3秒准备后，僵尸踩上即炸</li>
+              <li>🧿 <b>黑曜石胶神</b>(300) — 发射黑胶弹，穿透并永久冻结僵尸</li>
+              <li>🗿 <b>黑曜石战神</b>(500) — 三方向扫射黑曜石弹，毁天灭地</li>
+              <li>🎯 <b>超级投手</b>(200) — 投掷穿透弹，贯穿整行僵尸</li>
+              <li>🔫 <b>究极机枪炮台</b>(0) — 超高速4连射，随机扫射三行</li>
+              <li>🪏 点击<b>铲子</b>可以移除已种植的植物</li>
+              <li>🚜 每行有一个<b>割草机</b>，僵尸突破时自动清场（仅一次）</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="tab-content hidden" id="tab-settings">
+          <div class="settings-panel">
+            <div class="setting-row">
+              <span class="setting-label">初始阳光</span>
+              <div class="btn-group" id="sun-setting">
+                <button class="opt-btn" data-value="50">50</button>
+                <button class="opt-btn" data-value="150">150</button>
+                <button class="opt-btn active" data-value="300">300</button>
+                <button class="opt-btn" data-value="Infinity">无限</button>
+              </div>
+            </div>
+            <div class="setting-row">
+              <span class="setting-label">总波数</span>
+              <div class="btn-group" id="wave-setting">
+                <button class="opt-btn" data-value="3">3 波</button>
+                <button class="opt-btn active" data-value="6">6 波</button>
+                <button class="opt-btn" data-value="9">9 波</button>
+              </div>
+            </div>
+            <div class="setting-row">
+              <span class="setting-label">僵尸数量</span>
+              <div class="btn-group" id="zombie-count-setting">
+                <button class="opt-btn" data-value="0.5">少</button>
+                <button class="opt-btn active" data-value="1">正常</button>
+                <button class="opt-btn" data-value="2">多</button>
+                <button class="opt-btn" data-value="4">超多</button>
+              </div>
+            </div>
+            <div class="setting-row">
+              <span class="setting-label">僵尸速度</span>
+              <div class="speed-inline">
+                <input type="range" id="zombie-speed" min="0.5" max="3" step="0.5" value="1" />
+                <span id="speed-label">正常</span>
+              </div>
+            </div>
+          </div>
         </div>
         <button id="start-btn">开始游戏</button>
       </div>
