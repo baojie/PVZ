@@ -62,7 +62,7 @@ export class Plant extends Entity {
             if (this.timer >= 100) {
                 this.timer = 0;
                 const hasZombie = game.zombies.some(z =>
-                    z.y === this.y && z.x > this.x
+                    Math.floor(z.y / 100) === Math.floor(this.y / 100) && z.x > this.x
                 );
                 if (hasZombie) {
                     game.spawnProjectile(this.x + 40, this.y + 20);
@@ -74,7 +74,7 @@ export class Plant extends Entity {
             if (this.timer >= 1500) {
                 this.timer = 0;
                 const hasZombie = game.zombies.some(z =>
-                    z.y === this.y && z.x > this.x
+                    Math.floor(z.y / 100) === Math.floor(this.y / 100) && z.x > this.x
                 );
                 if (hasZombie) {
                     game.spawnProjectile(this.x + 40, this.y + 20, 'piercing');
@@ -86,7 +86,7 @@ export class Plant extends Entity {
             if (this.timer >= 500) {
                 this.timer = 0;
                 const hasZombie = game.zombies.some(z =>
-                    z.y === this.y && z.x > this.x
+                    Math.floor(z.y / 100) === Math.floor(this.y / 100) && z.x > this.x
                 );
                 if (hasZombie) {
                     game.spawnProjectile(this.x + 40, this.y + 20, 'glue');
@@ -101,7 +101,7 @@ export class Plant extends Entity {
                 for (const rowY of rows) {
                     if (rowY < 0 || rowY >= 500) continue;
                     const hasZombie = game.zombies.some(z =>
-                        z.y === rowY && z.x > this.x
+                        Math.floor(z.y / 100) === Math.floor(rowY / 100) && z.x > this.x
                     );
                     if (hasZombie) {
                         game.spawnProjectile(this.x + 40, rowY + 20, 'obsidian');
@@ -114,7 +114,7 @@ export class Plant extends Entity {
             if (this.timer >= 100) {
                 this.timer = 0;
                 const hasZombie = game.zombies.some(z =>
-                    z.y === this.y && z.x > this.x
+                    Math.floor(z.y / 100) === Math.floor(this.y / 100) && z.x > this.x
                 );
                 if (hasZombie) {
                     game.spawnProjectile(this.x + 40, this.y + 20, 'ice');
@@ -126,7 +126,7 @@ export class Plant extends Entity {
             if (this.timer >= 100) {
                 this.timer = 0;
                 const hasZombie = game.zombies.some(z =>
-                    z.y === this.y && z.x > this.x
+                    Math.floor(z.y / 100) === Math.floor(this.y / 100) && z.x > this.x
                 );
                 if (hasZombie) {
                     game.spawnProjectile(this.x + 40, this.y + 15);
@@ -196,6 +196,12 @@ export class Plant extends Entity {
     takeDamage(amount) {
         if (this.type === 'wallnut') return;
         this.health -= amount;
+        if (this.element) {
+            this.element.classList.remove('hit');
+            void this.element.offsetWidth;
+            this.element.classList.add('hit');
+            setTimeout(() => this.element?.classList.remove('hit'), 350);
+        }
         if (this.health <= 0) {
             this.count--;
             if (this.count <= 0) {

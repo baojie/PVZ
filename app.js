@@ -212,8 +212,9 @@ class Game {
     }
 
     setupEventListeners() {
-        document.getElementById('start-btn').addEventListener('click', () => { this.fusionMode = false; this.start(); });
-        document.getElementById('start-fusion-btn').addEventListener('click', () => { this.fusionMode = true; this.start(); });
+        document.getElementById('start-btn').addEventListener('click', () => { this.fusionMode = false; this.wandererMode = false; this.start(); });
+        document.getElementById('start-fusion-btn').addEventListener('click', () => { this.fusionMode = true; this.wandererMode = false; this.start(); });
+        document.getElementById('start-wanderer-btn')?.addEventListener('click', () => { this.fusionMode = false; this.wandererMode = true; this.start(); });
         document.getElementById('restart-btn').addEventListener('click', () => this.restart());
         document.getElementById('play-again-btn').addEventListener('click', () => this.restart());
 
@@ -386,6 +387,15 @@ class Game {
                 this.spawnPlant(row, 0, type);
             }
         }
+
+        // Wanderer mode: one immortal zombie that roams up and down
+        if (this.wandererMode) {
+            this.waveIndex = this.waves.length; // skip waves
+            const midY = Math.floor(this.height / 2) * this.cellHeight;
+            const zombie = new Zombie(this.boardWidth, midY, 'normal', this.zombieSpeedMultiplier, true);
+            this.zombies.push(zombie);
+        }
+
         requestAnimationFrame((timestamp) => this.gameLoop(timestamp));
     }
 

@@ -245,6 +245,8 @@ body {
   left: 20px;
   width: var(--board-width);
   height: var(--board-height);
+  perspective: 1400px;
+  perspective-origin: 50% 0%;
 }
 
 .grid-cell {
@@ -283,6 +285,49 @@ body {
 .plant {
   z-index: 20;
   font-size: 40px;
+  transform-style: preserve-3d;
+  animation: plantSpawn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
+             plantFloat 2.8s ease-in-out 0.45s infinite;
+}
+
+.plant::after {
+  content: '';
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%) translateZ(-10px);
+  width: 44px;
+  height: 10px;
+  background: rgba(0, 0, 0, 0.28);
+  border-radius: 50%;
+  filter: blur(5px);
+  pointer-events: none;
+}
+
+.plant.hit {
+  animation: plantHit 0.35s ease-out forwards !important;
+}
+
+@keyframes plantSpawn {
+  0%   { opacity: 0; transform: rotateX(-90deg) scale(0.4) translateY(30px); }
+  60%  { opacity: 1; transform: rotateX(12deg) scale(1.08); }
+  100% { transform: rotateX(0deg) scale(1); }
+}
+
+@keyframes plantFloat {
+  0%   { transform: translateY(0px)   rotateY(0deg)   rotateZ(0deg); }
+  20%  { transform: translateY(-7px)  rotateY(10deg)  rotateZ(1deg); }
+  50%  { transform: translateY(-10px) rotateY(0deg)   rotateZ(0deg); }
+  80%  { transform: translateY(-7px)  rotateY(-10deg) rotateZ(-1deg); }
+  100% { transform: translateY(0px)   rotateY(0deg)   rotateZ(0deg); }
+}
+
+@keyframes plantHit {
+  0%   { transform: translateX(0)    rotateZ(0deg);   filter: brightness(1); }
+  20%  { transform: translateX(-7px) rotateZ(-5deg);  filter: brightness(4) sepia(1) saturate(8) hue-rotate(-20deg); }
+  45%  { transform: translateX(7px)  rotateZ(5deg);   filter: brightness(3) sepia(1) saturate(6); }
+  70%  { transform: translateX(-4px) rotateZ(-2deg);  filter: brightness(1.5); }
+  100% { transform: translateX(0)    rotateZ(0deg);   filter: brightness(1); }
 }
 
 .zombie {
@@ -290,6 +335,18 @@ body {
   color: #8c9eff;
   font-size: 40px;
   transition: left 0 linear;
+  transform: scaleX(-1);
+}
+
+.zombie.wanderer {
+  font-size: 56px;
+  filter: drop-shadow(0 0 12px #e74c3c) drop-shadow(0 0 24px #c0392b);
+  animation: wandererPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes wandererPulse {
+  0%, 100% { filter: drop-shadow(0 0 10px #e74c3c) drop-shadow(0 0 20px #c0392b); }
+  50%       { filter: drop-shadow(0 0 20px #ff6b6b) drop-shadow(0 0 40px #e74c3c); }
 }
 
 .projectile {
@@ -616,6 +673,19 @@ button:active {
 
 .fusion-btn:active {
   box-shadow: 0 1px #4a148c;
+}
+
+.wanderer-btn {
+  background: #c0392b;
+  box-shadow: 0 5px #922b21;
+}
+
+.wanderer-btn:hover {
+  background: #e74c3c;
+}
+
+.wanderer-btn:active {
+  box-shadow: 0 1px #922b21;
 }
 
 .fusion-badge {
