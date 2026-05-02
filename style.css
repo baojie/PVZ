@@ -338,6 +338,18 @@ body {
   transform: scaleX(-1);
 }
 
+.zombie.eating {
+  animation: zombieChomp 0.3s ease-in-out infinite;
+}
+
+@keyframes zombieChomp {
+  0%   { transform: scaleX(-1) translateY(0)    scaleY(1); }
+  25%  { transform: scaleX(-1) translateY(-6px) scaleY(1.08); }
+  50%  { transform: scaleX(-1) translateY(0)    scaleY(1); }
+  75%  { transform: scaleX(-1) translateY(-3px) scaleY(1.04); }
+  100% { transform: scaleX(-1) translateY(0)    scaleY(1); }
+}
+
 .zombie.wanderer {
   font-size: 56px;
   filter: drop-shadow(0 0 12px #e74c3c) drop-shadow(0 0 24px #c0392b);
