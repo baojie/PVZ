@@ -21,6 +21,7 @@ const PLANT_EMOJI = {
     obsidian: '🗿',
     gatling: '🔫',
     waterdrop: '💧',
+    corncannon: '🌽',
     shovel: '🪏',
 };
 
@@ -53,6 +54,7 @@ const PLANT_COSTS = {
     obsidian: 0,
     gatling: 0,
     waterdrop: 0,
+    corncannon: 0,
 };
 
 const PLANT_COOLDOWNS = {
@@ -68,6 +70,7 @@ const PLANT_COOLDOWNS = {
     obsidian: 0,
     gatling: 0,
     waterdrop: 0,
+    corncannon: 0,
 };
 
 class Game {
@@ -99,8 +102,15 @@ class Game {
 
         this.selectedPlant = null;
         this.shovelMode = false;
-        this.plantCount = 100;
+        this.cannonTarget = null;
+        this.pendingCannon = null;
+        this.cannonIntervals = [];
+        this.plantCount = 1;
         this.zombieSpeedMultiplier = 1;
+        this.zombieBoost = false;
+        this.randomBullets = false;
+        this.plantSpeedMultiplier = 1;
+        this.zombieBoostLevel = 1;
         this.sound = new SoundManager();
         this.firstGame = true;
 
@@ -210,6 +220,11 @@ class Game {
             this.sound.startBGM();
             const overlay = document.getElementById('pause-overlay');
             if (overlay) overlay.style.display = 'none';
+            if (this.pendingCannon) {
+                const { plant, x, y, zombie, wandererIdx } = this.pendingCannon;
+                this.pendingCannon = null;
+                this.fireCannon(plant, x, y, zombie, wandererIdx);
+            }
             requestAnimationFrame((ts) => this.gameLoop(ts));
         }
     }
@@ -225,6 +240,18 @@ class Game {
             if (e.code === 'Space' && document.getElementById('start-screen').classList.contains('hidden')) {
                 e.preventDefault();
                 this.togglePause();
+            }
+            if (e.code === 'KeyF' && this.isRunning) {
+                this.plantSpeedMultiplier = (this.plantSpeedMultiplier || 1) * 3;
+                this.showNotEnoughFeedback(`⚡ 植物加速 ×${this.plantSpeedMultiplier}`);
+            }
+            if (e.code === 'Escape') {
+                this.selectedPlant = null;
+                this.cannonTarget = null;
+                this.cannonIntervals.forEach(id => clearInterval(id));
+                this.cannonIntervals = [];
+                document.querySelectorAll('.seed-packet').forEach(p => p.classList.remove('selected'));
+                setEmojiCursor(null);
             }
         });
 
@@ -295,6 +322,54 @@ class Game {
                 return;
             }
 
+            // Cannon targeting mode: must click on a zombie
+            if (this.cannonTarget) {
+                const rect = this.board.getBoundingClientRect();
+                const tx = e.clientX - rect.left;
+                const ty = e.clientY - rect.top;
+
+                let hitX = null, hitY = null, hitZombie = null, hitWandererIdx = -1;
+                for (const z of this.zombies) {
+                    if (tx >= z.x && tx <= z.x + z.width && ty >= z.y && ty <= z.y + z.height) {
+                        hitX = z.x + z.width / 2;
+                        hitY = z.y + z.height / 2;
+                        hitZombie = z;
+                        break;
+                    }
+                }
+                if (hitX === null && this.wandererSystem) {
+                    const ws = this.wandererSystem;
+                    for (let i = 0; i < ws.count; i++) {
+                        if (tx >= ws.px[i] && tx <= ws.px[i] + 40 && ty >= ws.py[i] && ty <= ws.py[i] + 60) {
+                            hitX = ws.px[i] + 20;
+                            hitY = ws.py[i] + 30;
+                            hitWandererIdx = i;
+                            break;
+                        }
+                    }
+                }
+                if (hitX === null) return;
+
+                if (this.paused) {
+                    this.pendingCannon = { plant: this.cannonTarget, x: hitX, y: hitY, zombie: hitZombie, wandererIdx: hitWandererIdx };
+                } else {
+                    this.fireCannon(this.cannonTarget, hitX, hitY, hitZombie, hitWandererIdx);
+                }
+                // 保持瞄准模式，可继续选择其他僵尸；按 ESC 退出
+                return;
+            }
+
+            // Click on a ready corncannon always arms it (takes priority over plant selection)
+            const stack = this.grid[row][col];
+            if (stack && stack.length > 0) {
+                const top = stack[stack.length - 1];
+                if (top.type === 'corncannon' && top.cannonReady) {
+                    this.cannonTarget = top;
+                    setEmojiCursor('🎯');
+                    return;
+                }
+            }
+
             if (this.selectedPlant) {
                 this.handleGridClick(row, col);
             }
@@ -334,11 +409,11 @@ class Game {
             countInput.value = this.plantCount;
         });
         document.getElementById('plant-count-inc').addEventListener('click', () => {
-            this.plantCount = Math.min(100, this.plantCount + 1);
+            this.plantCount = Math.min(1000000, this.plantCount + 1);
             countInput.value = this.plantCount;
         });
         countInput.addEventListener('change', () => {
-            this.plantCount = Math.min(100, Math.max(1, parseInt(countInput.value) || 1));
+            this.plantCount = Math.min(1000000, Math.max(1, parseInt(countInput.value) || 1));
             countInput.value = this.plantCount;
         });
         countInput.addEventListener('click', (e) => e.stopPropagation());
@@ -360,6 +435,9 @@ class Game {
         const zombieBtn = document.querySelector('#zombie-count-setting .opt-btn.active');
         this.zombieCountMultiplier = zombieBtn ? parseFloat(zombieBtn.dataset.value) : 1;
 
+        const bulletBtn = document.querySelector('#random-bullets-setting .opt-btn.active');
+        this.randomBullets = bulletBtn ? bulletBtn.dataset.value === 'true' : false;
+
         this.waves = this.generateWaves();
     }
 
@@ -374,8 +452,8 @@ class Game {
         this.sound.startBGM();
         this.setupLawnmowers();
 
-        // Auto-win first game
-        if (this.firstGame) {
+        // Auto-win first game (not in wanderer mode)
+        if (this.firstGame && !this.wandererMode) {
             this.firstGame = false;
             this.waveIndex = this.waves.length;
             this.updateProgressBar();
@@ -391,10 +469,13 @@ class Game {
             }
         }
 
-        // Wanderer mode: one immortal zombie that roams up and down
+        // Wanderer mode: 1,000,000 canvas-rendered wanderers
         if (this.wandererMode) {
             this.waveIndex = this.waves.length; // skip waves
-            this.spawnWanderer();
+            const bH = this.height * this.cellHeight;
+            this.wandererSystem = new WandererSystem(
+                10, this.boardWidth, bH, this.cellWidth, this.cellHeight
+            );
         }
 
         requestAnimationFrame((timestamp) => this.gameLoop(timestamp));
@@ -402,6 +483,8 @@ class Game {
 
     restart() {
         this.sound.stopBGM();
+        this.wandererSystem?.destroy();
+        this.wandererSystem = null;
         this.plants.forEach(p => p.remove());
         this.zombies.forEach(z => z.remove());
         this.projectiles.forEach(p => p.remove());
@@ -426,7 +509,10 @@ class Game {
         this.zombiesSpawnedInWave = 0;
         this.waveSpawnTimer = 0;
         this.timeSinceLastSun = 0;
-        this.cooldowns = { peashooter: 0, sunflower: 0, wallnut: 0, iceshooter: 0, doubleshooter: 0, cherry: 0, potato: 0, pitcher: 0, glue: 0, obsidian: 0, gatling: 0 };
+        this.cannonTarget = null;
+        this.cannonIntervals.forEach(id => clearInterval(id));
+        this.cannonIntervals = [];
+        this.cooldowns = { peashooter: 0, sunflower: 0, wallnut: 0, iceshooter: 0, doubleshooter: 0, cherry: 0, potato: 0, pitcher: 0, glue: 0, obsidian: 0, gatling: 0, corncannon: 0 };
 
         this.updateSunDisplay();
         this.updateProgressBar();
@@ -467,9 +553,21 @@ class Game {
 
         this.zombies.forEach(z => z.update(this));
         this.zombies = clean(this.zombies);
+        this.wandererSystem?.update(this);
         this.projectiles.forEach(p => p.update(this));
         this.projectiles = clean(this.projectiles);
         this.plants = clean(this.plants);
+
+        // 全屏随机子弹（需开启选项）
+        if (this.randomBullets) {
+            const types = ['normal', 'ice', 'piercing', 'gatling', 'waterdrop'];
+            for (let k = 0; k < 5; k++) {
+                const x = Math.random() * this.boardWidth;
+                const y = Math.random() * this.height * this.cellHeight;
+                const type = types[Math.floor(Math.random() * types.length)];
+                this.spawnProjectile(x, y, type);
+            }
+        }
         for (let r = 0; r < this.height; r++) {
             for (let c = 0; c < this.width; c++) {
                 const before = this.grid[r][c].length;
@@ -511,7 +609,7 @@ class Game {
         this.updateCooldowns(deltaTime);
 
         // Win check
-        if (this.waveIndex >= this.waves.length && this.zombies.length === 0 && !this.won) {
+        if (!this.wandererMode && this.waveIndex >= this.waves.length && this.zombies.length === 0 && !this.won) {
             this.won = true;
             setTimeout(() => this.victory(), 1000);
         }
@@ -651,8 +749,8 @@ class Game {
     removePlant(row, col) {
         const stack = this.grid[row][col];
         if (stack && stack.length > 0) {
-            const plant = stack.pop();
-            plant.remove();
+            stack.forEach(p => p.remove());
+            stack.length = 0;
             this.updateCellDisplay(row, col);
         }
         this.shovelMode = false;
@@ -670,9 +768,31 @@ class Game {
         return plant;
     }
 
+    hasEnemyInRow(row, minX) {
+        if (this.zombies.some(z => Math.floor(z.y / this.cellHeight) === row && z.x > minX)) return true;
+        if (!this.wandererSystem) return false;
+        const ws = this.wandererSystem;
+        for (let i = 0; i < ws.count; i++) {
+            if (Math.floor(ws.py[i] / this.cellHeight) === row && ws.px[i] > minX) return true;
+        }
+        return false;
+    }
+
+    hasAnyEnemy(minX) {
+        if (this.zombies.some(z => z.x > minX)) return true;
+        if (!this.wandererSystem) return false;
+        const ws = this.wandererSystem;
+        for (let i = 0; i < ws.count; i++) {
+            if (ws.px[i] > minX) return true;
+        }
+        return false;
+    }
+
     spawnWanderer() {
         const midY = Math.floor(this.height / 2) * this.cellHeight;
         const zombie = new Zombie(this.boardWidth, midY, 'normal', this.zombieSpeedMultiplier, true);
+        zombie.x = (this.width - 1) * this.cellWidth;
+        zombie.draw();
         this.zombies.push(zombie);
     }
 
@@ -702,6 +822,74 @@ class Game {
         el.textContent = '💥 BOOM!';
         document.getElementById('game-container').appendChild(el);
         setTimeout(() => el.remove(), 1500);
+    }
+
+    fireCannon(plant, targetX, targetY, targetZombie, wandererIdx) {
+        const INTERVAL = 5;
+        const SHOW_EVERY = 20;
+        let tick = 0;
+
+        this.sound.playExplosion();
+
+        const id = setInterval(() => {
+            if (tick % SHOW_EVERY === 0) {
+                const ox = (Math.random() - 0.5) * 10, oy = (Math.random() - 0.5) * 10;
+                const ball = document.createElement('div');
+                ball.style.cssText = `position:absolute;left:${plant.x+20}px;top:${plant.y+30}px;font-size:18px;z-index:25;pointer-events:none;transition:left 0.2s linear,top 0.2s linear;`;
+                ball.textContent = '🌽';
+                this.board.appendChild(ball);
+                requestAnimationFrame(() => { ball.style.left = `${targetX-9+ox}px`; ball.style.top = `${targetY-9+oy}px`; });
+                setTimeout(() => {
+                    ball.remove();
+                    const flash = document.createElement('div');
+                    flash.style.cssText = `position:absolute;left:${targetX-20+ox}px;top:${targetY-20+oy}px;width:40px;height:40px;border-radius:50%;background:rgba(255,220,0,0.8);z-index:24;pointer-events:none;`;
+                    this.board.appendChild(flash);
+                    setTimeout(() => flash.remove(), 150);
+                }, 200);
+            }
+
+            this.cannonExplosion(targetZombie, wandererIdx);
+            tick++;
+        }, INTERVAL);
+
+        this.cannonIntervals.push(id);
+    }
+
+    cannonExplosion(targetZombie, wandererIdx) {
+        const DMG = 1800;
+        if (targetZombie && !targetZombie.markedForDeletion) {
+            targetZombie.takeDamage(DMG);
+            if (targetZombie.health <= 0) targetZombie.remove();
+        } else if (wandererIdx >= 0 && this.wandererSystem) {
+            const ws = this.wandererSystem;
+            ws.hp[wandererIdx] -= DMG;
+            if (ws.hp[wandererIdx] <= 0) {
+                ws.hp[wandererIdx] = ws.maxHp;
+                ws.vx[wandererIdx] = 0.8 + Math.random() * 0.8;
+                ws.px[wandererIdx] = ws.W;
+            }
+        }
+    }
+
+    cannonAutoFire(plantX, plantY) {
+        const DMG = 1800;
+        for (const z of this.zombies) {
+            if (!z.markedForDeletion) {
+                z.takeDamage(DMG);
+                if (z.health <= 0) z.remove();
+            }
+        }
+        const ws = this.wandererSystem;
+        if (ws) {
+            for (let i = 0; i < ws.count; i++) {
+                ws.hp[i] -= DMG;
+                if (ws.hp[i] <= 0) {
+                    ws.hp[i] = ws.maxHp;
+                    ws.vx[i] = 0.8 + Math.random() * 0.8;
+                    ws.px[i] = ws.W;
+                }
+            }
+        }
     }
 
     spawnProjectile(x, y, type = 'normal') {
@@ -793,5 +981,123 @@ class Game {
         document.getElementById('victory-screen').classList.remove('hidden');
     }
 }
+
+// ── WandererSystem ──────────────────────────────────────────────────────────
+function _hslToRgb(h, s, l) {
+    const hue2 = (p, q, t) => {
+        if (t < 0) t += 1; if (t > 1) t -= 1;
+        if (t < 1/6) return p + (q - p) * 6 * t;
+        if (t < 1/2) return q;
+        if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+        return p;
+    };
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    const p = 2 * l - q;
+    return [hue2(p, q, h + 1/3) * 255 | 0, hue2(p, q, h) * 255 | 0, hue2(p, q, h - 1/3) * 255 | 0];
+}
+
+class WandererSystem {
+    constructor(count, boardWidth, boardHeight, cellWidth, cellHeight) {
+        this.count = count;
+        this.W = boardWidth; this.H = boardHeight;
+        this.cW = cellWidth; this.cH = cellHeight;
+        this.dmgTimer = 0;
+
+        this.px = new Float32Array(count);
+        this.py = new Float32Array(count);
+        this.vx = new Float32Array(count);
+        this.vy = new Float32Array(count);
+        this.hp = new Float32Array(count);
+        this.maxHp = Infinity;
+        this.cr = new Uint8Array(count);
+        this.cg = new Uint8Array(count);
+        this.cb = new Uint8Array(count);
+        this.dt = new Uint16Array(count);
+        this.di = new Uint16Array(count);
+
+        for (let i = 0; i < count; i++) {
+            this.px[i] = Math.random() * boardWidth;
+            this.py[i] = Math.random() * boardHeight;
+            this.vx[i] = 0.8 + Math.random() * 0.8;
+            this.hp[i] = this.maxHp;
+            const spd = 1.5 + Math.random() * 2;
+            this.vy[i] = Math.random() < 0.5 ? spd : -spd;
+            const [r, g, b] = _hslToRgb(Math.random(), 0.9, 0.6);
+            this.cr[i] = r; this.cg[i] = g; this.cb[i] = b;
+            this.dt[i] = Math.random() * 120 | 0;
+            this.di[i] = 60 + Math.random() * 120 | 0;
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = boardWidth; canvas.height = boardHeight;
+        canvas.style.cssText = 'position:absolute;left:0;top:0;z-index:18;pointer-events:none;';
+        document.getElementById('game-board').appendChild(canvas);
+        this.canvas = canvas;
+        this.ctx = canvas.getContext('2d');
+    }
+
+    update(game) {
+        const { W, H, count, ctx } = this;
+        const { px, py, vx, vy, cr, cg, cb, dt, di } = this;
+
+        ctx.clearRect(0, 0, W, H);
+
+        for (let i = 0; i < count; i++) {
+            dt[i]++;
+            if (dt[i] >= di[i]) {
+                dt[i] = 0;
+                di[i] = 60 + Math.random() * 120 | 0;
+                const spd = 1.5 + Math.random() * 2;
+                vy[i] = Math.random() < 0.5 ? spd : -spd;
+            }
+            px[i] -= vx[i];
+            if (px[i] < -40) px[i] = W;
+            // 碰到坚果就停在其右侧
+            const wCol = Math.floor(px[i] / this.cW);
+            const wRow = Math.floor((py[i] + 30) / this.cH);
+            if (wRow >= 0 && wRow < game.height && wCol >= 0 && wCol < game.width) {
+                const stack = game.grid[wRow][wCol];
+                if (stack.length > 0 && stack[stack.length - 1].type === 'wallnut' && !stack[stack.length - 1].markedForDeletion) {
+                    px[i] = (wCol + 1) * this.cW;
+                }
+            }
+            py[i] += vy[i];
+            if (py[i] >= H - 60) { py[i] = H - 60; vy[i] = -Math.abs(vy[i]); }
+            if (py[i] <  0)      { py[i] = 0;       vy[i] =  Math.abs(vy[i]); }
+
+            const xi = px[i], yi = py[i];
+            const color = `rgb(${cr[i]},${cg[i]},${cb[i]})`;
+            ctx.shadowBlur = 24;
+            ctx.shadowColor = color;
+            ctx.font = '36px serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('👾', xi + 20, yi + 46);
+            ctx.shadowBlur = 0;
+        }
+
+        // 每 30 帧批量伤害植物
+        if (++this.dmgTimer < 30) return;
+        this.dmgTimer = 0;
+        const rows = game.height, cols = game.width;
+        const cnt = new Int32Array(rows * cols);
+        for (let i = 0; i < count; i++) {
+            const c = px[i] / this.cW | 0, r = py[i] / this.cH | 0;
+            if (r >= 0 && r < rows && c >= 0 && c < cols) cnt[r * cols + c]++;
+        }
+        for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+                const n = cnt[r * cols + c];
+                if (!n) continue;
+                const stack = game.grid[r][c];
+                if (!stack.length) continue;
+                const plant = stack[stack.length - 1];
+                if (!plant.markedForDeletion) plant.takeDamage(n, true);
+            }
+        }
+    }
+
+    destroy() { this.canvas.remove(); }
+}
+// ────────────────────────────────────────────────────────────────────────────
 
 window.game = new Game();
