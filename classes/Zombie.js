@@ -1,12 +1,12 @@
 import { Entity } from './Entity.js';
 
 const ZOMBIE_CONFIG = {
-    normal:    { health: 9876543221, speed: 0.2,  icon: '🧟' },
-    cone:      { health: 9876543221, speed: 0.2,  icon: '🧟‍♂️' },
-    bucket:    { health: 9876543221, speed: 0.15, icon: '🧟‍♀️' },
-    newspaper: { health: 9876543221, speed: 0.2,  icon: '📰🧟' },
-    polevault: { health: 9876543221, speed: 0.35, icon: '🎿🧟' },
-    door:      { health: 9876543221, speed: 0.12, icon: '🚪🧟' },
+    normal:    { health: 99999, speed: 0.2,  icon: '🧟' },
+    cone:      { health: 99999, speed: 0.2,  icon: '🧟‍♂️' },
+    bucket:    { health: 99999, speed: 0.15, icon: '🧟‍♀️' },
+    newspaper: { health: 99999, speed: 0.2,  icon: '📰🧟' },
+    polevault: { health: 99999, speed: 0.35, icon: '🎿🧟' },
+    door:      { health: 99999, speed: 0.12, icon: '🚪🧟' },
 };
 
 export class Zombie extends Entity {
@@ -18,7 +18,7 @@ export class Zombie extends Entity {
         this.wanderer = wanderer;
         this.baseSpeed = wanderer ? 1.2 : cfg.speed * speedMultiplier;
         this.speed = this.baseSpeed;
-        this.health = wanderer ? 9_999_999 : cfg.health;
+        this.health = wanderer ? 99999 : cfg.health;
         this.maxHealth = this.health;
         this.damage = wanderer ? 200 : 0.5;
         this.eating = false;
@@ -39,8 +39,10 @@ export class Zombie extends Entity {
         }
 
         if (wanderer) {
-            this.verticalSpeed = 2.5;
-            this.verticalDir = 1;
+            this.verticalSpeed = 1.5 + Math.random() * 2;
+            this.verticalDir = Math.random() < 0.5 ? 1 : -1;
+            this.dirChangeTimer = 0;
+            this.dirChangeInterval = 60 + Math.random() * 120;
             this.color = Zombie.randomColor();
         }
 
@@ -119,9 +121,11 @@ export class Zombie extends Entity {
             this.eating = true;
             this.speed = 0;
             plant.takeDamage(this.damage);
+            if (this.element) this.element.classList.add('eating');
         } else {
             this.eating = false;
             this.speed = this.baseSpeed;
+            if (this.element) this.element.classList.remove('eating');
         }
 
         this.x -= this.speed;
@@ -140,8 +144,16 @@ export class Zombie extends Entity {
             return;
         }
 
-        if (this.x < -80) this.x = this.gameWidth;
+        // 随机换向计时
+        this.dirChangeTimer++;
+        if (this.dirChangeTimer >= this.dirChangeInterval) {
+            this.dirChangeTimer = 0;
+            this.dirChangeInterval = 60 + Math.random() * 120;
+            this.verticalDir = Math.random() < 0.5 ? 1 : -1;
+            this.verticalSpeed = 1.5 + Math.random() * 2;
+        }
 
+        // 纵向弹跳
         this.y += this.verticalSpeed * this.verticalDir;
         const maxY = (game.height - 1) * game.cellHeight;
         if (this.y >= maxY) { this.y = maxY; this.verticalDir = -1; }
@@ -154,20 +166,17 @@ export class Zombie extends Entity {
 
         if (plant && !plant.markedForDeletion) {
             this.eating = true;
-            this.speed = 0;
-            plant.takeDamage(this.damage);
+            plant.takeDamage(this.damage, true);
         } else {
             this.eating = false;
-            this.speed = this.baseSpeed;
         }
+
+        this.draw();
 
         if (this.element) {
             const ratio = this.health / this.maxHealth;
             this.element.style.opacity = 0.4 + ratio * 0.6;
         }
-
-        this.x -= this.speed;
-        this.draw();
     }
 
     static randomColor() {

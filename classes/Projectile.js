@@ -10,7 +10,7 @@ export class Projectile extends Entity {
             this.damage = DMG;
         } else if (type === 'ice') {
             this.speed = 5;
-            this.damage = DMG;
+            this.damage = 20;
         } else if (type === 'glue') {
             this.speed = 7;
             this.damage = DMG;
@@ -25,7 +25,7 @@ export class Projectile extends Entity {
             this.damage = Infinity;
         } else {
             this.speed = 5;
-            this.damage = DMG;
+            this.damage = 20;
         }
         let cssClass = 'projectile';
         if (type === 'gatling') cssClass = 'projectile gatling';
@@ -56,12 +56,15 @@ export class Projectile extends Entity {
                 this.y + this.height > zombie.y
             ) {
                 const absorbed = zombie.takeDamage(this.damage);
+                // 寒冰减速无论护盾是否吸收都生效
+                if (this.type === 'ice') {
+                    zombie.baseSpeed = Math.max(0.02, zombie.baseSpeed * 0.7);
+                    if (!zombie.eating) zombie.speed = zombie.baseSpeed;
+                    if (zombie.verticalSpeed !== undefined)
+                        zombie.verticalSpeed = Math.max(0.1, zombie.verticalSpeed * 0.7);
+                    if (zombie.element) zombie.element.style.filter = 'brightness(0.8) hue-rotate(180deg)';
+                }
                 if (!absorbed) {
-                    if (this.type === 'ice') {
-                        zombie.baseSpeed = zombie.baseSpeed * 0.5;
-                        zombie.speed = zombie.baseSpeed;
-                        if (zombie.element) zombie.element.style.filter = 'brightness(0.8) hue-rotate(180deg)';
-                    }
                     if (this.type === 'glue') {
                         zombie.baseSpeed = 0.01;
                         zombie.speed = 0.01;
@@ -73,6 +76,36 @@ export class Projectile extends Entity {
                     }
                 }
                 // Piercing/glue/obsidian/waterdrop projectiles don't stop
+                if (this.type !== 'piercing' && this.type !== 'obsidian' && this.type !== 'glue' && this.type !== 'waterdrop') {
+                    this.remove();
+                    break;
+                }
+            }
+        }
+
+        if (this.markedForDeletion) return;
+
+        // Collision with WandererSystem
+        const ws = game.wandererSystem;
+        if (!ws) return;
+        const { px, py } = ws;
+        for (let i = 0; i < ws.count; i++) {
+            if (
+                this.x < px[i] + 40 &&
+                this.x + this.width > px[i] &&
+                this.y < py[i] + 60 &&
+                this.y + this.height > py[i]
+            ) {
+                ws.hp[i] -= this.damage;
+                if (this.type === 'ice') {
+                    ws.vx[i] = 0;
+                    ws.vy[i] = 0;
+                }
+                if (ws.hp[i] <= 0) {
+                    ws.hp[i] = ws.maxHp;
+                    ws.vx[i] = 0.8 + Math.random() * 0.8;
+                    px[i] = ws.W;
+                }
                 if (this.type !== 'piercing' && this.type !== 'obsidian' && this.type !== 'glue' && this.type !== 'waterdrop') {
                     this.remove();
                     break;
