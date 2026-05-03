@@ -418,6 +418,46 @@ body {
   border: none;
 }
 
+.projectile.yuanshiwandou {
+  width: 22px;
+  height: 22px;
+  background: radial-gradient(circle at 35% 35%, #fffbe6, #ffd700 60%, #b8860b);
+  border: 2px solid #fff58c;
+  box-shadow: 0 0 10px #ffec3d, 0 0 20px #ffb300, 0 0 30px #c084fc;
+  animation: yswd-spin 0.5s linear infinite;
+}
+
+@keyframes yswd-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.zombie.stunned {
+  filter: brightness(1.4) drop-shadow(0 0 8px #ffd700) drop-shadow(0 0 14px #c084fc) !important;
+  animation: stun-shake 0.25s ease-in-out infinite alternate;
+}
+
+.zombie.stunned::after {
+  content: '💫';
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 22px;
+  animation: stun-spin 1.2s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes stun-shake {
+  from { transform: translateX(-1px); }
+  to   { transform: translateX(1px); }
+}
+
+@keyframes stun-spin {
+  from { transform: translateX(-50%) rotate(0deg); }
+  to   { transform: translateX(-50%) rotate(360deg); }
+}
+
 /* Lawnmower */
 .lawnmower {
   position: absolute;

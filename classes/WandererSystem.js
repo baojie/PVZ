@@ -23,6 +23,7 @@ export class WandererSystem {
         this.vx = new Float32Array(count);
         this.vy = new Float32Array(count);
         this.hp = new Float32Array(count);
+        this.stun = new Float32Array(count);
         this.maxHp = Infinity;
         this.cr = new Uint8Array(count);
         this.cg = new Uint8Array(count);
@@ -53,11 +54,29 @@ export class WandererSystem {
 
     update(game) {
         const { W, H, count, ctx } = this;
-        const { px, py, vx, vy, cr, cg, cb, dt, di } = this;
+        const { px, py, vx, vy, cr, cg, cb, dt, di, stun } = this;
+        const dtMs = game.deltaTime || 16;
 
         ctx.clearRect(0, 0, W, H);
 
         for (let i = 0; i < count; i++) {
+            if (stun[i] > 0) {
+                stun[i] -= dtMs;
+                if (stun[i] < 0) stun[i] = 0;
+                const xi = px[i], yi = py[i];
+                const color = `rgb(${cr[i]},${cg[i]},${cb[i]})`;
+                ctx.shadowBlur = 28;
+                ctx.shadowColor = '#ffd700';
+                ctx.font = '36px serif';
+                ctx.textAlign = 'center';
+                ctx.fillStyle = color;
+                ctx.fillText('👾', xi + 20, yi + 46);
+                ctx.shadowBlur = 0;
+                ctx.font = '20px serif';
+                ctx.fillText('💫', xi + 20, yi + 14);
+                continue;
+            }
+
             dt[i]++;
             if (dt[i] >= di[i]) {
                 dt[i] = 0;
@@ -98,6 +117,7 @@ export class WandererSystem {
         const rows = game.height, cols = game.width;
         const cnt = new Int32Array(rows * cols);
         for (let i = 0; i < count; i++) {
+            if (stun[i] > 0) continue;
             const c = px[i] / this.cW | 0, r = py[i] / this.cH | 0;
             if (r >= 0 && r < rows && c >= 0 && c < cols) cnt[r * cols + c]++;
         }

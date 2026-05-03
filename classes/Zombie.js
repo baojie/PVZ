@@ -22,6 +22,7 @@ export class Zombie extends Entity {
         this.maxHealth = this.health;
         this.damage = wanderer ? 200 : 0.5;
         this.eating = false;
+        this.stunTimer = 0;
 
         // 报纸僵尸：报纸护盾，破损后加速
         if (type === 'newspaper') {
@@ -94,6 +95,23 @@ export class Zombie extends Entity {
             return;
         }
 
+        if (this.stunTimer > 0) {
+            this.stunTimer -= game.deltaTime || 16;
+            this.speed = 0;
+            this.eating = false;
+            if (this.element) {
+                this.element.classList.add('stunned');
+                this.element.classList.remove('eating');
+            }
+            this.draw();
+            if (this.stunTimer <= 0) {
+                this.stunTimer = 0;
+                this.speed = this.baseSpeed;
+                if (this.element) this.element.classList.remove('stunned');
+            }
+            return;
+        }
+
         if (this.x < 0) {
             game.triggerLawnmower(Math.floor(this.y / 100));
             this.remove();
@@ -141,6 +159,18 @@ export class Zombie extends Entity {
         if (this.health <= 0) {
             this.remove();
             game.spawnWanderer();
+            return;
+        }
+
+        if (this.stunTimer > 0) {
+            this.stunTimer -= game.deltaTime || 16;
+            this.eating = false;
+            if (this.element) this.element.classList.add('stunned');
+            this.draw();
+            if (this.stunTimer <= 0) {
+                this.stunTimer = 0;
+                if (this.element) this.element.classList.remove('stunned');
+            }
             return;
         }
 

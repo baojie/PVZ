@@ -12,6 +12,7 @@ export const PLANT_EMOJI = {
     gatling: '🔫',
     waterdrop: '💧',
     corncannon: '🌽',
+    yuanshiwandou: '🌟',
     shovel: '🪏',
 };
 
@@ -29,6 +30,7 @@ export const PLANT_COSTS = {
     gatling: 0,
     waterdrop: 0,
     corncannon: 0,
+    yuanshiwandou: 0,
 };
 
 export const PLANT_COOLDOWNS = {
@@ -45,6 +47,7 @@ export const PLANT_COOLDOWNS = {
     gatling: 0,
     waterdrop: 0,
     corncannon: 0,
+    yuanshiwandou: 0,
 };
 
 export function setEmojiCursor(emoji) {

@@ -23,6 +23,10 @@ export class Projectile extends Entity {
         } else if (type === 'waterdrop') {
             this.speed = 4;
             this.damage = Infinity;
+        } else if (type === 'yuanshiwandou') {
+            this.speed = 6;
+            this.damage = 70;
+            this.stunMs = 2000;
         } else {
             this.speed = 5;
             this.damage = 20;
@@ -34,6 +38,7 @@ export class Projectile extends Entity {
         if (type === 'glue') cssClass = 'projectile glue';
         if (type === 'obsidian') cssClass = 'projectile obsidian';
         if (type === 'waterdrop') cssClass = 'projectile waterdrop';
+        if (type === 'yuanshiwandou') cssClass = 'projectile yuanshiwandou';
         this.createDOM(cssClass, '');
     }
 
@@ -56,6 +61,16 @@ export class Projectile extends Entity {
                 this.y + this.height > zombie.y
             ) {
                 const absorbed = zombie.takeDamage(this.damage);
+                // 元始豌豆：眩晕 + 击退，不论是否被护盾吸收都生效
+                if (this.type === 'yuanshiwandou') {
+                    zombie.stunTimer = Math.max(zombie.stunTimer || 0, this.stunMs);
+                    zombie.x += 80;
+                    const maxX = game.boardWidth - zombie.width;
+                    if (zombie.x > maxX) zombie.x = maxX;
+                    zombie.eating = false;
+                    if (zombie.element) zombie.element.classList.remove('eating');
+                    zombie.draw();
+                }
                 // 寒冰减速无论护盾是否吸收都生效
                 if (this.type === 'ice') {
                     zombie.baseSpeed = Math.max(0.02, zombie.baseSpeed * 0.7);
@@ -100,6 +115,10 @@ export class Projectile extends Entity {
                 if (this.type === 'ice') {
                     ws.vx[i] = 0;
                     ws.vy[i] = 0;
+                }
+                if (this.type === 'yuanshiwandou') {
+                    ws.stun[i] = Math.max(ws.stun[i] || 0, this.stunMs);
+                    px[i] = Math.min(ws.W - 40, px[i] + 80);
                 }
                 if (ws.hp[i] <= 0) {
                     ws.hp[i] = ws.maxHp;
