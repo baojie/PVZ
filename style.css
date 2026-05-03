@@ -601,11 +601,21 @@ body {
   color: #ccc;
 }
 
+#start-screen {
+  justify-content: flex-start;
+  padding: 18px 0;
+  overflow-y: auto;
+}
+
+#start-screen .subtitle {
+  margin-top: 4px;
+}
+
 /* Start Screen Tabs */
 .start-tabs {
   display: flex;
   gap: 6px;
-  margin-top: 14px;
+  margin-top: 10px;
 }
 
 .tab-btn {
@@ -634,8 +644,10 @@ body {
 .how-to-play {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 0 8px 8px 8px;
-  padding: 12px 20px;
+  padding: 8px 16px;
   max-width: 480px;
+  max-height: 380px;
+  overflow-y: auto;
   text-align: left;
 }
 
@@ -713,8 +725,8 @@ body {
 }
 
 .how-to-play li {
-  font-size: 13px;
-  line-height: 1.7;
+  font-size: 12px;
+  line-height: 1.5;
   color: #ddd;
 }
 
@@ -753,7 +765,7 @@ button:active {
 .mode-select {
   display: flex;
   gap: 16px;
-  margin-top: 20px;
+  margin-top: 14px;
 }
 
 .mode-btn {
