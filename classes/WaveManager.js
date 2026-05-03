@@ -5,14 +5,14 @@ export function generateWaves(zombieCountMultiplier = 1, waveCountSetting = 6) {
     const sc = (v) => Math.max(1, Math.round(v * m));
     const allWaves = [
         { zombies: [{ type: 'normal', count: sc(500) }], interval: 50 },
-        { zombies: [{ type: 'normal', count: sc(800) }, { type: 'newspaper', count: sc(300) }], interval: 45 },
+        { zombies: [{ type: 'normal', count: sc(800) }, { type: 'cone', count: sc(300) }], interval: 45 },
         { zombies: [{ type: 'normal', count: sc(800) }, { type: 'cone', count: sc(500) }, { type: 'polevault', count: sc(200) }], interval: 40 },
-        { zombies: [{ type: 'normal', count: sc(800) }, { type: 'cone', count: sc(800) }, { type: 'newspaper', count: sc(400) }], interval: 38 },
+        { zombies: [{ type: 'normal', count: sc(800) }, { type: 'cone', count: sc(800) }, { type: 'polevault', count: sc(400) }], interval: 38 },
         { zombies: [{ type: 'normal', count: sc(600) }, { type: 'cone', count: sc(800) }, { type: 'bucket', count: sc(400) }, { type: 'polevault', count: sc(300) }], interval: 33 },
         { zombies: [{ type: 'normal', count: sc(1000) }, { type: 'cone', count: sc(1000) }, { type: 'bucket', count: sc(1000) }, { type: 'door', count: sc(300) }], interval: 25 },
-        { zombies: [{ type: 'normal', count: sc(1200) }, { type: 'cone', count: sc(1200) }, { type: 'bucket', count: sc(600) }, { type: 'newspaper', count: sc(500) }, { type: 'door', count: sc(400) }], interval: 22 },
+        { zombies: [{ type: 'normal', count: sc(1200) }, { type: 'cone', count: sc(1200) }, { type: 'bucket', count: sc(600) }, { type: 'polevault', count: sc(500) }, { type: 'door', count: sc(400) }], interval: 22 },
         { zombies: [{ type: 'normal', count: sc(800) }, { type: 'cone', count: sc(1500) }, { type: 'bucket', count: sc(1200) }, { type: 'polevault', count: sc(600) }, { type: 'door', count: sc(600) }], interval: 20 },
-        { zombies: [{ type: 'normal', count: sc(2000) }, { type: 'cone', count: sc(2000) }, { type: 'bucket', count: sc(2000) }, { type: 'newspaper', count: sc(1000) }, { type: 'polevault', count: sc(800) }, { type: 'door', count: sc(800) }], interval: 18 },
+        { zombies: [{ type: 'normal', count: sc(2000) }, { type: 'cone', count: sc(2000) }, { type: 'bucket', count: sc(2000) }, { type: 'polevault', count: sc(1000) }, { type: 'door', count: sc(800) }], interval: 18 },
     ];
     return allWaves.slice(0, waveCountSetting);
 }
@@ -38,11 +38,13 @@ export function updateWaves(game, deltaTime) {
 
     game.waveSpawnTimer -= deltaTime;
     if (game.waveSpawnTimer <= 0 && game.zombiesSpawnedInWave < totalZombies) {
-        const pool = [];
+        const totalWeight = wave.zombies.reduce((s, g) => s + g.count, 0);
+        let r = Math.random() * totalWeight;
+        let type = 'normal';
         for (const group of wave.zombies) {
-            for (let i = 0; i < group.count; i++) pool.push(group.type);
+            if (r < group.count) { type = group.type; break; }
+            r -= group.count;
         }
-        const type = pool[game.zombiesSpawnedInWave] || 'normal';
         const row = Math.floor(Math.random() * game.height);
         spawnZombie(game, row, type);
         game.zombiesSpawnedInWave++;

@@ -145,13 +145,35 @@ export class Plant extends Entity {
         }
 
         if (this.type === 'cherry') {
-            // Cherry bomb: explode immediately on placement
-            game.cherryBomb(this.x, this.y);
-            this.remove();
-            return;
+            if (this.ultimateMs > 0 && !this._cherryUlt) {
+                this._cherryUlt = true;
+                const types = ['peashooter', 'sunflower', 'wallnut', 'iceshooter', 'doubleshooter', 'pitcher', 'glue', 'obsidian', 'gatling', 'waterdrop', 'corncannon', 'yuanshiwandou', 'sanchongwandousheshou'];
+                for (let r = 0; r < game.height; r++) {
+                    for (let c = 0; c < game.width; c++) {
+                        game.spawnPlant(r, c, types[Math.floor(Math.random() * types.length)]);
+                    }
+                }
+                this.remove();
+                return;
+            }
+            if (this.timer >= 800) {
+                game.cherryBomb(this.x, this.y);
+                this.remove();
+                return;
+            }
         }
 
         if (this.type === 'potato') {
+            if (this.ultimateMs > 0 && !this._potatoUlt) {
+                this._potatoUlt = true;
+                for (let r = 0; r < game.height; r++) {
+                    for (let c = 0; c < game.width; c++) {
+                        game.spawnPlant(r, c, 'cherry');
+                    }
+                }
+                this.remove();
+                return;
+            }
             if (!this.armed) {
                 this.armTimer += game.deltaTime;
                 if (this.armTimer >= 3000) {
@@ -243,9 +265,16 @@ export class Plant extends Entity {
         }
 
         if (this.type === 'jianguobaolingqiu') {
-            game.spawnProjectile(this.x + 40, this.y + 22, 'bowling');
-            this.remove();
-            return;
+            if (this.timer >= 2000) {
+                const wasUlt = this.ultimateMs > 0;
+                game.spawnProjectile(this.x + 40, this.y + 22, 'bowling');
+                if (wasUlt) {
+                    const last = game.projectiles[game.projectiles.length - 1];
+                    if (last) last.ultimate = true;
+                }
+                this.remove();
+                return;
+            }
         }
 
     }

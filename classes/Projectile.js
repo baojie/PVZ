@@ -52,6 +52,19 @@ export class Projectile extends Entity {
         this.x += this.speed;
         this.draw();
 
+        if (this.type === 'bowling' && this.ultimate) {
+            const col = Math.floor(this.x / game.cellWidth);
+            if (this._lastCol === undefined) this._lastCol = col - 1;
+            if (col !== this._lastCol && col >= 0 && col < game.width) {
+                this._lastCol = col;
+                const row = Math.floor(this.y / 100);
+                if (row >= 0 && row < game.height) {
+                    const t = Math.random() < 0.5 ? 'potato' : 'cherry';
+                    game.spawnPlant(row, col, t);
+                }
+            }
+        }
+
         if (this.x > game.boardWidth) {
             this.remove();
             return;
