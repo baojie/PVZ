@@ -23,7 +23,7 @@ export class Projectile extends Entity {
         } else if (type === 'waterdrop') {
             this.speed = 4;
             this.damage = Infinity;
-        } else if (type === 'yuanshiwandou') {
+        } else if (type === 'primitivepea') {
             this.speed = 6;
             this.damage = 70;
             this.stunMs = 2000;
@@ -43,7 +43,7 @@ export class Projectile extends Entity {
         if (type === 'glue') cssClass = 'projectile glue';
         if (type === 'obsidian') cssClass = 'projectile obsidian';
         if (type === 'waterdrop') cssClass = 'projectile waterdrop';
-        if (type === 'yuanshiwandou') cssClass = 'projectile yuanshiwandou';
+        if (type === 'primitivepea') cssClass = 'projectile primitivepea';
         if (type === 'bowling') cssClass = 'projectile bowling';
         this.createDOM(cssClass, '');
     }
@@ -81,7 +81,7 @@ export class Projectile extends Entity {
             ) {
                 const absorbed = zombie.takeDamage(this.damage);
                 // 元始豌豆：眩晕 + 击退，不论是否被护盾吸收都生效
-                if (this.type === 'yuanshiwandou') {
+                if (this.type === 'primitivepea') {
                     zombie.stunTimer = Math.max(zombie.stunTimer || 0, this.stunMs);
                     zombie.x += 80;
                     const maxX = game.boardWidth - zombie.width;
@@ -135,7 +135,7 @@ export class Projectile extends Entity {
                     ws.vx[i] = 0;
                     ws.vy[i] = 0;
                 }
-                if (this.type === 'yuanshiwandou') {
+                if (this.type === 'primitivepea') {
                     ws.stun[i] = Math.max(ws.stun[i] || 0, this.stunMs);
                     px[i] = Math.min(ws.W - 40, px[i] + 80);
                 }

@@ -44,7 +44,7 @@ export function updateCellDisplay(game, row, col) {
 }
 
 export function handleGridClick(game, row, col) {
-    if (game.selectedPlant === 'lvyesu') {
+    if (game.selectedPlant === 'plantfood') {
         const stack = game.grid[row][col];
         const top = stack && stack.length > 0 ? stack[stack.length - 1] : null;
         if (top && !top.markedForDeletion) {

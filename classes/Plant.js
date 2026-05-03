@@ -43,8 +43,8 @@ export class Plant extends Entity {
             peashooter: '🌱', sunflower: '🌻', wallnut: '🌰',
             iceshooter: '❄️', doubleshooter: '🌿', cherry: '🍒', potato: '🥔',
             pitcher: '🎯', glue: '🧿', obsidian: '🗿', gatling: '🔫', waterdrop: '💧',
-            corncannon: '🌽', yuanshiwandou: '🌟', sanchongwandousheshou: '🌳',
-            jianguobaolingqiu: '🥥',
+            corncannon: '🌽', primitivepea: '🌟', triplepea: '🌳',
+            nutbowling: '🥥',
         };
         let icon = icons[type] || '';
 
@@ -147,7 +147,7 @@ export class Plant extends Entity {
         if (this.type === 'cherry') {
             if (this.ultimateMs > 0 && !this._cherryUlt) {
                 this._cherryUlt = true;
-                const types = ['peashooter', 'sunflower', 'wallnut', 'iceshooter', 'doubleshooter', 'pitcher', 'glue', 'obsidian', 'gatling', 'waterdrop', 'corncannon', 'yuanshiwandou', 'sanchongwandousheshou'];
+                const types = ['peashooter', 'sunflower', 'wallnut', 'iceshooter', 'doubleshooter', 'pitcher', 'glue', 'obsidian', 'gatling', 'waterdrop', 'corncannon', 'primitivepea', 'triplepea'];
                 for (let r = 0; r < game.height; r++) {
                     for (let c = 0; c < game.width; c++) {
                         game.spawnPlant(r, c, types[Math.floor(Math.random() * types.length)]);
@@ -233,17 +233,17 @@ export class Plant extends Entity {
             }
         }
 
-        if (this.type === 'yuanshiwandou') {
+        if (this.type === 'primitivepea') {
             if (this.timer >= 100) {
                 this.timer = 0;
                 const hasZombie = (this.ultimateMs > 0) || game.hasEnemyInRow(Math.floor(this.y / 100), this.x);
                 if (hasZombie) {
-                    game.spawnProjectile(this.x + 40, this.y + 20, 'yuanshiwandou');
+                    game.spawnProjectile(this.x + 40, this.y + 20, 'primitivepea');
                 }
             }
         }
 
-        if (this.type === 'sanchongwandousheshou') {
+        if (this.type === 'triplepea') {
             if (this.timer >= 100) {
                 this.timer = 0;
                 const rows = [this.y - 100, this.y, this.y + 100];
@@ -264,7 +264,7 @@ export class Plant extends Entity {
             }
         }
 
-        if (this.type === 'jianguobaolingqiu') {
+        if (this.type === 'nutbowling') {
             if (this.timer >= 2000) {
                 const wasUlt = this.ultimateMs > 0;
                 game.spawnProjectile(this.x + 40, this.y + 22, 'bowling');

@@ -12,10 +12,10 @@ export const PLANT_EMOJI = {
     gatling: '🔫',
     waterdrop: '💧',
     corncannon: '🌽',
-    yuanshiwandou: '🌟',
-    sanchongwandousheshou: '🌳',
-    jianguobaolingqiu: '🥥',
-    lvyesu: '💚',
+    primitivepea: '🌟',
+    triplepea: '🌳',
+    nutbowling: '🥥',
+    plantfood: '💚',
     shovel: '🪏',
 };
 
@@ -33,10 +33,10 @@ export const PLANT_COSTS = {
     gatling: 0,
     waterdrop: 0,
     corncannon: 0,
-    yuanshiwandou: 0,
-    sanchongwandousheshou: 0,
-    jianguobaolingqiu: 0,
-    lvyesu: 0,
+    primitivepea: 0,
+    triplepea: 0,
+    nutbowling: 0,
+    plantfood: 0,
 };
 
 export const PLANT_COOLDOWNS = {
@@ -53,10 +53,10 @@ export const PLANT_COOLDOWNS = {
     gatling: 0,
     waterdrop: 0,
     corncannon: 0,
-    yuanshiwandou: 0,
-    sanchongwandousheshou: 0,
-    jianguobaolingqiu: 0,
-    lvyesu: 0,
+    primitivepea: 0,
+    triplepea: 0,
+    nutbowling: 0,
+    plantfood: 0,
 };
 
 export function setEmojiCursor(emoji) {
