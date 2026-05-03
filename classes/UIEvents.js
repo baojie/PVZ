@@ -18,6 +18,16 @@ export function setupEventListeners(game) {
             game.plantSpeedMultiplier = (game.plantSpeedMultiplier || 1) * 3;
             game.showNotEnoughFeedback(`⚡ 植物加速 ×${game.plantSpeedMultiplier}`);
         }
+        if (e.code === 'KeyG') {
+            game.zombieSpeedBoost = (game.zombieSpeedBoost || 1) * 3;
+            console.log('[G] zombieSpeedBoost =', game.zombieSpeedBoost, '| zombies:', game.zombies?.length, '| wanderers:', game.wandererSystem?.count);
+            game.showNotEnoughFeedback(`💨 僵尸加速 ×${game.zombieSpeedBoost}`);
+        }
+        if (e.code === 'KeyH') {
+            game.zombieSpeedBoost = (game.zombieSpeedBoost || 1) / 3;
+            console.log('[H] zombieSpeedBoost =', game.zombieSpeedBoost);
+            game.showNotEnoughFeedback(`🐢 僵尸减速 ×${game.zombieSpeedBoost.toFixed(3)}`);
+        }
         if (e.code === 'Escape') {
             game.selectedPlant = null;
             game.cannonTarget = null;

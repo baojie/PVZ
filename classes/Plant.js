@@ -44,6 +44,7 @@ export class Plant extends Entity {
             iceshooter: '❄️', doubleshooter: '🌿', cherry: '🍒', potato: '🥔',
             pitcher: '🎯', glue: '🧿', obsidian: '🗿', gatling: '🔫', waterdrop: '💧',
             corncannon: '🌽', yuanshiwandou: '🌟', sanchongwandousheshou: '🌳',
+            jianguobaolingqiu: '🥥',
         };
         let icon = icons[type] || '';
 
@@ -66,12 +67,20 @@ export class Plant extends Entity {
 
     update(game) {
         const stackMult = this._stackMult || 1;
-        this.timer += game.deltaTime * this.fusionLevel * stackMult * (game.plantSpeedMultiplier || 1);
+        const ultimateMult = (this.ultimateMs && this.ultimateMs > 0) ? 20 : 1;
+        this.timer += game.deltaTime * this.fusionLevel * stackMult * (game.plantSpeedMultiplier || 1) * ultimateMult;
+        if (this.ultimateMs && this.ultimateMs > 0) {
+            this.ultimateMs -= (game.deltaTime || 16);
+            if (this.ultimateMs <= 0) {
+                this.ultimateMs = 0;
+                if (this.element) this.element.classList.remove('ultimate');
+            }
+        }
 
         if (this.type === 'peashooter') {
             if (this.timer >= 100) {
                 this.timer = 0;
-                const hasZombie = game.hasEnemyInRow(Math.floor(this.y / 100), this.x);
+                const hasZombie = (this.ultimateMs > 0) || game.hasEnemyInRow(Math.floor(this.y / 100), this.x);
                 if (hasZombie) {
                     game.spawnProjectile(this.x + 40, this.y + 20);
                 }
@@ -81,7 +90,7 @@ export class Plant extends Entity {
         if (this.type === 'pitcher') {
             if (this.timer >= 1500) {
                 this.timer = 0;
-                const hasZombie = game.hasEnemyInRow(Math.floor(this.y / 100), this.x);
+                const hasZombie = (this.ultimateMs > 0) || game.hasEnemyInRow(Math.floor(this.y / 100), this.x);
                 if (hasZombie) {
                     game.spawnProjectile(this.x + 40, this.y + 20, 'piercing');
                 }
@@ -91,7 +100,7 @@ export class Plant extends Entity {
         if (this.type === 'glue') {
             if (this.timer >= 500) {
                 this.timer = 0;
-                const hasZombie = game.hasEnemyInRow(Math.floor(this.y / 100), this.x);
+                const hasZombie = (this.ultimateMs > 0) || game.hasEnemyInRow(Math.floor(this.y / 100), this.x);
                 if (hasZombie) {
                     game.spawnProjectile(this.x + 40, this.y + 20, 'glue');
                 }
@@ -117,7 +126,7 @@ export class Plant extends Entity {
         if (this.type === 'iceshooter') {
             if (this.timer >= 100) {
                 this.timer = 0;
-                const hasZombie = game.hasEnemyInRow(Math.floor(this.y / 100), this.x);
+                const hasZombie = (this.ultimateMs > 0) || game.hasEnemyInRow(Math.floor(this.y / 100), this.x);
                 if (hasZombie) {
                     game.spawnProjectile(this.x + 40, this.y + 20, 'ice');
                 }
@@ -127,7 +136,7 @@ export class Plant extends Entity {
         if (this.type === 'doubleshooter') {
             if (this.timer >= 100) {
                 this.timer = 0;
-                const hasZombie = game.hasEnemyInRow(Math.floor(this.y / 100), this.x);
+                const hasZombie = (this.ultimateMs > 0) || game.hasEnemyInRow(Math.floor(this.y / 100), this.x);
                 if (hasZombie) {
                     game.spawnProjectile(this.x + 40, this.y + 15);
                     game.spawnProjectile(this.x + 40, this.y + 35);
@@ -171,7 +180,7 @@ export class Plant extends Entity {
         if (this.type === 'gatling') {
             if (this.timer >= 30) {
                 this.timer = 0;
-                const hasZombie = game.hasAnyEnemy(this.x);
+                const hasZombie = (this.ultimateMs > 0) || game.hasAnyEnemy(this.x);
                 if (hasZombie) {
                     // 4 bullets with random vertical spread across 3 rows
                     for (let i = 0; i < 4; i++) {
@@ -195,7 +204,7 @@ export class Plant extends Entity {
         if (this.type === 'waterdrop') {
             if (this.timer >= 1000) {
                 this.timer = 0;
-                const hasZombie = game.hasEnemyInRow(Math.floor(this.y / 100), this.x);
+                const hasZombie = (this.ultimateMs > 0) || game.hasEnemyInRow(Math.floor(this.y / 100), this.x);
                 if (hasZombie) {
                     game.spawnProjectile(this.x + 40, this.y + 20, 'waterdrop');
                 }
@@ -205,7 +214,7 @@ export class Plant extends Entity {
         if (this.type === 'yuanshiwandou') {
             if (this.timer >= 100) {
                 this.timer = 0;
-                const hasZombie = game.hasEnemyInRow(Math.floor(this.y / 100), this.x);
+                const hasZombie = (this.ultimateMs > 0) || game.hasEnemyInRow(Math.floor(this.y / 100), this.x);
                 if (hasZombie) {
                     game.spawnProjectile(this.x + 40, this.y + 20, 'yuanshiwandou');
                 }
@@ -219,7 +228,7 @@ export class Plant extends Entity {
                 for (const rowY of rows) {
                     if (rowY < 0 || rowY >= 500) continue;
                     const r = Math.floor(rowY / 100);
-                    if (game.hasEnemyInRow(r, this.x)) {
+                    if ((this.ultimateMs > 0) || game.hasEnemyInRow(r, this.x)) {
                         game.spawnProjectile(this.x + 40, rowY + 20);
                     }
                 }
@@ -231,6 +240,12 @@ export class Plant extends Entity {
                 this.timer = 0;
                 game.cannonAutoFire(this.x, this.y);
             }
+        }
+
+        if (this.type === 'jianguobaolingqiu') {
+            game.spawnProjectile(this.x + 40, this.y + 22, 'bowling');
+            this.remove();
+            return;
         }
 
     }

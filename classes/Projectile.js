@@ -27,6 +27,11 @@ export class Projectile extends Entity {
             this.speed = 6;
             this.damage = 70;
             this.stunMs = 2000;
+        } else if (type === 'bowling') {
+            this.speed = 12;
+            this.damage = DMG;
+            this.width = 56;
+            this.height = 56;
         } else {
             this.speed = 5;
             this.damage = 20;
@@ -39,6 +44,7 @@ export class Projectile extends Entity {
         if (type === 'obsidian') cssClass = 'projectile obsidian';
         if (type === 'waterdrop') cssClass = 'projectile waterdrop';
         if (type === 'yuanshiwandou') cssClass = 'projectile yuanshiwandou';
+        if (type === 'bowling') cssClass = 'projectile bowling';
         this.createDOM(cssClass, '');
     }
 
@@ -91,7 +97,7 @@ export class Projectile extends Entity {
                     }
                 }
                 // Piercing/glue/obsidian/waterdrop projectiles don't stop
-                if (this.type !== 'piercing' && this.type !== 'obsidian' && this.type !== 'glue' && this.type !== 'waterdrop') {
+                if (this.type !== 'piercing' && this.type !== 'obsidian' && this.type !== 'glue' && this.type !== 'waterdrop' && this.type !== 'bowling') {
                     this.remove();
                     break;
                 }
@@ -125,7 +131,7 @@ export class Projectile extends Entity {
                     ws.vx[i] = 0.8 + Math.random() * 0.8;
                     px[i] = ws.W;
                 }
-                if (this.type !== 'piercing' && this.type !== 'obsidian' && this.type !== 'glue' && this.type !== 'waterdrop') {
+                if (this.type !== 'piercing' && this.type !== 'obsidian' && this.type !== 'glue' && this.type !== 'waterdrop' && this.type !== 'bowling') {
                     this.remove();
                     break;
                 }

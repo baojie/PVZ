@@ -84,7 +84,7 @@ export class WandererSystem {
                 const spd = 1.5 + Math.random() * 2;
                 vy[i] = Math.random() < 0.5 ? spd : -spd;
             }
-            px[i] -= vx[i];
+            px[i] -= vx[i] * (game.zombieSpeedBoost || 1);
             if (px[i] < -40) px[i] = W;
 
             // 碰到坚果停在右侧

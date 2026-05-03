@@ -1,12 +1,12 @@
 import { Entity } from './Entity.js';
 
 const ZOMBIE_CONFIG = {
-    normal:    { health: 99999, speed: 0.2,  icon: '🧟' },
-    cone:      { health: 99999, speed: 0.2,  icon: '🧟‍♂️' },
-    bucket:    { health: 99999, speed: 0.15, icon: '🧟‍♀️' },
-    newspaper: { health: 99999, speed: 0.2,  icon: '📰🧟' },
-    polevault: { health: 99999, speed: 0.35, icon: '🎿🧟' },
-    door:      { health: 99999, speed: 0.12, icon: '🚪🧟' },
+    normal:    { health: 17000, speed: 0.2,  icon: '🧟' },
+    cone:      { health: 17000, speed: 0.2,  icon: '🧟‍♂️' },
+    bucket:    { health: 17000, speed: 0.15, icon: '🧟‍♀️' },
+    newspaper: { health: 17000, speed: 0.2,  icon: '📰🧟' },
+    polevault: { health: 17000, speed: 0.35, icon: '🎿🧟' },
+    door:      { health: 17000, speed: 0.12, icon: '🚪🧟' },
 };
 
 export class Zombie extends Entity {
@@ -146,7 +146,7 @@ export class Zombie extends Entity {
             if (this.element) this.element.classList.remove('eating');
         }
 
-        this.x -= this.speed;
+        this.x -= this.speed * (game.zombieSpeedBoost || 1);
         this.draw();
 
         if (this.element) {

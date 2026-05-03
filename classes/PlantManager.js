@@ -44,6 +44,19 @@ export function updateCellDisplay(game, row, col) {
 }
 
 export function handleGridClick(game, row, col) {
+    if (game.selectedPlant === 'lvyesu') {
+        const stack = game.grid[row][col];
+        const top = stack && stack.length > 0 ? stack[stack.length - 1] : null;
+        if (top && !top.markedForDeletion) {
+            top.ultimateMs = 2000;
+            if (top.element) top.element.classList.add('ultimate');
+            game.showNotEnoughFeedback('💚 大招！');
+        } else {
+            game.showNotEnoughFeedback('需要点在植物上');
+        }
+        return;
+    }
+
     const cost = PLANT_COSTS[game.selectedPlant] || 0;
 
     if (game.cooldowns[game.selectedPlant] > 0) {
