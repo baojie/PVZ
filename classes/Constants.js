@@ -13,6 +13,7 @@ export const PLANT_EMOJI = {
     waterdrop: '💧',
     corncannon: '🌽',
     yuanshiwandou: '🌟',
+    sanchongwandousheshou: '🌳',
     shovel: '🪏',
 };
 
@@ -31,6 +32,7 @@ export const PLANT_COSTS = {
     waterdrop: 0,
     corncannon: 0,
     yuanshiwandou: 0,
+    sanchongwandousheshou: 0,
 };
 
 export const PLANT_COOLDOWNS = {
@@ -48,6 +50,7 @@ export const PLANT_COOLDOWNS = {
     waterdrop: 0,
     corncannon: 0,
     yuanshiwandou: 0,
+    sanchongwandousheshou: 0,
 };
 
 export function setEmojiCursor(emoji) {

@@ -43,7 +43,7 @@ export class Plant extends Entity {
             peashooter: '🌱', sunflower: '🌻', wallnut: '🌰',
             iceshooter: '❄️', doubleshooter: '🌿', cherry: '🍒', potato: '🥔',
             pitcher: '🎯', glue: '🧿', obsidian: '🗿', gatling: '🔫', waterdrop: '💧',
-            corncannon: '🌽', yuanshiwandou: '🌟',
+            corncannon: '🌽', yuanshiwandou: '🌟', sanchongwandousheshou: '🌳',
         };
         let icon = icons[type] || '';
 
@@ -208,6 +208,20 @@ export class Plant extends Entity {
                 const hasZombie = game.hasEnemyInRow(Math.floor(this.y / 100), this.x);
                 if (hasZombie) {
                     game.spawnProjectile(this.x + 40, this.y + 20, 'yuanshiwandou');
+                }
+            }
+        }
+
+        if (this.type === 'sanchongwandousheshou') {
+            if (this.timer >= 100) {
+                this.timer = 0;
+                const rows = [this.y - 100, this.y, this.y + 100];
+                for (const rowY of rows) {
+                    if (rowY < 0 || rowY >= 500) continue;
+                    const r = Math.floor(rowY / 100);
+                    if (game.hasEnemyInRow(r, this.x)) {
+                        game.spawnProjectile(this.x + 40, rowY + 20);
+                    }
                 }
             }
         }

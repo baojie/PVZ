@@ -94,6 +94,7 @@ body {
 
 #seed-bank {
   display: flex;
+  flex-wrap: wrap;
   gap: 4px;
   align-items: center;
   background: #6d4c41;
