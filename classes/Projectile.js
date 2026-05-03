@@ -1,51 +1,31 @@
 import { Entity } from './Entity.js';
 
+// 弹道类型表：speed/damage/cssClass 是必填，其他字段按需附加。
+// piercing=true 表示命中后不消失（贯穿）。Infinity 用作「秒杀」哨兵伤害。
+const PROJECTILE_TYPES = {
+    normal:       { speed: 5,  damage: 20,       cssClass: 'projectile' },
+    gatling:      { speed: 10, damage: Infinity, cssClass: 'projectile gatling' },
+    ice:          { speed: 5,  damage: 20,       cssClass: 'projectile ice' },
+    glue:         { speed: 7,  damage: Infinity, cssClass: 'projectile glue',         piercing: true },
+    obsidian:     { speed: 8,  damage: Infinity, cssClass: 'projectile obsidian',     piercing: true },
+    piercing:     { speed: 6,  damage: Infinity, cssClass: 'projectile piercing',     piercing: true },
+    waterdrop:    { speed: 4,  damage: Infinity, cssClass: 'projectile waterdrop',    piercing: true },
+    primitivepea: { speed: 6,  damage: 70,       cssClass: 'projectile primitivepea', stunMs: 2000 },
+    bowling:      { speed: 12, damage: Infinity, cssClass: 'projectile bowling',      piercing: true, width: 56, height: 56 },
+};
+
 export class Projectile extends Entity {
     constructor(x, y, type = 'normal') {
         super(x, y, 20, 20);
+        const cfg = PROJECTILE_TYPES[type] || PROJECTILE_TYPES.normal;
         this.type = type;
-        const DMG = 1.2345678901234568e+49;
-        if (type === 'gatling') {
-            this.speed = 10;
-            this.damage = DMG;
-        } else if (type === 'ice') {
-            this.speed = 5;
-            this.damage = 20;
-        } else if (type === 'glue') {
-            this.speed = 7;
-            this.damage = DMG;
-        } else if (type === 'obsidian') {
-            this.speed = 8;
-            this.damage = DMG;
-        } else if (type === 'piercing') {
-            this.speed = 6;
-            this.damage = DMG;
-        } else if (type === 'waterdrop') {
-            this.speed = 4;
-            this.damage = Infinity;
-        } else if (type === 'primitivepea') {
-            this.speed = 6;
-            this.damage = 70;
-            this.stunMs = 2000;
-        } else if (type === 'bowling') {
-            this.speed = 12;
-            this.damage = DMG;
-            this.width = 56;
-            this.height = 56;
-        } else {
-            this.speed = 5;
-            this.damage = 20;
-        }
-        let cssClass = 'projectile';
-        if (type === 'gatling') cssClass = 'projectile gatling';
-        if (type === 'ice') cssClass = 'projectile ice';
-        if (type === 'piercing') cssClass = 'projectile piercing';
-        if (type === 'glue') cssClass = 'projectile glue';
-        if (type === 'obsidian') cssClass = 'projectile obsidian';
-        if (type === 'waterdrop') cssClass = 'projectile waterdrop';
-        if (type === 'primitivepea') cssClass = 'projectile primitivepea';
-        if (type === 'bowling') cssClass = 'projectile bowling';
-        this.createDOM(cssClass, '');
+        this.speed = cfg.speed;
+        this.damage = cfg.damage;
+        this.piercing = !!cfg.piercing;
+        if (cfg.stunMs) this.stunMs = cfg.stunMs;
+        if (cfg.width) this.width = cfg.width;
+        if (cfg.height) this.height = cfg.height;
+        this.createDOM(cfg.cssClass, '');
     }
 
     update(game) {
@@ -109,8 +89,7 @@ export class Projectile extends Entity {
                         if (game.sound) game.sound.playZombieDie();
                     }
                 }
-                // Piercing/glue/obsidian/waterdrop projectiles don't stop
-                if (this.type !== 'piercing' && this.type !== 'obsidian' && this.type !== 'glue' && this.type !== 'waterdrop' && this.type !== 'bowling') {
+                if (!this.piercing) {
                     this.remove();
                     break;
                 }
@@ -144,7 +123,7 @@ export class Projectile extends Entity {
                     ws.vx[i] = 0.8 + Math.random() * 0.8;
                     px[i] = ws.W;
                 }
-                if (this.type !== 'piercing' && this.type !== 'obsidian' && this.type !== 'glue' && this.type !== 'waterdrop' && this.type !== 'bowling') {
+                if (!this.piercing) {
                     this.remove();
                     break;
                 }
