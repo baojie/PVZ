@@ -2,7 +2,7 @@ import { Zombie } from './classes/Zombie.js';
 import { SoundManager } from './classes/SoundManager.js';
 import { PLANT_COOLDOWNS, setEmojiCursor } from './classes/Constants.js';
 import { WandererSystem } from './classes/WandererSystem.js';
-import { generateWaves, updateWaves, spawnZombie } from './classes/WaveManager.js';
+import { generateWaves, updateWaves, spawnZombie, getTotalZombiesInWave } from './classes/WaveManager.js';
 import { setupEventListeners } from './classes/UIEvents.js';
 import { hasEnemyInRow, hasAnyEnemy, spawnProjectile, cherryBomb, fireCannon, cannonExplosion, cannonAutoFire } from './classes/CombatManager.js';
 import { spawnSun, collectSun, updateSunDisplay } from './classes/SunManager.js';
@@ -42,6 +42,7 @@ class Game {
         this.cannonIntervals = [];
         this.plantCount = 1;
         this.zombieSpeedMultiplier = 1;
+        this.zombieSpeedBoost = 1;
         this.randomBullets = false;
         this.plantSpeedMultiplier = 1;
         this.sound = new SoundManager();
@@ -284,12 +285,16 @@ class Game {
                         this.sound.playZombieDie();
                     }
                 });
-                if (lm.x > this.boardWidth + 50) { lm.element.remove(); lm.gone = true; }
+                if (lm.x > this.boardWidth + 50) {
+                    lm.x = -40;
+                    lm.active = false;
+                    lm.element.style.left = '-40px';
+                }
             }
         });
-        this.lawnmowers = this.lawnmowers.filter(lm => !lm.gone);
 
         this.updateCooldowns(deltaTime);
+        this.updateProgressBar();
 
         if (!this.wandererMode && this.waveIndex >= this.waves.length && this.zombies.length === 0 && !this.won) {
             this.won = true;
@@ -318,6 +323,19 @@ class Game {
     updateProgressBar() {
         const fill = document.getElementById('progress-fill');
         if (fill) fill.style.width = `${Math.min(this.waveIndex / this.waves.length, 1) * 100}%`;
+        const stats = document.getElementById('wave-stats');
+        if (stats) {
+            if (this.wandererMode) {
+                stats.textContent = `漫游模式 · 场上 ${this.zombies.length}`;
+            } else if (this.waveIndex >= this.waves.length) {
+                stats.textContent = `全部 ${this.waves.length} 波已完成`;
+            } else {
+                const wave = this.waves[this.waveIndex];
+                const total = getTotalZombiesInWave(wave);
+                const remaining = (total - this.zombiesSpawnedInWave) + this.zombies.length;
+                stats.textContent = `第 ${this.waveIndex + 1}/${this.waves.length} 波 · 剩 ${remaining} · 场上 ${this.zombies.length}`;
+            }
+        }
     }
 
     showNotEnoughFeedback(msg) {
@@ -329,9 +347,19 @@ class Game {
     }
 
     triggerLawnmower(row) {
-        const lm = this.lawnmowers.find(l => l.row === row && !l.active);
-        if (lm) { lm.active = true; this.sound.playLawnmower(); }
-        else { this.gameOver(); }
+        let lm = this.lawnmowers.find(l => l.row === row && !l.active);
+        if (!lm) {
+            const el = document.createElement('div');
+            el.className = 'lawnmower';
+            el.textContent = '🚜';
+            el.style.left = '-40px';
+            el.style.top = `${row * this.cellHeight + 30}px`;
+            this.board.appendChild(el);
+            lm = { row, x: -40, active: false, gone: false, element: el };
+            this.lawnmowers.push(lm);
+        }
+        lm.active = true;
+        this.sound.playLawnmower();
     }
 
     gameOver() {
