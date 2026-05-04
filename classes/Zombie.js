@@ -9,6 +9,10 @@ const Z = {
     M:'#3a0d11', T:'#d4a83a', J:'#8b5a2b', j:'#5e3a16', R:'#cc2a22',
     w:'#f1f1f1', P:'#1f3d80', O:'#3a1f0e',
 };
+// Pre-flip layout (drawn facing right). The .zombie element applies
+// transform: scaleX(-1) so the rendered zombie ends up facing LEFT toward
+// the plants. Asymmetries below (near/far eye, mouth offset, tie position)
+// give it a 3/4 turn instead of a flat front view.
 const Z_RECTS = [
     // hair tufts on top
     [4,0,1,1,'H'], [7,0,2,1,'H'], [11,0,1,1,'H'],
@@ -22,27 +26,33 @@ const Z_RECTS = [
     [2,5,1,6,'S'], [12,5,1,6,'S'],
     // brow shadow under hair line
     [3,4,9,1,'s'],
-    // eyes — wide whites + small pupils
-    [4,6,3,3,'W'], [8,6,3,3,'W'],
-    [5,7,1,1,'B'], [9,7,1,1,'B'],
-    // mouth open + teeth
-    [4,10,7,2,'M'],
-    [4,11,1,1,'T'], [6,11,1,1,'T'], [9,11,1,1,'T'],
+    // near eye (right side pre-flip → left after flip, closer to viewer)
+    [8,5,4,4,'W'],
+    [10,7,1,1,'B'],
+    // far eye (left side pre-flip → right after flip, smaller)
+    [5,6,2,2,'W'],
+    [5,7,1,1,'B'],
+    // nose bridge shadow between the eyes
+    [7,7,1,2,'s'],
+    // mouth open, offset to right pre-flip
+    [6,10,6,2,'M'],
+    // teeth
+    [6,11,1,1,'T'], [8,11,1,1,'T'], [10,11,1,1,'T'],
     // neck/jaw
     [5,12,5,1,'S'],
     // jacket body
     [2,13,11,5,'J'],
     [1,14,1,4,'J'], [13,14,1,4,'J'],
-    // jacket lapels (shadow)
-    [5,13,1,2,'j'], [9,13,1,2,'j'],
-    // tie
-    [6,13,3,5,'R'],
-    [6,14,3,1,'w'], [6,16,3,1,'w'],
+    // jacket lapels (shadow) — far lapel narrower for 3/4 effect
+    [4,13,1,2,'j'], [10,13,1,2,'j'],
+    // tie shifted slightly right pre-flip (sits on left after flip)
+    [7,13,3,5,'R'],
+    [7,14,3,1,'w'], [7,16,3,1,'w'],
     // hands hanging out the sleeves
     [0,16,1,2,'S'], [14,16,1,2,'S'],
     // pants (split between legs)
     [3,18,4,2,'P'], [8,18,4,2,'P'],
-    // one bare leg (right), one shoe (left)
+    // one bare leg, one shoe
     [8,20,3,2,'S'],
     [2,20,5,2,'O'],
     [7,21,5,1,'S'],
