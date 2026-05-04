@@ -135,7 +135,9 @@ export function setupEventListeners(game) {
         document.getElementById('shovel-btn').classList.toggle('selected', game.shovelMode);
         if (game.shovelMode) {
             game.selectedPlant = null;
-            document.querySelectorAll('.seed-packet').forEach(p => p.classList.remove('selected'));
+            document.querySelectorAll('.seed-packet').forEach(p => {
+                if (p.id !== 'shovel-btn') p.classList.remove('selected');
+            });
             setEmojiCursor(PLANT_EMOJI.shovel);
         } else {
             setEmojiCursor(null);

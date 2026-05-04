@@ -20,8 +20,6 @@ export function removePlant(game, row, col) {
         stack.length = 0;
         updateCellDisplay(game, row, col);
     }
-    game.shovelMode = false;
-    document.getElementById('shovel-btn').classList.remove('selected');
 }
 
 export function updateCellDisplay(game, row, col) {
