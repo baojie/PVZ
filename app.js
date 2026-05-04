@@ -201,6 +201,26 @@ class Game {
         this.start();
     }
 
+    goHome() {
+        this.sound.stopBGM();
+        this.wandererSystem?.destroy();
+        this.wandererSystem = null;
+        this.plants.forEach(p => p.remove());
+        this.zombies.forEach(z => z.remove());
+        this.projectiles.forEach(p => p.remove());
+        this.fallingSuns.forEach(s => s.remove());
+        this.lawnmowers.forEach(lm => lm.element && lm.element.remove());
+        this.board.querySelectorAll('.sun').forEach(s => s.remove());
+        this.cannonIntervals.forEach(id => clearInterval(id));
+        setEmojiCursor(null);
+        this._resetGameState();
+        updateSunDisplay(this);
+        this.updateProgressBar();
+        document.getElementById('game-over-screen').classList.add('hidden');
+        document.getElementById('victory-screen').classList.add('hidden');
+        document.getElementById('start-screen').classList.remove('hidden');
+    }
+
     gameLoop(timestamp) {
         if (!this.isRunning) return;
         const deltaTime = timestamp - this.lastTime;

@@ -10,6 +10,7 @@ export function setupEventListeners(game) {
     document.getElementById('start-wanderer-btn')?.addEventListener('click', () => { game.fusionMode = false; game.wandererMode = true; game.start(); });
     document.getElementById('restart-btn').addEventListener('click', () => game.restart());
     document.getElementById('play-again-btn').addEventListener('click', () => game.restart());
+    document.getElementById('home-btn')?.addEventListener('click', () => game.goHome());
 
     // Keyboard shortcuts
     document.addEventListener('keydown', (e) => {
