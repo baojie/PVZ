@@ -682,7 +682,7 @@ body {
 
 .tab-content {
   width: 100%;
-  max-width: 500px;
+  max-width: 760px;
 }
 
 /* How to Play */
@@ -690,10 +690,18 @@ body {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 0 8px 8px 8px;
   padding: 8px 16px;
-  max-width: 480px;
-  max-height: 380px;
-  overflow-y: auto;
+  max-width: 760px;
   text-align: left;
+}
+
+.how-to-play ul {
+  column-count: 2;
+  column-gap: 24px;
+}
+
+.how-to-play li {
+  break-inside: avoid;
+  -webkit-column-break-inside: avoid;
 }
 
 /* Settings Panel */
