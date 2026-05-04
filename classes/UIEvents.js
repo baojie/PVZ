@@ -1,4 +1,7 @@
 import { PLANT_EMOJI, setEmojiCursor } from './Constants.js';
+import { handleCornCannonClick } from './CornCannon.js';
+import { collectSun } from './SunManager.js';
+import { removePlant, handleGridClick } from './PlantManager.js';
 
 export function setupEventListeners(game) {
     // Game mode buttons
@@ -82,7 +85,7 @@ export function setupEventListeners(game) {
         if (!game.isRunning && !game.paused) return;
 
         if (!game.paused && e.target.classList.contains('sun')) {
-            game.collectSun(e.target);
+            collectSun(game, e.target);
             return;
         }
 
@@ -101,59 +104,14 @@ export function setupEventListeners(game) {
         }
 
         if (game.shovelMode) {
-            game.removePlant(row, col);
+            removePlant(game, row, col);
             return;
         }
 
-        // 加农炮瞄准模式：必须点中僵尸
-        if (game.cannonTarget) {
-            const rect = game.board.getBoundingClientRect();
-            const tx = e.clientX - rect.left;
-            const ty = e.clientY - rect.top;
-
-            let hitX = null, hitY = null, hitZombie = null, hitWandererIdx = -1;
-            for (const z of game.zombies) {
-                if (tx >= z.x && tx <= z.x + z.width && ty >= z.y && ty <= z.y + z.height) {
-                    hitX = z.x + z.width / 2;
-                    hitY = z.y + z.height / 2;
-                    hitZombie = z;
-                    break;
-                }
-            }
-            if (hitX === null && game.wandererSystem) {
-                const ws = game.wandererSystem;
-                for (let i = 0; i < ws.count; i++) {
-                    if (tx >= ws.px[i] && tx <= ws.px[i] + 40 && ty >= ws.py[i] && ty <= ws.py[i] + 60) {
-                        hitX = ws.px[i] + 20;
-                        hitY = ws.py[i] + 30;
-                        hitWandererIdx = i;
-                        break;
-                    }
-                }
-            }
-            if (hitX === null) return;
-
-            if (game.paused) {
-                game.pendingCannon = { plant: game.cannonTarget, x: hitX, y: hitY, zombie: hitZombie, wandererIdx: hitWandererIdx };
-            } else {
-                game.fireCannon(game.cannonTarget, hitX, hitY, hitZombie, hitWandererIdx);
-            }
-            return;
-        }
-
-        // 点击准备好的加农炮优先进入瞄准
-        const stack = game.grid[row][col];
-        if (stack && stack.length > 0) {
-            const top = stack[stack.length - 1];
-            if (top.type === 'corncannon' && top.cannonReady) {
-                game.cannonTarget = top;
-                setEmojiCursor('🎯');
-                return;
-            }
-        }
+        if (handleCornCannonClick(game, e, row, col)) return;
 
         if (game.selectedPlant) {
-            game.handleGridClick(row, col);
+            handleGridClick(game, row, col);
         }
     });
 

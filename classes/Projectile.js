@@ -1,4 +1,5 @@
 import { Entity } from './Entity.js';
+import { spawnPlant } from './PlantManager.js';
 
 // 弹道类型表：speed/damage/cssClass 是必填，其他字段按需附加。
 // piercing=true 表示命中后不消失（贯穿）。Infinity 用作「秒杀」哨兵伤害。
@@ -40,7 +41,7 @@ export class Projectile extends Entity {
                 const row = Math.floor(this.y / 100);
                 if (row >= 0 && row < game.height) {
                     const t = Math.random() < 0.5 ? 'potato' : 'cherry';
-                    game.spawnPlant(row, col, t);
+                    spawnPlant(game, row, col, t);
                 }
             }
         }

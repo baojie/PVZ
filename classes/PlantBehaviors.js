@@ -1,3 +1,8 @@
+import { hasEnemyInRow, hasAnyEnemy, spawnProjectile, cherryBomb } from './CombatManager.js';
+import { spawnSun } from './SunManager.js';
+import { spawnPlant } from './PlantManager.js';
+import { cannonAutoFire } from './CornCannon.js';
+
 // 植物行为表：声明式描述每种植物每个 tick 该做什么。
 //
 // 简单射手用 { interval, kind, shots } 表达；非常规行为（樱桃 / 土豆 / 坚果保龄球
@@ -11,9 +16,9 @@
 
 function fireRow(plant, game, shots) {
     const r = Math.floor(plant.y / game.cellHeight);
-    if (!(plant.ultimateMs > 0) && !game.hasEnemyInRow(r, plant.x)) return;
+    if (!(plant.ultimateMs > 0) && !hasEnemyInRow(game,r, plant.x)) return;
     for (const [proj, dy] of shots) {
-        game.spawnProjectile(plant.x + 40, plant.y + dy, proj);
+        spawnProjectile(game,plant.x + 40, plant.y + dy, proj);
     }
 }
 
@@ -24,9 +29,9 @@ function fireTri(plant, game, shots) {
     for (const rowY of rows) {
         if (rowY < 0 || rowY >= maxY) continue;
         const r = Math.floor(rowY / game.cellHeight);
-        if (!(plant.ultimateMs > 0) && !game.hasEnemyInRow(r, plant.x)) continue;
+        if (!(plant.ultimateMs > 0) && !hasEnemyInRow(game,r, plant.x)) continue;
         for (const [proj, dy] of shots) {
-            game.spawnProjectile(plant.x + 40, rowY + dy, proj);
+            spawnProjectile(game,plant.x + 40, rowY + dy, proj);
         }
     }
 }
@@ -43,26 +48,26 @@ function fireTriZombies(plant, game, shots) {
         );
         if (!has) continue;
         for (const [proj, dy] of shots) {
-            game.spawnProjectile(plant.x + 40, rowY + dy, proj);
+            spawnProjectile(game,plant.x + 40, rowY + dy, proj);
         }
     }
 }
 
 function gatlingBurst(plant, game) {
-    if (!(plant.ultimateMs > 0) && !game.hasAnyEnemy(plant.x)) return;
+    if (!(plant.ultimateMs > 0) && !hasAnyEnemy(game, plant.x)) return;
     const maxY = game.height * game.cellHeight;
     for (let i = 0; i < 4; i++) {
         const py = plant.y + 20 + (Math.random() - 0.5) * 200;
-        if (py >= 0 && py < maxY) game.spawnProjectile(plant.x + 40, py, 'gatling');
+        if (py >= 0 && py < maxY) spawnProjectile(game,plant.x + 40, py, 'gatling');
     }
 }
 
 function sunflowerProduce(plant, game) {
-    game.spawnSun(plant.x, plant.y, 25);
+    spawnSun(game, plant.x, plant.y, 25);
 }
 
 function corncannonAuto(plant, game) {
-    game.cannonAutoFire(plant.x, plant.y);
+    cannonAutoFire(game, plant.x, plant.y);
 }
 
 function cherryTick(plant, game) {
@@ -73,14 +78,14 @@ function cherryTick(plant, game) {
                        'primitivepea', 'triplepea'];
         for (let r = 0; r < game.height; r++) {
             for (let c = 0; c < game.width; c++) {
-                game.spawnPlant(r, c, types[Math.floor(Math.random() * types.length)]);
+                spawnPlant(game,r, c, types[Math.floor(Math.random() * types.length)]);
             }
         }
         plant.remove();
         return;
     }
     if (plant.timer >= 800) {
-        game.cherryBomb(plant.x, plant.y);
+        cherryBomb(game, plant.x, plant.y);
         plant.remove();
     }
 }
@@ -89,7 +94,7 @@ function potatoTick(plant, game) {
     if (plant.ultimateMs > 0 && !plant._potatoUlt) {
         plant._potatoUlt = true;
         for (let r = 0; r < game.height; r++) {
-            for (let c = 0; c < game.width; c++) game.spawnPlant(r, c, 'cherry');
+            for (let c = 0; c < game.width; c++) spawnPlant(game,r, c, 'cherry');
         }
         plant.remove();
         return;
@@ -119,7 +124,7 @@ function potatoTick(plant, game) {
 function nutbowlingTick(plant, game) {
     if (plant.timer < 2000) return;
     const wasUlt = plant.ultimateMs > 0;
-    game.spawnProjectile(plant.x + 40, plant.y + 22, 'bowling');
+    spawnProjectile(game,plant.x + 40, plant.y + 22, 'bowling');
     if (wasUlt) {
         const last = game.projectiles[game.projectiles.length - 1];
         if (last) last.ultimate = true;

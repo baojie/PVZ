@@ -1,12 +1,12 @@
-import { Zombie } from './classes/Zombie.js';
 import { SoundManager } from './classes/SoundManager.js';
 import { PLANT_COOLDOWNS, setEmojiCursor } from './classes/Constants.js';
 import { WandererSystem } from './classes/WandererSystem.js';
-import { generateWaves, updateWaves, spawnZombie, getTotalZombiesInWave } from './classes/WaveManager.js';
+import { generateWaves, updateWaves, getTotalZombiesInWave } from './classes/WaveManager.js';
 import { setupEventListeners } from './classes/UIEvents.js';
-import { hasEnemyInRow, hasAnyEnemy, spawnProjectile, cherryBomb, fireCannon, cannonExplosion, cannonAutoFire } from './classes/CombatManager.js';
-import { spawnSun, collectSun, updateSunDisplay } from './classes/SunManager.js';
-import { spawnPlant, removePlant, updateCellDisplay, handleGridClick } from './classes/PlantManager.js';
+import { spawnProjectile } from './classes/CombatManager.js';
+import { fireCannon } from './classes/CornCannon.js';
+import { spawnSun, updateSunDisplay } from './classes/SunManager.js';
+import { spawnPlant, updateCellDisplay } from './classes/PlantManager.js';
 
 class Game {
     constructor() {
@@ -20,6 +20,15 @@ class Game {
         this.cellHeight = 100;
         this.boardWidth = this.width * this.cellWidth;
 
+        this.sound = new SoundManager();
+        this.firstGame = true;
+        this.plantCount = 1;
+
+        this._resetGameState();
+        this.init();
+    }
+
+    _resetGameState() {
         this.suns = Infinity;
         this.deltaTime = 0;
         this.lastTime = 0;
@@ -32,7 +41,6 @@ class Game {
         this.projectiles = [];
         this.fallingSuns = [];
         this.lawnmowers = [];
-
         this.grid = Array(this.height).fill(null).map(() => Array(this.width).fill(null).map(() => []));
 
         this.selectedPlant = null;
@@ -40,33 +48,24 @@ class Game {
         this.cannonTarget = null;
         this.pendingCannon = null;
         this.cannonIntervals = [];
-        this.plantCount = 1;
         this.zombieSpeedMultiplier = 1;
         this.zombieSpeedBoost = 1;
         this.randomBullets = false;
         this.plantSpeedMultiplier = 1;
-        this.sound = new SoundManager();
-        this.firstGame = true;
 
-        this.cooldowns = {
-            peashooter: 0, sunflower: 0, wallnut: 0, iceshooter: 0,
-            doubleshooter: 0, cherry: 0, potato: 0, pitcher: 0,
-            glue: 0, obsidian: 0, gatling: 0,
-        };
+        this.cooldowns = Object.fromEntries(Object.keys(PLANT_COOLDOWNS).map(k => [k, 0]));
 
         this.waves = generateWaves();
         this.waveIndex = 0;
-        this.waveTimer = 50;
+        this.waveTimer = 5000;
         this.zombiesSpawnedInWave = 0;
         this.waveSpawnTimer = 0;
-
-        this.init();
     }
 
     init() {
         this.createGridVisuals();
         setupEventListeners(this);
-        this.updateSunDisplay();
+        updateSunDisplay(this);
     }
 
     createGridVisuals() {
@@ -121,7 +120,7 @@ class Game {
             if (this.pendingCannon) {
                 const { plant, x, y, zombie, wandererIdx } = this.pendingCannon;
                 this.pendingCannon = null;
-                this.fireCannon(plant, x, y, zombie, wandererIdx);
+                fireCannon(this, plant, x, y, zombie, wandererIdx);
             }
             requestAnimationFrame((ts) => this.gameLoop(ts));
         }
@@ -149,7 +148,7 @@ class Game {
 
     start() {
         this.readSettings();
-        this.updateSunDisplay();
+        updateSunDisplay(this);
         document.getElementById('start-screen').classList.add('hidden');
         document.getElementById('game-over-screen').classList.add('hidden');
         document.getElementById('victory-screen').classList.add('hidden');
@@ -169,7 +168,7 @@ class Game {
         for (let row = 0; row < this.height; row++) {
             if (this.grid[row][0].length === 0) {
                 const type = plantTypes[Math.floor(Math.random() * plantTypes.length)];
-                this.spawnPlant(row, 0, type);
+                spawnPlant(this, row, 0, type);
             }
         }
 
@@ -192,32 +191,12 @@ class Game {
         this.fallingSuns.forEach(s => s.remove());
         this.lawnmowers.forEach(lm => lm.element && lm.element.remove());
         this.board.querySelectorAll('.sun').forEach(s => s.remove());
-
-        this.plants = [];
-        this.zombies = [];
-        this.projectiles = [];
-        this.fallingSuns = [];
-        this.lawnmowers = [];
-        this.grid = Array(this.height).fill(null).map(() => Array(this.width).fill(null).map(() => []));
-        this.won = false;
-        this.selectedPlant = null;
-        this.shovelMode = false;
-        setEmojiCursor(null);
-        this.waveIndex = 0;
-        this.waveTimer = 5000;
-        this.zombiesSpawnedInWave = 0;
-        this.waveSpawnTimer = 0;
-        this.timeSinceLastSun = 0;
-        this.cannonTarget = null;
         this.cannonIntervals.forEach(id => clearInterval(id));
-        this.cannonIntervals = [];
-        this.cooldowns = {
-            peashooter: 0, sunflower: 0, wallnut: 0, iceshooter: 0,
-            doubleshooter: 0, cherry: 0, potato: 0, pitcher: 0,
-            glue: 0, obsidian: 0, gatling: 0, corncannon: 0,
-        };
 
-        this.updateSunDisplay();
+        setEmojiCursor(null);
+        this._resetGameState();
+
+        updateSunDisplay(this);
         this.updateProgressBar();
         this.start();
     }
@@ -255,7 +234,7 @@ class Game {
             for (let k = 0; k < 5; k++) {
                 const x = Math.random() * this.boardWidth;
                 const y = Math.random() * this.height * this.cellHeight;
-                this.spawnProjectile(x, y, types[Math.floor(Math.random() * types.length)]);
+                spawnProjectile(this, x, y, types[Math.floor(Math.random() * types.length)]);
             }
         }
 
@@ -263,13 +242,13 @@ class Game {
             for (let c = 0; c < this.width; c++) {
                 const before = this.grid[r][c].length;
                 this.grid[r][c] = this.grid[r][c].filter(p => !p.markedForDeletion);
-                if (this.grid[r][c].length !== before) this.updateCellDisplay(r, c);
+                if (this.grid[r][c].length !== before) updateCellDisplay(this, r, c);
             }
         }
 
         this.timeSinceLastSun += deltaTime;
         if (this.timeSinceLastSun > 7000) {
-            this.spawnSun(Math.random() * (this.boardWidth - 40), 0, 25);
+            spawnSun(this, Math.random() * (this.boardWidth - 40), 0, 25);
             this.timeSinceLastSun = 0;
         }
 
@@ -381,30 +360,10 @@ class Game {
         }
         for (let i = 0; i < Math.min(100, cells.length); i++) {
             const { r, c } = cells[i];
-            this.spawnPlant(r, c, allTypes[Math.floor(Math.random() * allTypes.length)]);
+            spawnPlant(this, r, c, allTypes[Math.floor(Math.random() * allTypes.length)]);
         }
         document.getElementById('victory-screen').classList.remove('hidden');
     }
-
-    // ── Delegations to extracted modules ────────────────────────────────────
-    spawnPlant(row, col, type)              { return spawnPlant(this, row, col, type); }
-    removePlant(row, col)                   { removePlant(this, row, col); }
-    updateCellDisplay(row, col)             { updateCellDisplay(this, row, col); }
-    handleGridClick(row, col)               { handleGridClick(this, row, col); }
-
-    spawnSun(x, startY, value)              { spawnSun(this, x, startY, value); }
-    collectSun(sunEl)                       { collectSun(this, sunEl); }
-    updateSunDisplay()                      { updateSunDisplay(this); }
-
-    hasEnemyInRow(row, minX)               { return hasEnemyInRow(this, row, minX); }
-    hasAnyEnemy(minX)                       { return hasAnyEnemy(this, minX); }
-    spawnProjectile(x, y, type)            { spawnProjectile(this, x, y, type); }
-    cherryBomb(plantX, plantY)             { cherryBomb(this, plantX, plantY); }
-    fireCannon(plant, tx, ty, tz, wi)      { fireCannon(this, plant, tx, ty, tz, wi); }
-    cannonExplosion(tz, wi)                { cannonExplosion(this, tz, wi); }
-    cannonAutoFire(plantX, plantY)         { cannonAutoFire(this, plantX, plantY); }
-
-    spawnZombie(row, type = 'normal')      { spawnZombie(this, row, type); }
 }
 
 window.game = new Game();

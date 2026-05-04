@@ -1,5 +1,6 @@
 import { Plant } from './Plant.js';
 import { PLANT_COSTS, PLANT_COOLDOWNS } from './Constants.js';
+import { updateSunDisplay } from './SunManager.js';
 
 export function spawnPlant(game, row, col, type) {
     const x = col * game.cellWidth;
@@ -43,17 +44,21 @@ export function updateCellDisplay(game, row, col) {
     }
 }
 
+export function usePlantFood(game, row, col) {
+    const stack = game.grid[row][col];
+    const top = stack && stack.length > 0 ? stack[stack.length - 1] : null;
+    if (top && !top.markedForDeletion) {
+        top.ultimateMs = 2000;
+        if (top.element) top.element.classList.add('ultimate');
+        game.showNotEnoughFeedback('💚 大招！');
+    } else {
+        game.showNotEnoughFeedback('需要点在植物上');
+    }
+}
+
 export function handleGridClick(game, row, col) {
     if (game.selectedPlant === 'plantfood') {
-        const stack = game.grid[row][col];
-        const top = stack && stack.length > 0 ? stack[stack.length - 1] : null;
-        if (top && !top.markedForDeletion) {
-            top.ultimateMs = 2000;
-            if (top.element) top.element.classList.add('ultimate');
-            game.showNotEnoughFeedback('💚 大招！');
-        } else {
-            game.showNotEnoughFeedback('需要点在植物上');
-        }
+        usePlantFood(game, row, col);
         return;
     }
 
@@ -69,7 +74,7 @@ export function handleGridClick(game, row, col) {
 
     if (game.suns >= totalCost) {
         game.suns -= totalCost;
-        game.updateSunDisplay();
+        updateSunDisplay(game);
         const stack = game.grid[row][col];
         const top = stack[stack.length - 1];
         if (game.fusionMode && top && !top.markedForDeletion && top.type === game.selectedPlant) {
