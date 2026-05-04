@@ -90,10 +90,10 @@ class Game {
             const el = document.createElement('div');
             el.className = 'lawnmower';
             el.textContent = '🚜';
-            el.style.left = '-40px';
+            el.style.left = '-20px';
             el.style.top = `${row * this.cellHeight + 30}px`;
             this.board.appendChild(el);
-            this.lawnmowers.push({ row, x: -40, active: false, gone: false, element: el });
+            this.lawnmowers.push({ row, x: -20, active: false, gone: false, element: el });
         }
     }
 
@@ -285,9 +285,9 @@ class Game {
                     }
                 });
                 if (lm.x > this.boardWidth + 50) {
-                    lm.x = -40;
+                    lm.x = -20;
                     lm.active = false;
-                    lm.element.style.left = '-40px';
+                    lm.element.style.left = '-20px';
                 }
             }
         });
@@ -351,10 +351,10 @@ class Game {
             const el = document.createElement('div');
             el.className = 'lawnmower';
             el.textContent = '🚜';
-            el.style.left = '-40px';
+            el.style.left = '-20px';
             el.style.top = `${row * this.cellHeight + 30}px`;
             this.board.appendChild(el);
-            lm = { row, x: -40, active: false, gone: false, element: el };
+            lm = { row, x: -20, active: false, gone: false, element: el };
             this.lawnmowers.push(lm);
         }
         lm.active = true;
