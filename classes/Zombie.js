@@ -1,4 +1,5 @@
 import { Entity } from './Entity.js';
+import { ZOMBIE_TIPS } from './Tooltip.js';
 
 // Pixel-art zombie body (15w × 22h grid). One inline SVG, no external assets.
 // Replaces the 🧟 emoji used previously for the basic zombie silhouette.
@@ -126,6 +127,8 @@ export class Zombie extends Entity {
 
         const inner = wanderer ? '👾' : bodyWith(ACCESSORY[type] || '');
         this.createDOM(`entity zombie zombie-${type}${wanderer ? ' wanderer' : ''}`, `<div class="zombie-inner">${inner}</div>`);
+        const tipKey = wanderer ? 'wanderer' : type;
+        if (this.element && ZOMBIE_TIPS[tipKey]) this.element.dataset.tip = ZOMBIE_TIPS[tipKey];
         if (wanderer && this.element) {
             this.element.style.setProperty('--wcolor', this.color);
             this.element.style.filter = `drop-shadow(0 0 12px ${this.color}) drop-shadow(0 0 24px ${this.color})`;

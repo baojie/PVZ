@@ -1,5 +1,6 @@
 import { Entity } from './Entity.js';
 import { runPlantBehavior } from './PlantBehaviors.js';
+import { PLANT_TIPS } from './Tooltip.js';
 
 export class Plant extends Entity {
     constructor(x, y, type) {
@@ -50,6 +51,7 @@ export class Plant extends Entity {
         let icon = icons[type] || '';
 
         this.createDOM(`entity plant ${type}`, `<div class="plant-inner">${icon}</div>`);
+        if (this.element && PLANT_TIPS[type]) this.element.dataset.tip = PLANT_TIPS[type];
     }
 
     levelUpFusion() {

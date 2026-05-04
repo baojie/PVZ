@@ -7,6 +7,7 @@ import { spawnProjectile } from './classes/CombatManager.js';
 import { fireCannon } from './classes/CornCannon.js';
 import { spawnSun, updateSunDisplay } from './classes/SunManager.js';
 import { spawnPlant, updateCellDisplay } from './classes/PlantManager.js';
+import { setupTooltip, PLANT_TIPS } from './classes/Tooltip.js';
 
 class Game {
     constructor() {
@@ -66,6 +67,14 @@ class Game {
         this.createGridVisuals();
         setupEventListeners(this);
         updateSunDisplay(this);
+        setupTooltip();
+        // Apply tooltips to seed cards now that the DOM is in place.
+        document.querySelectorAll('.seed-packet[data-plant]').forEach((p) => {
+            const tip = PLANT_TIPS[p.dataset.plant];
+            if (tip) p.dataset.tip = tip;
+        });
+        const shovel = document.getElementById('shovel-btn');
+        if (shovel) shovel.dataset.tip = '铲子 — 移除已种植物（可连续移除）';
     }
 
     createGridVisuals() {
@@ -90,6 +99,7 @@ class Game {
             const el = document.createElement('div');
             el.className = 'lawnmower';
             el.textContent = '🚜';
+            el.dataset.tip = '割草机 — 僵尸突防时自动清场（每行一台）';
             el.style.left = '-20px';
             el.style.top = `${row * this.cellHeight + 30}px`;
             this.board.appendChild(el);
@@ -351,6 +361,7 @@ class Game {
             const el = document.createElement('div');
             el.className = 'lawnmower';
             el.textContent = '🚜';
+            el.dataset.tip = '割草机 — 僵尸突防时自动清场（每行一台）';
             el.style.left = '-20px';
             el.style.top = `${row * this.cellHeight + 30}px`;
             this.board.appendChild(el);
