@@ -3,6 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="植物大战僵尸超级无敌版 — 9 岁小男孩天马行空设计的爽快塔防游戏。" />
+    <meta name="theme-color" content="#558b2f" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8C%B1%3C/text%3E%3C/svg%3E" />
     <title>植物大战僵尸超级无敌版</title>
     <link rel="stylesheet" href="style.css" />
   </head>
@@ -14,8 +17,8 @@
           <span id="sun-icon">☀️</span>
           <span id="sun-amount">∞</span>
         </div>
-        <button id="sound-toggle" title="音效开关">🔊</button>
-        <button id="home-btn" title="返回首页">🏠</button>
+        <button id="sound-toggle" data-tip="音效开关">🔊</button>
+        <button id="home-btn" data-tip="返回首页">🏠</button>
 
         <div id="seed-bank">
           <div class="seed-packet" data-plant="peashooter">
@@ -98,12 +101,12 @@
             <div class="seed-icon">🥥</div>
             <div class="seed-cost">0</div>
           </div>
-          <div class="seed-packet" data-plant="plantfood" title="绿叶素 - 选中后点向植物开启大招">
+          <div class="seed-packet" data-plant="plantfood">
             <div class="cooldown-overlay"></div>
             <div class="seed-icon">💚</div>
             <div class="seed-cost">0</div>
           </div>
-          <div id="shovel-btn" class="seed-packet" title="铲子 - 移除植物">
+          <div id="shovel-btn" class="seed-packet">
             <div class="seed-icon">🪏</div>
             <div class="seed-cost">铲</div>
           </div>

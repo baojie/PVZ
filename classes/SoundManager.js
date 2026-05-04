@@ -10,13 +10,13 @@ export class SoundManager {
         this.masterGain = null;
         this.bgmPlaying = false;
         this.bgmNodes = [];
-        this.muted = false;
+        this.muted = localStorage.getItem('pvz-muted') === '1';
     }
 
     init() {
         this.ctx = new (window.AudioContext || window.webkitAudioContext)();
         this.masterGain = this.ctx.createGain();
-        this.masterGain.gain.value = 1;
+        this.masterGain.gain.value = this.muted ? 0 : 1;
         this.masterGain.connect(this.ctx.destination);
         this.bgmGain = this.ctx.createGain();
         this.bgmGain.gain.value = 0.3;
@@ -31,6 +31,7 @@ export class SoundManager {
         if (this.masterGain) {
             this.masterGain.gain.value = this.muted ? 0 : 1;
         }
+        try { localStorage.setItem('pvz-muted', this.muted ? '1' : '0'); } catch (_) {}
     }
 
     ensure() {

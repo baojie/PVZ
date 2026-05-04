@@ -9,6 +9,11 @@ import { spawnSun, updateSunDisplay } from './classes/SunManager.js';
 import { spawnPlant, updateCellDisplay } from './classes/PlantManager.js';
 import { setupTooltip, PLANT_TIPS } from './classes/Tooltip.js';
 
+// Lawnmower resting position (px) — sits just left of the lawn so the icon
+// is mostly visible. See triggerLawnmower / setupLawnmowers.
+const LAWNMOWER_X = -20;
+const LAWNMOWER_TIP = '割草机 — 僵尸突防时自动清场（每行一台）';
+
 class Game {
     constructor() {
         this.board = document.getElementById('game-board');
@@ -99,11 +104,11 @@ class Game {
             const el = document.createElement('div');
             el.className = 'lawnmower';
             el.textContent = '🚜';
-            el.dataset.tip = '割草机 — 僵尸突防时自动清场（每行一台）';
-            el.style.left = '-20px';
+            el.dataset.tip = LAWNMOWER_TIP;
+            el.style.left = `${LAWNMOWER_X}px`;
             el.style.top = `${row * this.cellHeight + 30}px`;
             this.board.appendChild(el);
-            this.lawnmowers.push({ row, x: -20, active: false, gone: false, element: el });
+            this.lawnmowers.push({ row, x: LAWNMOWER_X, active: false, gone: false, element: el });
         }
     }
 
@@ -295,9 +300,9 @@ class Game {
                     }
                 });
                 if (lm.x > this.boardWidth + 50) {
-                    lm.x = -20;
+                    lm.x = LAWNMOWER_X;
                     lm.active = false;
-                    lm.element.style.left = '-20px';
+                    lm.element.style.left = `${LAWNMOWER_X}px`;
                 }
             }
         });
@@ -361,11 +366,11 @@ class Game {
             const el = document.createElement('div');
             el.className = 'lawnmower';
             el.textContent = '🚜';
-            el.dataset.tip = '割草机 — 僵尸突防时自动清场（每行一台）';
-            el.style.left = '-20px';
+            el.dataset.tip = LAWNMOWER_TIP;
+            el.style.left = `${LAWNMOWER_X}px`;
             el.style.top = `${row * this.cellHeight + 30}px`;
             this.board.appendChild(el);
-            lm = { row, x: -20, active: false, gone: false, element: el };
+            lm = { row, x: LAWNMOWER_X, active: false, gone: false, element: el };
             this.lawnmowers.push(lm);
         }
         lm.active = true;

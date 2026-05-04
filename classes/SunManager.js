@@ -5,6 +5,7 @@ export function spawnSun(game, x, startY, value) {
     sun.style.left = `${x}px`;
     sun.style.top = `${startY}px`;
     sun.dataset.value = value;
+    sun.dataset.tip = '阳光 — 点击收集（仅展示用）';
 
     game.board.appendChild(sun);
 

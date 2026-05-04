@@ -3,6 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="植物大战僵尸超级无敌版 — 9 岁小男孩天马行空设计的爽快塔防游戏。" />
+    <meta name="theme-color" content="#558b2f" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8C%B1%3C/text%3E%3C/svg%3E" />
     <title>植物大战僵尸超级无敌版</title>
     <link rel="stylesheet" href="style.css" />
   </head>
@@ -14,7 +17,8 @@
           <span id="sun-icon">☀️</span>
           <span id="sun-amount">∞</span>
         </div>
-        <button id="sound-toggle" title="音效开关">🔊</button>
+        <button id="sound-toggle" data-tip="音效开关">🔊</button>
+        <button id="home-btn" data-tip="返回首页">🏠</button>
 
         <div id="seed-bank">
           <div class="seed-packet" data-plant="peashooter">
@@ -97,12 +101,12 @@
             <div class="seed-icon">🥥</div>
             <div class="seed-cost">0</div>
           </div>
-          <div class="seed-packet" data-plant="plantfood" title="绿叶素 - 选中后点向植物开启大招">
+          <div class="seed-packet" data-plant="plantfood">
             <div class="cooldown-overlay"></div>
             <div class="seed-icon">💚</div>
             <div class="seed-cost">0</div>
           </div>
-          <div id="shovel-btn" class="seed-packet" title="铲子 - 移除植物">
+          <div id="shovel-btn" class="seed-packet">
             <div class="seed-icon">🪏</div>
             <div class="seed-cost">铲</div>
           </div>
@@ -142,28 +146,37 @@
         <div class="tab-content" id="tab-howto">
           <div class="how-to-play">
             <ul>
-              <li>☀️ 点击收集掉落的<b>阳光</b>，当前所有植物均免费（成本 0），阳光仅作展示</li>
-              <li>🌱 点击上方<b>种子卡</b>选择植物，再点击草坪格子种下</li>
-              <li>🌻 <b>向日葵</b>(0) — 持续产出额外阳光</li>
-              <li>🌱 <b>豌豆射手</b>(0) — 向同行僵尸发射豌豆</li>
-              <li>🌰 <b>坚果墙</b>(0) — 极高血量挡住僵尸前进</li>
-              <li>❄️ <b>寒冰射手</b>(0) — 冰冻豌豆，每次命中减速 30%（可叠加）</li>
-              <li>🌿 <b>双发射手</b>(0) — 同时发射两颗豌豆</li>
-              <li>🍒 <b>樱桃炸弹</b>(0) — 约 0.8 秒后引爆，3×3 范围秒杀</li>
-              <li>🥔 <b>土豆地雷</b>(0) — 3 秒准备后，僵尸踩上即炸</li>
-              <li>🧿 <b>黑曜石胶神</b>(0) — 发射黑胶弹，穿透整行并将僵尸近乎冻结</li>
-              <li>🗿 <b>黑曜石战神</b>(0) — 同时向上中下三行扫射黑曜石弹</li>
-              <li>🎯 <b>超级投手</b>(0) — 投掷穿透弹，贯穿整行僵尸</li>
-              <li>💧 <b>水滴 / Waterdrop</b>(0) — 每秒发射一颗水滴，无视护盾秒杀命中僵尸</li>
-              <li>🌽 <b>究极玉米炮 / Corn Cannon</b>(0) — 自动追踪扫射，连续轰炸全场</li>
-              <li>🔫 <b>究极机枪炮台</b>(0) — 超高速 4 连射，随机扫射三行</li>
-              <li>🌟 <b>原始豌豆 / Primitive Pea</b>(0) — 70 伤害豌豆，命中眩晕 2 秒并击退僵尸</li>
-              <li>🌳 <b>三重豌豆射手 / Triple Pea</b>(0) — 同时向上中下三行各射一颗豌豆</li>
-              <li>🥥 <b>坚果保龄球 / Nut Bowling</b>(0) — 放下约 2 秒后沿当前行高速滚动，碾碎沿途所有僵尸</li>
-              <li>💚 <b>绿叶素 / Plant Food</b>(0) — 选中后点向任意植物，触发 2 秒大招（攻速 ×20）；对樱桃 / 土豆 / 坚果保龄球触发特殊全屏效果</li>
-              <li>🪏 点击<b>铲子</b>可以移除已种植的植物</li>
-              <li>🚜 每行有一个<b>割草机</b>，僵尸突破时自动清场，用完后还可循环 / 自动新建</li>
+              <li>☀️ 收集阳光（仅展示，植物全免费）</li>
+              <li>🌱 点种子卡 → 点草坪格种植</li>
+              <li>🪏 铲子可移除已种的植物</li>
+              <li>🚜 每行一台割草机，突防自动清场</li>
+              <li>🌻 <b>向日葵</b> — 持续产阳光</li>
+              <li>🌱 <b>豌豆射手</b> — 同行直射</li>
+              <li>🌰 <b>坚果墙</b> — 高血量肉盾</li>
+              <li>❄️ <b>寒冰射手</b> — 命中减速 30%</li>
+              <li>🌿 <b>双发射手</b> — 一次两颗豌豆</li>
+              <li>🍒 <b>樱桃炸弹</b> — 0.8 秒 3×3 秒杀</li>
+              <li>🥔 <b>土豆地雷</b> — 3 秒后踩中即炸</li>
+              <li>🧿 <b>黑胶神</b> — 穿行黑胶，近乎冻结</li>
+              <li>🗿 <b>黑曜石战神</b> — 上中下三行扫射</li>
+              <li>🎯 <b>超级投手</b> — 穿透整行</li>
+              <li>💧 <b>水滴</b> — 每秒一发，无视护盾秒杀</li>
+              <li>🌽 <b>玉米炮</b> — 自动追踪连续轰炸</li>
+              <li>🔫 <b>机枪炮台</b> — 4 连射扫三行</li>
+              <li>🌟 <b>原始豌豆</b> — 70 伤 + 眩晕击退</li>
+              <li>🌳 <b>三重豌豆</b> — 三行各一颗</li>
+              <li>🥥 <b>坚果保龄</b> — 2 秒后沿行碾压</li>
+              <li>💚 <b>绿叶素</b> — 点植物开 2 秒大招（攻速 ×20）</li>
             </ul>
+            <div class="shortcuts">
+              <b>快捷键：</b>
+              <kbd>Space</kbd> 暂停
+              <kbd>F</kbd> 植物攻速 ×3
+              <kbd>G</kbd> 僵尸加速 ×3
+              <kbd>H</kbd> 僵尸减速 ×3
+              <kbd>Esc</kbd> 取消选择
+              <kbd>🏠</kbd> 返回首页
+            </div>
           </div>
         </div>
 
