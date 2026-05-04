@@ -351,6 +351,30 @@ body {
   transform: scaleX(-1);
 }
 
+.zombie-inner {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  line-height: 1;
+}
+
+.zombie-body {
+  width: 56px;
+  height: 82px;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  display: block;
+  filter: drop-shadow(1px 2px 0 rgba(0, 0, 0, 0.35));
+}
+
+.zombie-acc {
+  font-size: 28px;
+  line-height: 1;
+  /* counter-flip so accessory emoji isn't mirrored along with the body */
+  display: inline-block;
+  transform: scaleX(-1);
+}
+
 .zombie.eating {
   animation: zombieChomp 0.3s ease-in-out infinite;
 }

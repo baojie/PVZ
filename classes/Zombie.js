@@ -1,12 +1,79 @@
 import { Entity } from './Entity.js';
 
+// Pixel-art zombie body (15w × 22h grid). One inline SVG, no external assets.
+// Replaces the 🧟 emoji used previously for the basic zombie silhouette.
+// Accessory emoji (cone, bucket, newspaper, polevault, door) are kept as a
+// separate prefix span — see ACCESSORY map below.
+const Z = {
+    H:'#262638', S:'#a8c39c', s:'#7c9b78', W:'#ffffff', B:'#0e0e0e',
+    M:'#3a0d11', T:'#d4a83a', J:'#8b5a2b', j:'#5e3a16', R:'#cc2a22',
+    w:'#f1f1f1', P:'#1f3d80', O:'#3a1f0e',
+};
+const Z_RECTS = [
+    // hair tufts on top
+    [4,0,1,1,'H'], [7,0,2,1,'H'], [11,0,1,1,'H'],
+    [3,1,3,1,'H'], [7,1,3,1,'H'], [11,1,2,1,'H'],
+    // hair main
+    [2,2,12,2,'H'],
+    [1,3,1,3,'H'], [13,3,1,3,'H'],
+    [0,4,1,2,'H'], [14,4,1,2,'H'],
+    // face skin
+    [3,4,9,8,'S'],
+    [2,5,1,6,'S'], [12,5,1,6,'S'],
+    // brow shadow under hair line
+    [3,4,9,1,'s'],
+    // eyes — wide whites + small pupils
+    [4,6,3,3,'W'], [8,6,3,3,'W'],
+    [5,7,1,1,'B'], [9,7,1,1,'B'],
+    // mouth open + teeth
+    [4,10,7,2,'M'],
+    [4,11,1,1,'T'], [6,11,1,1,'T'], [9,11,1,1,'T'],
+    // neck/jaw
+    [5,12,5,1,'S'],
+    // jacket body
+    [2,13,11,5,'J'],
+    [1,14,1,4,'J'], [13,14,1,4,'J'],
+    // jacket lapels (shadow)
+    [5,13,1,2,'j'], [9,13,1,2,'j'],
+    // tie
+    [6,13,3,5,'R'],
+    [6,14,3,1,'w'], [6,16,3,1,'w'],
+    // hands hanging out the sleeves
+    [0,16,1,2,'S'], [14,16,1,2,'S'],
+    // pants (split between legs)
+    [3,18,4,2,'P'], [8,18,4,2,'P'],
+    // one bare leg (right), one shoe (left)
+    [8,20,3,2,'S'],
+    [2,20,5,2,'O'],
+    [7,21,5,1,'S'],
+];
+function zombieBodyHTML() {
+    let s = '<svg class="zombie-body" viewBox="0 0 15 22" shape-rendering="crispEdges" preserveAspectRatio="xMidYMid meet">';
+    for (const [x,y,w,h,c] of Z_RECTS) s += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${Z[c]}"/>`;
+    return s + '</svg>';
+}
+function bodyWith(prefix) {
+    if (!prefix) return zombieBodyHTML();
+    return `<span class="zombie-acc">${prefix}</span>${zombieBodyHTML()}`;
+}
+
+// Accessory emoji per type. The body is the same pixel-art zombie for all.
+const ACCESSORY = {
+    normal:    '',
+    cone:      '🔶',
+    bucket:    '🪣',
+    newspaper: '📰',
+    polevault: '🎿',
+    door:      '🚪',
+};
+
 const ZOMBIE_CONFIG = {
-    normal:    { health: 17000, speed: 0.2,  icon: '🧟' },
-    cone:      { health: 17000, speed: 0.2,  icon: '🧟‍♂️' },
-    bucket:    { health: 17000, speed: 0.15, icon: '🧟‍♀️' },
-    newspaper: { health: 17000, speed: 0.2,  icon: '📰🧟' },
-    polevault: { health: 17000, speed: 0.35, icon: '🎿🧟' },
-    door:      { health: 17000, speed: 0.12, icon: '🚪🧟' },
+    normal:    { health: 17000, speed: 0.2  },
+    cone:      { health: 17000, speed: 0.2  },
+    bucket:    { health: 17000, speed: 0.15 },
+    newspaper: { health: 17000, speed: 0.2  },
+    polevault: { health: 17000, speed: 0.35 },
+    door:      { health: 17000, speed: 0.12 },
 };
 
 export class Zombie extends Entity {
@@ -47,11 +114,8 @@ export class Zombie extends Entity {
             this.color = Zombie.randomColor();
         }
 
-        let label = wanderer ? '👾' : cfg.icon;
-        if (!wanderer && type === 'cone')   label = '🔶🧟';
-        if (!wanderer && type === 'bucket') label = '🪣🧟';
-
-        this.createDOM(`entity zombie zombie-${type}${wanderer ? ' wanderer' : ''}`, `<div class="zombie-inner">${label}</div>`);
+        const inner = wanderer ? '👾' : bodyWith(ACCESSORY[type] || '');
+        this.createDOM(`entity zombie zombie-${type}${wanderer ? ' wanderer' : ''}`, `<div class="zombie-inner">${inner}</div>`);
         if (wanderer && this.element) {
             this.element.style.setProperty('--wcolor', this.color);
             this.element.style.filter = `drop-shadow(0 0 12px ${this.color}) drop-shadow(0 0 24px ${this.color})`;
@@ -65,7 +129,7 @@ export class Zombie extends Entity {
             if (this.newspaperHealth <= 0) {
                 this.baseSpeed *= 2.5;
                 this.speed = this.eating ? 0 : this.baseSpeed;
-                this._setLabel('😡🧟');
+                this._setBody(bodyWith('😡'));
             }
             return true;
         }
@@ -73,7 +137,7 @@ export class Zombie extends Entity {
         if (this.type === 'door' && this.doorHealth > 0) {
             this.doorHealth -= 1;
             if (this.doorHealth <= 0) {
-                this._setLabel('🧟');
+                this._setBody(bodyWith(''));
             }
             return true;
         }
@@ -82,10 +146,10 @@ export class Zombie extends Entity {
         return false;
     }
 
-    _setLabel(label) {
+    _setBody(html) {
         if (this.element) {
             const inner = this.element.querySelector('.zombie-inner');
-            if (inner) inner.textContent = label;
+            if (inner) inner.innerHTML = html;
         }
     }
 
@@ -129,7 +193,7 @@ export class Zombie extends Entity {
             this.x -= 160; // 跳过这格，落到前一格
             this.baseSpeed = 0.25;
             this.speed = this.baseSpeed;
-            this._setLabel('🧟');
+            this._setBody(bodyWith(''));
             this.eating = false;
             this.draw();
             return;
