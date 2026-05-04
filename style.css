@@ -547,6 +547,9 @@ body {
   position: absolute;
   font-size: 30px;
   z-index: 15;
+  /* 🚜 emoji renders facing left by default; flip so it points right
+     toward the zombies it'll mow when triggered. */
+  transform: scaleX(-1);
 }
 
 /* Suns */
