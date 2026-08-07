@@ -4,7 +4,7 @@ import { spawnPlant } from './PlantManager.js';
 import { cannonAutoFire } from './CornCannon.js';
 import { cabbageBarrage } from './CabbagePult.js';
 import { magnetPull, magnetUltimate } from './MagnetShroom.js';
-import { mgVolley, mgScatter } from './SuperMG.js';
+import { mgVolley, mgScatter, mgUpgrade } from './SuperMG.js';
 
 // 植物行为表：声明式描述每种植物每个 tick 该做什么。
 //
@@ -140,6 +140,17 @@ function cabbagepultTick(plant, game) {
 
 // 超级机枪：0.5 秒一轮 6 连发，每打满 5 轮自动喷一次 150 颗散射豌豆
 function supermgTick(plant, game) {
+    // 绿叶素：连发数永久 +1。一次绿叶素只加一次，所以用标志位卡住，
+    // 大招结束（ultimateMs 归零）后才允许下一次。
+    if (plant.ultimateMs > 0) {
+        if (!plant._mgUlt) {
+            plant._mgUlt = true;
+            mgUpgrade(game, plant);
+        }
+    } else {
+        plant._mgUlt = false;
+    }
+
     if (plant.timer < 500) return;
     plant.timer = 0;
 
