@@ -47,7 +47,7 @@ export function mgVolley(game, plant) {
         const laneDy = Math.min(MAX_DY, lane * LANE_DY) * (lane % 2 ? -1 : 1);
         const dx = (i % LANE_SIZE) * 13;
         const dy = (i % 2 ? 6 : -6) + laneDy;
-        spawnProjectile(game, x0 + dx, y0 + dy, 'mgpea');
+        spawnProjectile(game, x0 + dx, y0 + dy, 'mgpea', plant);
     }
     game.sound.playShoot();
 }
@@ -59,7 +59,7 @@ export function mgScatter(game, plant) {
     for (let i = 0; i < SCATTER_COUNT; i++) {
         // t 从 -1 均匀铺到 +1，得到一个正对前方的扇面
         const t = (i / (SCATTER_COUNT - 1)) * 2 - 1;
-        const p = spawnProjectile(game, x0 + (i % 10) * 4, y0, 'scatterpea');
+        const p = spawnProjectile(game, x0 + (i % 10) * 4, y0, 'scatterpea', plant);
         if (!p) break;   // 撞到子弹上限了，这一轮就喷到这儿
         p.vy = t * SCATTER_SPREAD;
     }

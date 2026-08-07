@@ -26,10 +26,33 @@ export function hasAnyEnemy(game, minX) {
 // 正常玩法离这个数很远，只有满屏叠种 + 超级机枪散射连喷才顶得到。
 const MAX_PROJECTILES = 700;
 
+// 子弹伤害递增：一株植物打出的每一颗子弹，都比它上一颗高 15%，复利叠加，
+// 封顶 6700 万。计数存在植物身上，所以每株各涨各的，铲掉重种就从头来。
+// 基础伤害 17000 起步，第 61 发触顶（17000 × 1.15^60 ≈ 6805 万，被削到 6700 万）。
+export const DAMAGE_GROWTH = 1.15;
+export const DAMAGE_CAP = 67_000_000;
+
+// 这一发的倍率 = 1.15^(已打发数)，第一发是 ×1
+function nextDamageMult(plant) {
+    const n = plant._shots || 0;
+    plant._shots = n + 1;
+    return Math.pow(DAMAGE_GROWTH, n);
+}
+
 // 达到上限时返回 null —— 取返回值的调用方（超级机枪散射要设 vy）需要判空。
-export function spawnProjectile(game, x, y, type = 'normal') {
+// 传了 plant 就吃伤害递增；没传（比如全屏随机子弹）就用基础伤害。
+export function spawnProjectile(game, x, y, type = 'normal', plant = null) {
     if (game.projectiles.length >= MAX_PROJECTILES) return null;
     const proj = new Projectile(x, y, type);
+    if (plant) {
+        const mult = nextDamageMult(plant);
+        proj.damageMult = mult;
+        // 兜底：现在所有弹种都是实数伤害了，但万一哪天又冒出 Infinity 的，
+        // 乘多少还是 Infinity，交给 Projectile 里的 boss 折算去处理
+        if (proj.damage !== Infinity) {
+            proj.damage = Math.min(proj.damage * mult, DAMAGE_CAP);
+        }
+    }
     game.projectiles.push(proj);
     return proj;
 }

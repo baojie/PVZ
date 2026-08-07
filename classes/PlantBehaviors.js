@@ -21,7 +21,7 @@ function fireRow(plant, game, shots) {
     const r = Math.floor(plant.y / game.cellHeight);
     if (!(plant.ultimateMs > 0) && !hasEnemyInRow(game,r, plant.x)) return;
     for (const [proj, dy] of shots) {
-        spawnProjectile(game,plant.x + 40, plant.y + dy, proj);
+        spawnProjectile(game, plant.x + 40, plant.y + dy, proj, plant);
     }
 }
 
@@ -34,7 +34,7 @@ function fireTri(plant, game, shots) {
         const r = Math.floor(rowY / game.cellHeight);
         if (!(plant.ultimateMs > 0) && !hasEnemyInRow(game,r, plant.x)) continue;
         for (const [proj, dy] of shots) {
-            spawnProjectile(game,plant.x + 40, rowY + dy, proj);
+            spawnProjectile(game, plant.x + 40, rowY + dy, proj, plant);
         }
     }
 }
@@ -51,7 +51,7 @@ function fireTriZombies(plant, game, shots) {
         );
         if (!has) continue;
         for (const [proj, dy] of shots) {
-            spawnProjectile(game,plant.x + 40, rowY + dy, proj);
+            spawnProjectile(game, plant.x + 40, rowY + dy, proj, plant);
         }
     }
 }
@@ -61,7 +61,7 @@ function gatlingBurst(plant, game) {
     const maxY = game.height * game.cellHeight;
     for (let i = 0; i < 4; i++) {
         const py = plant.y + 20 + (Math.random() - 0.5) * 200;
-        if (py >= 0 && py < maxY) spawnProjectile(game,plant.x + 40, py, 'gatling');
+        if (py >= 0 && py < maxY) spawnProjectile(game, plant.x + 40, py, 'gatling', plant);
     }
 }
 
@@ -183,7 +183,7 @@ function nutbowlingTick(plant, game) {
     const wasUlt = plant.ultimateMs > 0;
     // 用返回值拿保龄球本体。撞到子弹上限时 spawnProjectile 返回 null，
     // 按下标取「最后一颗」会误标到别的子弹上。
-    const ball = spawnProjectile(game, plant.x + 40, plant.y + 22, 'bowling');
+    const ball = spawnProjectile(game, plant.x + 40, plant.y + 22, 'bowling', plant);
     if (wasUlt && ball) ball.ultimate = true;
     plant.remove();
 }

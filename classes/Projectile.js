@@ -1,22 +1,30 @@
 import { Entity } from './Entity.js';
 import { spawnPlant } from './PlantManager.js';
 import { BOSS_SENTINEL_DAMAGE } from './Boss.js';
+import { DAMAGE_CAP } from './CombatManager.js';
 
 // 弹道类型表：speed/damage/cssClass 是必填，其他字段按需附加。
-// piercing=true 表示命中后不消失（贯穿）。Infinity 用作「秒杀」哨兵伤害。
+// piercing=true 表示命中后不消失（贯穿）。
+//
+// 每一颗子弹的伤害都是 17000（僵尸满血正好 800，所以对僵尸依旧是一发一个；
+// 对 6400 万血的将王博士就是实打实的 17000 一发）。以前用 Infinity 当「秒杀
+// 哨兵」的那几种弹（加特林 / 胶水 / 黑曜石 / 超级投手 / 水滴 / 保龄球）
+// 一并改成 17000，不再需要对博士做折算。
+export const BULLET_DAMAGE = 17000;
+
 const PROJECTILE_TYPES = {
-    normal:       { speed: 5,  damage: 20,       cssClass: 'projectile' },
-    gatling:      { speed: 10, damage: Infinity, cssClass: 'projectile gatling' },
-    ice:          { speed: 5,  damage: 20,       cssClass: 'projectile ice' },
-    glue:         { speed: 7,  damage: Infinity, cssClass: 'projectile glue',         piercing: true },
-    obsidian:     { speed: 8,  damage: Infinity, cssClass: 'projectile obsidian',     piercing: true },
-    piercing:     { speed: 6,  damage: Infinity, cssClass: 'projectile piercing',     piercing: true },
-    waterdrop:    { speed: 4,  damage: Infinity, cssClass: 'projectile waterdrop',    piercing: true },
-    primitivepea: { speed: 6,  damage: 70,       cssClass: 'projectile primitivepea', stunMs: 2000 },
-    bowling:      { speed: 12, damage: Infinity, cssClass: 'projectile bowling',      piercing: true, width: 56, height: 56 },
-    cabbage:      { speed: 6,  damage: 40,       cssClass: 'projectile cabbage',      width: 28, height: 28 },
-    mgpea:        { speed: 9,  damage: 20,       cssClass: 'projectile mgpea',        width: 14, height: 14 },
-    scatterpea:   { speed: 7,  damage: 20,       cssClass: 'projectile scatterpea',   width: 12, height: 12 },
+    normal:       { speed: 5,  damage: BULLET_DAMAGE, cssClass: 'projectile' },
+    gatling:      { speed: 10, damage: BULLET_DAMAGE, cssClass: 'projectile gatling' },
+    ice:          { speed: 5,  damage: BULLET_DAMAGE, cssClass: 'projectile ice' },
+    glue:         { speed: 7,  damage: BULLET_DAMAGE, cssClass: 'projectile glue',         piercing: true },
+    obsidian:     { speed: 8,  damage: BULLET_DAMAGE, cssClass: 'projectile obsidian',     piercing: true },
+    piercing:     { speed: 6,  damage: BULLET_DAMAGE, cssClass: 'projectile piercing',     piercing: true },
+    waterdrop:    { speed: 4,  damage: BULLET_DAMAGE, cssClass: 'projectile waterdrop',    piercing: true },
+    primitivepea: { speed: 6,  damage: BULLET_DAMAGE, cssClass: 'projectile primitivepea', stunMs: 2000 },
+    bowling:      { speed: 12, damage: BULLET_DAMAGE, cssClass: 'projectile bowling',      piercing: true, width: 56, height: 56 },
+    cabbage:      { speed: 6,  damage: BULLET_DAMAGE, cssClass: 'projectile cabbage',      width: 28, height: 28 },
+    mgpea:        { speed: 9,  damage: BULLET_DAMAGE, cssClass: 'projectile mgpea',        width: 14, height: 14 },
+    scatterpea:   { speed: 7,  damage: BULLET_DAMAGE, cssClass: 'projectile scatterpea',   width: 12, height: 12 },
 };
 
 export class Projectile extends Entity {
@@ -66,7 +74,11 @@ export class Projectile extends Entity {
             this.x + this.width > boss.x && this.x < boss.x + boss.width &&
             this.y + this.height > boss.y && this.y < boss.y + boss.height) {
             this._hitBoss = true;
-            boss.takeDamage(this.damage === Infinity ? BOSS_SENTINEL_DAMAGE : this.damage);
+            // 必杀弹对博士折算成实数，同样吃这颗子弹的递增倍率
+            const dmg = this.damage === Infinity
+                ? Math.min(BOSS_SENTINEL_DAMAGE * (this.damageMult || 1), DAMAGE_CAP)
+                : this.damage;
+            boss.takeDamage(dmg);
             if (!this.piercing) { this.remove(); return; }
         }
 
