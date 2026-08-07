@@ -32,7 +32,7 @@ description: 把项目当前所有变更按内容分组，一组一组地调用 
 | 5 | **css** | `style.css` 及其他 `.css` 文件 |
 | 6 | **assets** | `screenshot/`、图片、音频、字体等资源文件 |
 | 7 | **docs** | `README.md`、`CHANGELOG.md`、`TODO.md`、`INSTRUCTIONS.md`、`docs/` |
-| 8 | **config** | `*.json`、`.gitignore`、`start.sh`、`.claude/settings*.json` |
+| 8 | **config** | `*.json`、`.gitignore`、`run.sh`、`.claude/settings*.json` |
 | 9 | **other** | 其他所有文件 |
 
 分组后若某组只有 1 个文件且与相邻组强相关，可合并（由 Claude 判断）。

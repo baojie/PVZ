@@ -22,7 +22,7 @@ git add \
   app.js \
   index.html \
   style.css \
-  start.sh \
+  run.sh \
   classes/ \
   screenshot/ \
   README.md \
