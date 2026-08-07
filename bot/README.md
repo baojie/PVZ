@@ -14,7 +14,7 @@ npm install puppeteer-core
 ## Run
 
 ```sh
-./start.sh -d 1644          # static server in daemon mode
+./run.sh -d 1644           # static server in daemon mode
 node bot/play.js            # opens game, plays round 2, screenshots
 ```
 
