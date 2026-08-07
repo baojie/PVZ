@@ -1,5 +1,6 @@
 import { Entity } from './Entity.js';
 import { spawnPlant } from './PlantManager.js';
+import { BOSS_SENTINEL_DAMAGE } from './Boss.js';
 
 // 弹道类型表：speed/damage/cssClass 是必填，其他字段按需附加。
 // piercing=true 表示命中后不消失（贯穿）。Infinity 用作「秒杀」哨兵伤害。
@@ -55,6 +56,18 @@ export class Projectile extends Entity {
                     spawnPlant(game, row, col, t);
                 }
             }
+        }
+
+        // 将王博士机甲：只有低头时才吃伤害，没低头就是够不着，子弹直接飞过去
+        // 每颗子弹只能打博士一次。他有 190px 宽，穿透弹飞过去要几十帧，
+        // 不卡这一下的话一颗水滴能连打 40 多次。
+        const boss = game.boss;
+        if (boss && !boss.markedForDeletion && boss.vulnerable && !this._hitBoss &&
+            this.x + this.width > boss.x && this.x < boss.x + boss.width &&
+            this.y + this.height > boss.y && this.y < boss.y + boss.height) {
+            this._hitBoss = true;
+            boss.takeDamage(this.damage === Infinity ? BOSS_SENTINEL_DAMAGE : this.damage);
+            if (!this.piercing) { this.remove(); return; }
         }
 
         if (this.x > game.boardWidth) {

@@ -78,13 +78,16 @@ const ACCESSORY = {
     door:      '🚪',
 };
 
+// 每只僵尸 800 血，血量直接显示在头顶（见 _updateHpLabel）
+export const ZOMBIE_HP = 800;
+
 const ZOMBIE_CONFIG = {
-    normal:    { health: 17000, speed: 0.2  },
-    cone:      { health: 17000, speed: 0.2  },
-    bucket:    { health: 17000, speed: 0.15 },
-    newspaper: { health: 17000, speed: 0.2  },
-    polevault: { health: 17000, speed: 0.35 },
-    door:      { health: 17000, speed: 0.12 },
+    normal:    { health: ZOMBIE_HP, speed: 0.2  },
+    cone:      { health: ZOMBIE_HP, speed: 0.2  },
+    bucket:    { health: ZOMBIE_HP, speed: 0.15 },
+    newspaper: { health: ZOMBIE_HP, speed: 0.2  },
+    polevault: { health: ZOMBIE_HP, speed: 0.35 },
+    door:      { health: ZOMBIE_HP, speed: 0.12 },
 };
 
 export class Zombie extends Entity {
@@ -126,7 +129,13 @@ export class Zombie extends Entity {
         }
 
         const inner = wanderer ? '👾' : bodyWith(ACCESSORY[type] || '');
-        this.createDOM(`entity zombie zombie-${type}${wanderer ? ' wanderer' : ''}`, `<div class="zombie-inner">${inner}</div>`);
+        this.createDOM(
+            `entity zombie zombie-${type}${wanderer ? ' wanderer' : ''}`,
+            `<div class="zombie-hp"><i></i><b></b></div><div class="zombie-inner">${inner}</div>`
+        );
+        this._hpFill = this.element.querySelector('.zombie-hp i');
+        this._hpText = this.element.querySelector('.zombie-hp b');
+        this._updateHpLabel();
         const tipKey = wanderer ? 'wanderer' : type;
         if (this.element && ZOMBIE_TIPS[tipKey]) this.element.dataset.tip = ZOMBIE_TIPS[tipKey];
         if (wanderer && this.element) {
@@ -156,7 +165,17 @@ export class Zombie extends Entity {
         }
 
         this.health -= amount;
+        this._updateHpLabel();
         return false;
+    }
+
+    // 血量显示。只在掉血时刷新，不放进每帧的 update —— 几百只僵尸时
+    // 每帧写几百次 DOM 是白给的开销。
+    _updateHpLabel() {
+        if (!this._hpText) return;
+        const hp = Math.max(0, Math.round(this.health));
+        this._hpText.textContent = this.wanderer ? '∞' : hp;
+        this._hpFill.style.width = `${Math.max(0, Math.min(1, this.health / this.maxHealth)) * 100}%`;
     }
 
     _setBody(html) {
