@@ -2,7 +2,7 @@
 // then actually plays round 2 and saves screenshots to ../screenshot/.
 //
 // Usage:
-//   ./start.sh -d 1644         # run the static server
+//   ./run.sh -d 1644           # run the static server
 //   node bot/play.js           # run this bot (requires puppeteer-core)
 //
 // puppeteer-core is loaded from /tmp/pvz-bot/node_modules/puppeteer-core

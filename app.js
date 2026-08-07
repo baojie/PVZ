@@ -8,6 +8,7 @@ import { fireCannon } from './classes/CornCannon.js';
 import { spawnSun, updateSunDisplay } from './classes/SunManager.js';
 import { spawnPlant, updateCellDisplay } from './classes/PlantManager.js';
 import { setupTooltip, PLANT_TIPS } from './classes/Tooltip.js';
+import { Boss } from './classes/Boss.js';
 
 // Lawnmower resting position (px) — sits just left of the lawn so the icon
 // is mostly visible. See triggerLawnmower / setupLawnmowers.
@@ -49,6 +50,7 @@ class Game {
         this.lawnmowers = [];
         this.grid = Array(this.height).fill(null).map(() => Array(this.width).fill(null).map(() => []));
 
+        this.boss = null;
         this.selectedPlant = null;
         this.shovelMode = false;
         this.cannonTarget = null;
@@ -191,6 +193,9 @@ class Game {
             this.waveIndex = this.waves.length;
             const bH = this.height * this.cellHeight;
             this.wandererSystem = new WandererSystem(10, this.boardWidth, bH, this.cellWidth, this.cellHeight);
+        } else {
+            // 普通 / 融合模式：场上唯一的敌人来源就是他，僵尸全由他放
+            this.boss = new Boss(this);
         }
 
         requestAnimationFrame((timestamp) => this.gameLoop(timestamp));
@@ -200,6 +205,8 @@ class Game {
         this.sound.stopBGM();
         this.wandererSystem?.destroy();
         this.wandererSystem = null;
+        this.boss?.remove();
+        this.boss = null;
         this.plants.forEach(p => p.remove());
         this.zombies.forEach(z => z.remove());
         this.projectiles.forEach(p => p.remove());
@@ -220,6 +227,8 @@ class Game {
         this.sound.stopBGM();
         this.wandererSystem?.destroy();
         this.wandererSystem = null;
+        this.boss?.remove();
+        this.boss = null;
         this.plants.forEach(p => p.remove());
         this.zombies.forEach(z => z.remove());
         this.projectiles.forEach(p => p.remove());
@@ -257,6 +266,7 @@ class Game {
             }
         }
 
+        this.boss?.update(this);
         this.zombies.forEach(z => z.update(this));
         this.zombies = clean(this.zombies);
         this.wandererSystem?.update(this);
@@ -310,7 +320,13 @@ class Game {
         this.updateCooldowns(deltaTime);
         this.updateProgressBar();
 
-        if (!this.wandererMode && this.waveIndex >= this.waves.length && this.zombies.length === 0 && !this.won) {
+        if (this.boss) {
+            // 有博士时，胜负只看他 —— 僵尸是无限的，杀不完
+            if (this.boss.markedForDeletion && !this.won) {
+                this.won = true;
+                setTimeout(() => this.victory(), 1000);
+            }
+        } else if (!this.wandererMode && this.waveIndex >= this.waves.length && this.zombies.length === 0 && !this.won) {
             this.won = true;
             setTimeout(() => this.victory(), 1000);
         }
@@ -336,10 +352,19 @@ class Game {
 
     updateProgressBar() {
         const fill = document.getElementById('progress-fill');
-        if (fill) fill.style.width = `${Math.min(this.waveIndex / this.waves.length, 1) * 100}%`;
+        if (fill) {
+            const pct = this.boss
+                ? (1 - Math.max(0, this.boss.health) / this.boss.maxHealth) * 100
+                : Math.min(this.waveIndex / this.waves.length, 1) * 100;
+            fill.style.width = `${pct}%`;
+        }
         const stats = document.getElementById('wave-stats');
         if (stats) {
-            if (this.wandererMode) {
+            if (this.boss) {
+                const b = this.boss;
+                const state = b.markedForDeletion ? '已击败' : (b.vulnerable ? '低头中 · 快打!' : '无敌 · 放僵尸');
+                stats.textContent = `将王博士 ${Math.max(0, Math.round(b.health))}/${b.maxHealth} · 第 ${b.wave} 波 · ${state} · 场上 ${this.zombies.length}`;
+            } else if (this.wandererMode) {
                 stats.textContent = `漫游模式 · 场上 ${this.zombies.length}`;
             } else if (this.waveIndex >= this.waves.length) {
                 stats.textContent = `全部 ${this.waves.length} 波已完成`;
