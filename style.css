@@ -629,6 +629,65 @@ body {
   to   { opacity: 0; transform: scale(2); }
 }
 
+/* ---------- 超级机枪 ---------- */
+
+/* 豌豆本体上扣一顶钢盔。种子卡和棋盘上用同一段结构，靠 em 跟随字号缩放。 */
+.helmet-pea {
+  position: relative;
+  display: inline-block;
+  line-height: 1;
+}
+
+.helmet-pea .hp-helmet {
+  position: absolute;
+  left: 50%;
+  top: -0.28em;
+  transform: translateX(-50%) rotate(-8deg);
+  font-size: 0.62em;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.55));
+}
+
+/* 散射大招时的后坐力 */
+.plant.mg-recoil {
+  animation: mg-recoil 0.4s ease-out;
+}
+
+@keyframes mg-recoil {
+  0%   { transform: translateX(0); }
+  20%  { transform: translateX(-10px) scale(1.12); }
+  100% { transform: translateX(0) scale(1); }
+}
+
+.mg-muzzle {
+  position: absolute;
+  width: 60px;
+  height: 40px;
+  z-index: 26;
+  pointer-events: none;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 20% 50%, rgba(255, 255, 200, 0.95), rgba(255, 170, 0, 0.7) 45%, transparent 72%);
+  animation: mg-muzzle 0.32s ease-out forwards;
+}
+
+@keyframes mg-muzzle {
+  from { opacity: 1; transform: scaleX(0.5); }
+  to   { opacity: 0; transform: scaleX(1.6); }
+}
+
+.projectile.mgpea {
+  width: 14px;
+  height: 14px;
+  background: radial-gradient(circle at 35% 30%, #d9ffb0, #66bb2a 60%, #2e7d10);
+  box-shadow: 0 0 6px #8bc34a, 0 0 12px rgba(120, 190, 60, 0.7);
+}
+
+.projectile.scatterpea {
+  width: 12px;
+  height: 12px;
+  background: radial-gradient(circle at 35% 30%, #fdffd0, #b2ff30 60%, #6a9c00);
+  box-shadow: 0 0 6px #cddc39, 0 0 14px rgba(200, 255, 60, 0.75);
+}
+
 .zombie.stunned {
   filter: brightness(1.4) drop-shadow(0 0 8px #ffd700) drop-shadow(0 0 14px #c084fc) !important;
   animation: stun-shake 0.25s ease-in-out infinite alternate;
