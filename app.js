@@ -28,7 +28,6 @@ class Game {
         this.boardWidth = this.width * this.cellWidth;
 
         this.sound = new SoundManager();
-        this.firstGame = true;
         this.plantCount = 1;
 
         this._resetGameState();
@@ -173,13 +172,6 @@ class Game {
         this.lastTime = performance.now();
         this.sound.startBGM();
         this.setupLawnmowers();
-
-        if (this.firstGame && !this.wandererMode) {
-            this.firstGame = false;
-            this.waveIndex = this.waves.length;
-            this.updateProgressBar();
-            setTimeout(() => this.victory(), 500);
-        }
 
         const plantTypes = ['peashooter', 'wallnut', 'pitcher', 'glue', 'obsidian'];
         for (let row = 0; row < this.height; row++) {

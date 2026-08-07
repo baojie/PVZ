@@ -1,5 +1,5 @@
-// PVZ headless playthrough — opens the game, lets the auto-win round 1 finish,
-// then actually plays round 2 and saves screenshots to ../screenshot/.
+// PVZ headless playthrough — opens the game, plays a normal round against
+// 将王博士 and saves screenshots to ../screenshot/.
 //
 // Usage:
 //   ./run.sh -d 1644           # run the static server
@@ -66,31 +66,15 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   await sleep(120);
   await shot('02-settings');
 
-  // Round 1 (auto-victory by design — see app.js:160-165).
-  // Round 1 schedules two setTimeout(victory, ...) calls — one at 500ms from
-  // start(), one at 1000ms from update() after `won=true`. Wait for both to
-  // fire before restarting; otherwise the late one runs during round 2 and
-  // freezes/wins it on us.
+  // 普通版：将王博士开局就站在棋盘最右侧，僵尸全由他放出来。
   await page.click('#start-btn');
-  await page.waitForFunction(() => window.game && window.game.won === true, { timeout: 10000 });
-  await sleep(1500);
-  await shot('03-round1-victory');
-  console.log('round 1 auto-victory reached');
-
-  // Round 2: trigger restart() directly — clicking the button via puppeteer
-  // sometimes misses while the victory overlay is mid-fade.
-  await page.evaluate(() => {
-    const btn = document.getElementById('play-again-btn');
-    if (btn) btn.click();
-    if (window.game && typeof window.game.restart === 'function' && window.game.won) {
-      window.game.restart();
-    }
-  });
   await page.waitForFunction(
-    () => window.game && window.game.isRunning === true && window.game.won === false,
+    () => window.game && window.game.isRunning === true && !!window.game.boss,
     { timeout: 5000 }
   );
-  await sleep(400);
+  await sleep(600);
+  await shot('03-boss-entrance');
+  console.log('boss on board at t=0');
   await shot('04-round2-empty');
 
   async function plant(key, row, col) {
@@ -173,7 +157,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
   // ---------- Wanderer-mode pass ----------
   // Reload the page to get back to the start screen with a fresh game,
-  // then click 游荡者 (wandererMode skips the firstGame auto-victory).
+  // then click 游荡者 (wandererMode has no boss — zombies come from WandererSystem).
   console.log('→ wanderer mode');
   await page.goto(URL, { waitUntil: 'networkidle0', timeout: 15000 });
   await sleep(400);
