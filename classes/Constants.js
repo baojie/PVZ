@@ -16,6 +16,7 @@ export const PLANT_EMOJI = {
     triplepea: '🌳',
     nutbowling: '🥥',
     cabbagepult: '🥬',
+    magnetshroom: '🧲',
     plantfood: '💚',
     shovel: '🪏',
 };
@@ -38,6 +39,7 @@ export const PLANT_COSTS = {
     triplepea: 0,
     nutbowling: 0,
     cabbagepult: 0,
+    magnetshroom: 0,
     plantfood: 0,
 };
 
@@ -59,6 +61,7 @@ export const PLANT_COOLDOWNS = {
     triplepea: 0,
     nutbowling: 0,
     cabbagepult: 0,
+    magnetshroom: 0,
     plantfood: 0,
 };
 

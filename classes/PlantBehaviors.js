@@ -2,7 +2,8 @@ import { hasEnemyInRow, hasAnyEnemy, spawnProjectile, cherryBomb } from './Comba
 import { spawnSun } from './SunManager.js';
 import { spawnPlant } from './PlantManager.js';
 import { cannonAutoFire } from './CornCannon.js';
-import { giantCabbage } from './CabbagePult.js';
+import { cabbageBarrage } from './CabbagePult.js';
+import { magnetPull, magnetUltimate } from './MagnetShroom.js';
 
 // 植物行为表：声明式描述每种植物每个 tick 该做什么。
 //
@@ -126,7 +127,7 @@ function cabbagepultTick(plant, game) {
     if (plant.ultimateMs > 0) {
         if (!plant._cabbageUlt) {
             plant._cabbageUlt = true;
-            giantCabbage(game, plant);
+            cabbageBarrage(game, plant);
         }
         return;
     }
@@ -134,6 +135,18 @@ function cabbagepultTick(plant, game) {
     if (plant.timer < 800) return;
     plant.timer = 0;
     fireRow(plant, game, [['cabbage', 20]]);
+}
+
+function magnetshroomTick(plant, game) {
+    if (plant.ultimateMs > 0) {
+        if (!plant._magnetUlt) {
+            plant._magnetUlt = true;
+            magnetUltimate(game, plant);
+        }
+        return;
+    }
+    plant._magnetUlt = false;
+    magnetPull(game, plant);
 }
 
 function nutbowlingTick(plant, game) {
@@ -166,6 +179,7 @@ export const PLANT_BEHAVIORS = {
     potato:        { tick: potatoTick },
     nutbowling:    { tick: nutbowlingTick },
     cabbagepult:   { tick: cabbagepultTick },
+    magnetshroom:  { tick: magnetshroomTick },
 };
 
 export function runPlantBehavior(plant, game) {

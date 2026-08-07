@@ -46,7 +46,7 @@ export class Plant extends Entity {
             iceshooter: '❄️', doubleshooter: '🌿', cherry: '🍒', potato: '🥔',
             pitcher: '🎯', glue: '🧿', obsidian: '🗿', gatling: '🔫', waterdrop: '💧',
             corncannon: '🌽', primitivepea: '🌟', triplepea: '🌳',
-            nutbowling: '🥥', cabbagepult: '🥬',
+            nutbowling: '🥥', cabbagepult: '🥬', magnetshroom: '🧲',
         };
         let icon = icons[type] || '';
 
