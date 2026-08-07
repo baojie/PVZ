@@ -17,6 +17,7 @@ export const PLANT_EMOJI = {
     nutbowling: '🥥',
     cabbagepult: '🥬',
     magnetshroom: '🧲',
+    supermg: '🪖',
     plantfood: '💚',
     shovel: '🪏',
 };
@@ -40,6 +41,7 @@ export const PLANT_COSTS = {
     nutbowling: 0,
     cabbagepult: 0,
     magnetshroom: 0,
+    supermg: 0,
     plantfood: 0,
 };
 
@@ -62,6 +64,7 @@ export const PLANT_COOLDOWNS = {
     nutbowling: 0,
     cabbagepult: 0,
     magnetshroom: 0,
+    supermg: 0,
     plantfood: 0,
 };
 

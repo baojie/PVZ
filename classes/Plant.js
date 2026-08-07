@@ -47,6 +47,8 @@ export class Plant extends Entity {
             pitcher: '🎯', glue: '🧿', obsidian: '🗿', gatling: '🔫', waterdrop: '💧',
             corncannon: '🌽', primitivepea: '🌟', triplepea: '🌳',
             nutbowling: '🥥', cabbagepult: '🥬', magnetshroom: '🧲',
+            // 超级机枪：豌豆本体上扣一顶钢盔，见 style.css 的 .helmet-pea
+            supermg: '<span class="helmet-pea">🫛<span class="hp-helmet">🪖</span></span>',
         };
         let icon = icons[type] || '';
 

@@ -14,6 +14,8 @@ const PROJECTILE_TYPES = {
     primitivepea: { speed: 6,  damage: 70,       cssClass: 'projectile primitivepea', stunMs: 2000 },
     bowling:      { speed: 12, damage: Infinity, cssClass: 'projectile bowling',      piercing: true, width: 56, height: 56 },
     cabbage:      { speed: 6,  damage: 40,       cssClass: 'projectile cabbage',      width: 28, height: 28 },
+    mgpea:        { speed: 9,  damage: 20,       cssClass: 'projectile mgpea',        width: 14, height: 14 },
+    scatterpea:   { speed: 7,  damage: 20,       cssClass: 'projectile scatterpea',   width: 12, height: 12 },
 };
 
 export class Projectile extends Entity {
@@ -32,6 +34,14 @@ export class Projectile extends Entity {
 
     update(game) {
         this.x += this.speed;
+        // vy 由发射方按需设置（超级机枪的散射豌豆），飞出上下边界就回收
+        if (this.vy) {
+            this.y += this.vy;
+            if (this.y < -this.height || this.y > game.height * game.cellHeight) {
+                this.remove();
+                return;
+            }
+        }
         this.draw();
 
         if (this.type === 'bowling' && this.ultimate) {

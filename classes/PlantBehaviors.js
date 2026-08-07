@@ -4,6 +4,7 @@ import { spawnPlant } from './PlantManager.js';
 import { cannonAutoFire } from './CornCannon.js';
 import { cabbageBarrage } from './CabbagePult.js';
 import { magnetPull, magnetUltimate } from './MagnetShroom.js';
+import { mgVolley, mgScatter } from './SuperMG.js';
 
 // 植物行为表：声明式描述每种植物每个 tick 该做什么。
 //
@@ -77,7 +78,7 @@ function cherryTick(plant, game) {
         plant._cherryUlt = true;
         const types = ['peashooter', 'sunflower', 'wallnut', 'iceshooter', 'doubleshooter',
                        'pitcher', 'glue', 'obsidian', 'gatling', 'waterdrop', 'corncannon',
-                       'primitivepea', 'triplepea', 'cabbagepult'];
+                       'primitivepea', 'triplepea', 'cabbagepult', 'supermg'];
         for (let r = 0; r < game.height; r++) {
             for (let c = 0; c < game.width; c++) {
                 spawnPlant(game,r, c, types[Math.floor(Math.random() * types.length)]);
@@ -137,6 +138,23 @@ function cabbagepultTick(plant, game) {
     fireRow(plant, game, [['cabbage', 20]]);
 }
 
+// 超级机枪：0.5 秒一轮 6 连发，每打满 5 轮自动喷一次 150 颗散射豌豆
+function supermgTick(plant, game) {
+    if (plant.timer < 500) return;
+    plant.timer = 0;
+
+    const row = Math.floor(plant.y / game.cellHeight);
+    if (!(plant.ultimateMs > 0) && !hasEnemyInRow(game, row, plant.x)) return;
+
+    mgVolley(game, plant);
+
+    plant._mgVolleys = (plant._mgVolleys || 0) + 1;
+    if (plant._mgVolleys >= 5) {
+        plant._mgVolleys = 0;
+        mgScatter(game, plant);
+    }
+}
+
 function magnetshroomTick(plant, game) {
     if (plant.ultimateMs > 0) {
         if (!plant._magnetUlt) {
@@ -180,6 +198,7 @@ export const PLANT_BEHAVIORS = {
     nutbowling:    { tick: nutbowlingTick },
     cabbagepult:   { tick: cabbagepultTick },
     magnetshroom:  { tick: magnetshroomTick },
+    supermg:       { tick: supermgTick },
 };
 
 export function runPlantBehavior(plant, game) {

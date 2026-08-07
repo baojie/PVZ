@@ -23,6 +23,7 @@ export function hasAnyEnemy(game, minX) {
 export function spawnProjectile(game, x, y, type = 'normal') {
     const proj = new Projectile(x, y, type);
     game.projectiles.push(proj);
+    return proj;
 }
 
 export function cherryBomb(game, plantX, plantY) {
