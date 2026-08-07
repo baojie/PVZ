@@ -170,11 +170,10 @@ function magnetshroomTick(plant, game) {
 function nutbowlingTick(plant, game) {
     if (plant.timer < 2000) return;
     const wasUlt = plant.ultimateMs > 0;
-    spawnProjectile(game,plant.x + 40, plant.y + 22, 'bowling');
-    if (wasUlt) {
-        const last = game.projectiles[game.projectiles.length - 1];
-        if (last) last.ultimate = true;
-    }
+    // 用返回值拿保龄球本体。撞到子弹上限时 spawnProjectile 返回 null，
+    // 按下标取「最后一颗」会误标到别的子弹上。
+    const ball = spawnProjectile(game, plant.x + 40, plant.y + 22, 'bowling');
+    if (wasUlt && ball) ball.ultimate = true;
     plant.remove();
 }
 

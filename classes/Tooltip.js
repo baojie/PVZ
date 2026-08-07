@@ -20,7 +20,7 @@ export const PLANT_TIPS = {
     triplepea:     '三重豌豆 — 三行各一颗',
     nutbowling:    '坚果保龄 — 2 秒后沿当前行碾压',
     cabbagepult:   '卷心菜投手 — 每 0.8 秒投一颗卷心菜，40 伤',
-    magnetshroom:  '磁力菇 — 把全场僵尸吸到自己这一行',
+    magnetshroom:  '磁力菇 — 每 1.5 秒击退全场僵尸，再吸到自己这一行',
     supermg:       '超级机枪 — 0.5 秒 6 连发 ×20 伤，每 5 轮自动散射 150 连',
     plantfood:     '绿叶素 — 点植物开 2 秒大招（攻速 ×20）',
 };

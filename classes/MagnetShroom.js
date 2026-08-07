@@ -1,14 +1,18 @@
-// 磁力菇：持续把场上所有僵尸（含游荡者）吸到自己所在的这一行，
-// 把整片草坪的进攻压缩成一条线，交给这一行的输出植物收割。
+// 磁力菇：两段式磁场 —— 先斥后吸。
 //
-// 绿叶素大招：先把所有僵尸瞬间吸成一条直线，再引爆磁场 ——
-// 金属护甲（路障 / 铁桶 / 铁门 / 报纸）先被磁力扒掉，然后每个僵尸
-// 吃满 17000 点伤害，正好是本作僵尸的满血值。
+// 普通攻击：每 PULSE_MS 打出一次斥力脉冲，把场上所有僵尸（含游荡者）
+//           往右轰回去，然后持续把它们纵向吸到自己所在的这一行。
+// 绿叶素大招：一次超远距离击退，把全场僵尸推到右边，再吸成一条直线，
+//           最后引爆磁场 —— 金属护甲（路障 / 铁桶 / 铁门 / 报纸）先被扒掉，
+//           每个僵尸吃满 17000 点伤害，正好是本作僵尸的满血值。
 
-const PULL_PER_MS = 0.25;   // 普通吸附速度（px/ms），约 0.4 秒吸过一行
-const SNAP_PX = 4;          // 差距小于这个值直接吸附到位
-const WANDER_PULL = 0.12;   // 游荡者每帧向目标行收拢的比例
-const ULT_GATHER_MS = 500;  // 大招吸成一线的蓄力时间
+const PULL_PER_MS = 0.25;      // 吸附速度（px/ms），约 0.4 秒吸过一行
+const SNAP_PX = 4;             // 差距小于这个值直接吸附到位
+const WANDER_PULL = 0.12;      // 游荡者每帧向目标行收拢的比例
+const PULSE_MS = 1500;         // 普通攻击的斥力脉冲间隔
+const KNOCKBACK_PX = 80;       // 每次脉冲把僵尸往右轰多远
+const ULT_KNOCKBACK_PX = 280;  // 大招的击退距离
+const ULT_GATHER_MS = 500;     // 大招吸成一线的蓄力时间
 const ULT_DAMAGE = 17000;
 
 // 磁力菇所在行的顶边 y
@@ -21,12 +25,41 @@ function wandererTargetY(rowY) {
     return rowY + 20;
 }
 
-// ---------- 普通形态：持续吸附 ----------
+// ---------- 第一段：击退 ----------
 
-export function magnetPull(game, plant) {
-    const rowY = magnetRowY(game, plant);
-    const step = (game.deltaTime || 16) * PULL_PER_MS;
+// 把所有僵尸往右轰。瞬移式击退，和原始豌豆 / 撑杆跳用的是同一套写法。
+// 这里刻意不给每只僵尸加 class + setTimeout：一波几百只的时候，
+// 每 1.5 秒几百次 DOM class 改写是白给的开销，冲击波环已经把动静表达出来了。
+function knockback(game, plant, dist) {
+    let hit = 0;
 
+    for (const z of game.zombies) {
+        if (z.markedForDeletion) continue;
+        z.x = Math.min(game.boardWidth - z.width, z.x + dist);
+        z.eating = false;
+        if (z.element) z.element.classList.remove('eating');
+        z.draw();
+        hit++;
+    }
+
+    const ws = game.wandererSystem;
+    if (ws) {
+        for (let i = 0; i < ws.count; i++) {
+            ws.px[i] = Math.min(ws.W - 40, ws.px[i] + dist);
+            hit++;
+        }
+    }
+
+    if (hit > 0) {
+        shockwave(game, plant);
+        game.sound.playIceShoot();
+    }
+    return hit;
+}
+
+// ---------- 第二段：吸到本行 ----------
+
+function gather(game, rowY, step) {
     for (const z of game.zombies) {
         if (z.markedForDeletion) continue;
         const dy = rowY - z.y;
@@ -52,7 +85,21 @@ export function magnetPull(game, plant) {
     }
 }
 
-// ---------- 绿叶素大招：吸成一线 → 引爆 ----------
+// ---------- 普通攻击：脉冲击退 + 持续吸附 ----------
+
+export function magnetPull(game, plant) {
+    const rowY = magnetRowY(game, plant);
+
+    // plant.timer 已经带上了融合 / 叠种 / 加速倍率，和其他植物同一套节奏口径
+    if (plant.timer >= PULSE_MS) {
+        plant.timer = 0;
+        knockback(game, plant, KNOCKBACK_PX);
+    }
+
+    gather(game, rowY, (game.deltaTime || 16) * PULL_PER_MS);
+}
+
+// ---------- 绿叶素大招：远距离击退 → 吸成一线 → 引爆 ----------
 
 export function magnetUltimate(game, plant) {
     const rowY = magnetRowY(game, plant);
@@ -65,13 +112,15 @@ export function magnetUltimate(game, plant) {
         return;
     }
 
-    game.sound.playIceShoot();
+    // 第一段：一口气全部轰回右边
+    knockback(game, plant, ULT_KNOCKBACK_PX);
 
     const field = document.createElement('div');
     field.className = 'magnet-field';
     field.style.top = `${rowY}px`;
     game.board.appendChild(field);
 
+    // 第二段：吸成一条直线。起点在击退之后取，插值才不会把僵尸拽回去。
     const startAt = performance.now();
     const fromY = targets.map(z => z.y);
     const wFromY = [];
@@ -99,6 +148,7 @@ export function magnetUltimate(game, plant) {
     requestAnimationFrame(step);
 }
 
+// 第三段：引爆
 function detonate(game, rowY, targets) {
     game.sound.playExplosion();
 
@@ -142,6 +192,16 @@ function detonate(game, rowY, targets) {
 function stripMetal(z) {
     if (z.newspaperHealth > 0) z.newspaperHealth = 0;
     if (z.doorHealth > 0) z.doorHealth = 0;
+}
+
+// 从磁力菇向外扩散的斥力环
+function shockwave(game, plant) {
+    const el = document.createElement('div');
+    el.className = 'magnet-shockwave';
+    el.style.left = `${plant.x + 40}px`;
+    el.style.top = `${plant.y + 50}px`;
+    game.board.appendChild(el);
+    setTimeout(() => el.remove(), 520);
 }
 
 function blastAt(game, x, y) {

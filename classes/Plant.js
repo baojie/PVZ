@@ -88,11 +88,17 @@ export class Plant extends Entity {
     takeDamage(amount, force = false) {
         if (this.type === 'wallnut' && !force) return;
         this.health -= amount;
-        if (this.element) {
-            this.element.classList.remove('hit');
-            void this.element.offsetWidth;
+        // 受击闪烁：已经在播就不重启。重启动画要靠 void offsetWidth 强制同步布局，
+        // 而僵尸是「每帧啃一口」的 —— 上百只同时开啃时，每帧会触发上百次全页布局，
+        // 帧时间直接飙到几百毫秒，整局看起来就是卡死。
+        // 顺带一提，每 16ms 重启一次动画，plantHit 永远播不过 20%，本来也看不全。
+        if (this.element && !this._hitFlashing) {
+            this._hitFlashing = true;
             this.element.classList.add('hit');
-            setTimeout(() => this.element?.classList.remove('hit'), 350);
+            setTimeout(() => {
+                this._hitFlashing = false;
+                this.element?.classList.remove('hit');
+            }, 350);
         }
         if (this.health <= 0) {
             this.count--;

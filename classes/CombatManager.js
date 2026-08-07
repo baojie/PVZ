@@ -20,7 +20,15 @@ export function hasAnyEnemy(game, minX) {
     return false;
 }
 
+// 同时存活的子弹上限。每颗子弹是一个 DOM 元素，上千个一起动的时候浏览器
+// 光合成就来不及，帧率掉下去 → 子弹每帧只走固定像素、于是活得更久 → 攒得更多，
+// 越卡越多。封顶就是把这个正反馈掐断。
+// 正常玩法离这个数很远，只有满屏叠种 + 超级机枪散射连喷才顶得到。
+const MAX_PROJECTILES = 700;
+
+// 达到上限时返回 null —— 取返回值的调用方（超级机枪散射要设 vy）需要判空。
 export function spawnProjectile(game, x, y, type = 'normal') {
+    if (game.projectiles.length >= MAX_PROJECTILES) return null;
     const proj = new Projectile(x, y, type);
     game.projectiles.push(proj);
     return proj;

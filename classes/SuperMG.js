@@ -29,6 +29,7 @@ export function mgScatter(game, plant) {
         // t 从 -1 均匀铺到 +1，得到一个正对前方的扇面
         const t = (i / (SCATTER_COUNT - 1)) * 2 - 1;
         const p = spawnProjectile(game, x0 + (i % 10) * 4, y0, 'scatterpea');
+        if (!p) break;   // 撞到子弹上限了，这一轮就喷到这儿
         p.vy = t * SCATTER_SPREAD;
     }
 
