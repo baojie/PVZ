@@ -14,14 +14,14 @@ export const PLANT_TIPS = {
     obsidian:      '黑曜石战神 — 上中下三行扫射',
     pitcher:       '超级投手 — 穿透整行',
     gatling:       '机枪炮台 — 4 连射扫三行',
-    waterdrop:     '水滴 — 每秒一发，无视护盾秒杀',
+    waterdrop:     '水滴 — 每秒一发，穿透整行',
     corncannon:    '究极玉米炮 — 自动追踪连续轰炸',
-    primitivepea:  '原始豌豆 — 70 伤 + 眩晕击退',
+    primitivepea:  '原始豌豆 — 眩晕 2 秒 + 击退',
     triplepea:     '三重豌豆 — 三行各一颗',
     nutbowling:    '坚果保龄 — 2 秒后沿当前行碾压',
-    cabbagepult:   '卷心菜投手 — 每 0.8 秒投一颗卷心菜，40 伤',
+    cabbagepult:   '卷心菜投手 — 每 0.8 秒投一颗卷心菜',
     magnetshroom:  '磁力菇 — 每 1.5 秒击退全场僵尸，再吸到自己这一行',
-    supermg:       '超级机枪 — 0.5 秒 6 连发 ×20 伤，吃一次绿叶素永久 +1 连；每 5 轮自动散射 150 连',
+    supermg:       '超级机枪 — 0.5 秒 6 连发，吃一次绿叶素永久 +1 连；每 5 轮自动散射 150 连',
     plantfood:     '绿叶素 — 点植物开 2 秒大招（攻速 ×20）',
 };
 
