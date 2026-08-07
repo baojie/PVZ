@@ -531,30 +531,102 @@ body {
   to   { transform: rotate(-360deg); }
 }
 
-/* 绿叶素大招：巨型卷心菜飞向全场 */
-.giant-cabbage {
+/* 绿叶素大招：每个僵尸头上砸一颗巨大卷心菜。z-index 高于植物 / 僵尸，
+   视觉上就是从高空越过所有障碍物飞过去的。 */
+.lob-cabbage {
   position: absolute;
-  font-size: 100px;
+  font-size: 44px;
   line-height: 1;
   z-index: 60;
   pointer-events: none;
   transform-origin: center;
-  transition: left 0.6s ease-in, top 0.6s ease-in, transform 0.6s ease-in;
-  filter: drop-shadow(0 0 20px #7cb342) drop-shadow(0 0 40px #33691e);
+  filter: drop-shadow(0 0 12px #7cb342) drop-shadow(0 0 24px #33691e);
 }
 
-.cabbage-shock {
+.cabbage-splash {
   position: absolute;
-  inset: 0;
+  width: 80px;
+  height: 80px;
   z-index: 59;
   pointer-events: none;
-  background: radial-gradient(circle at 50% 50%, rgba(139, 195, 74, 0.85), rgba(51, 105, 30, 0.35) 55%, transparent 75%);
-  animation: cabbage-shock 0.6s ease-out forwards;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 50%, rgba(200, 255, 150, 0.95), rgba(85, 139, 47, 0.6) 50%, transparent 72%);
+  animation: cabbage-splash 0.45s ease-out forwards;
 }
 
-@keyframes cabbage-shock {
-  from { opacity: 1;   transform: scale(0.3); }
-  to   { opacity: 0;   transform: scale(1.6); }
+@keyframes cabbage-splash {
+  from { opacity: 1; transform: scale(0.4); }
+  to   { opacity: 0; transform: scale(1.8); }
+}
+
+/* ---------- 磁力菇 ---------- */
+
+/* 种下就一直脉动，提示它在持续吸附 */
+.plant.magnetshroom .plant-inner {
+  animation: magnet-pulse 1.2s ease-in-out infinite;
+  filter: drop-shadow(0 0 8px #c084fc);
+}
+
+@keyframes magnet-pulse {
+  0%, 100% { transform: scale(1);    filter: drop-shadow(0 0 6px #c084fc); }
+  50%      { transform: scale(1.15); filter: drop-shadow(0 0 18px #a855f7) drop-shadow(0 0 30px #7e22ce); }
+}
+
+/* 正在被拖向磁力菇那一行的僵尸 */
+.zombie.magnetized {
+  filter: drop-shadow(0 0 10px #c084fc) drop-shadow(0 0 20px #7e22ce) !important;
+}
+
+/* 大招蓄力：目标行整条亮起磁场 */
+.magnet-field {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 100px;
+  z-index: 17;
+  pointer-events: none;
+  background: linear-gradient(90deg, rgba(168, 85, 247, 0.05), rgba(192, 132, 252, 0.45), rgba(168, 85, 247, 0.05));
+  box-shadow: inset 0 0 30px rgba(126, 34, 206, 0.8);
+  animation: magnet-field 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes magnet-field {
+  from { opacity: 0.45; }
+  to   { opacity: 1; }
+}
+
+/* 引爆：整行一条紫色冲击波 */
+.magnet-blast-band {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 100px;
+  z-index: 58;
+  pointer-events: none;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.9), rgba(192, 132, 252, 0.9), rgba(255, 255, 255, 0.9));
+  animation: magnet-band 0.6s ease-out forwards;
+}
+
+@keyframes magnet-band {
+  from { opacity: 1; transform: scaleY(1); }
+  to   { opacity: 0; transform: scaleY(2.4); }
+}
+
+/* 每个僵尸身上的爆点 */
+.magnet-blast {
+  position: absolute;
+  width: 90px;
+  height: 90px;
+  z-index: 59;
+  pointer-events: none;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.95), rgba(168, 85, 247, 0.7) 45%, transparent 72%);
+  animation: magnet-blast 0.5s ease-out forwards;
+}
+
+@keyframes magnet-blast {
+  from { opacity: 1; transform: scale(0.3); }
+  to   { opacity: 0; transform: scale(2); }
 }
 
 .zombie.stunned {
