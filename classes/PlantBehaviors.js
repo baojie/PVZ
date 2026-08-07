@@ -2,6 +2,7 @@ import { hasEnemyInRow, hasAnyEnemy, spawnProjectile, cherryBomb } from './Comba
 import { spawnSun } from './SunManager.js';
 import { spawnPlant } from './PlantManager.js';
 import { cannonAutoFire } from './CornCannon.js';
+import { giantCabbage } from './CabbagePult.js';
 
 // 植物行为表：声明式描述每种植物每个 tick 该做什么。
 //
@@ -75,7 +76,7 @@ function cherryTick(plant, game) {
         plant._cherryUlt = true;
         const types = ['peashooter', 'sunflower', 'wallnut', 'iceshooter', 'doubleshooter',
                        'pitcher', 'glue', 'obsidian', 'gatling', 'waterdrop', 'corncannon',
-                       'primitivepea', 'triplepea'];
+                       'primitivepea', 'triplepea', 'cabbagepult'];
         for (let r = 0; r < game.height; r++) {
             for (let c = 0; c < game.width; c++) {
                 spawnPlant(game,r, c, types[Math.floor(Math.random() * types.length)]);
@@ -121,6 +122,20 @@ function potatoTick(plant, game) {
     }
 }
 
+function cabbagepultTick(plant, game) {
+    if (plant.ultimateMs > 0) {
+        if (!plant._cabbageUlt) {
+            plant._cabbageUlt = true;
+            giantCabbage(game, plant);
+        }
+        return;
+    }
+    plant._cabbageUlt = false;
+    if (plant.timer < 800) return;
+    plant.timer = 0;
+    fireRow(plant, game, [['cabbage', 20]]);
+}
+
 function nutbowlingTick(plant, game) {
     if (plant.timer < 2000) return;
     const wasUlt = plant.ultimateMs > 0;
@@ -150,6 +165,7 @@ export const PLANT_BEHAVIORS = {
     cherry:        { tick: cherryTick },
     potato:        { tick: potatoTick },
     nutbowling:    { tick: nutbowlingTick },
+    cabbagepult:   { tick: cabbagepultTick },
 };
 
 export function runPlantBehavior(plant, game) {

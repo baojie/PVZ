@@ -13,6 +13,7 @@ const PROJECTILE_TYPES = {
     waterdrop:    { speed: 4,  damage: Infinity, cssClass: 'projectile waterdrop',    piercing: true },
     primitivepea: { speed: 6,  damage: 70,       cssClass: 'projectile primitivepea', stunMs: 2000 },
     bowling:      { speed: 12, damage: Infinity, cssClass: 'projectile bowling',      piercing: true, width: 56, height: 56 },
+    cabbage:      { speed: 6,  damage: 40,       cssClass: 'projectile cabbage',      width: 28, height: 28 },
 };
 
 export class Projectile extends Entity {

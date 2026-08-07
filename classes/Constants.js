@@ -15,6 +15,7 @@ export const PLANT_EMOJI = {
     primitivepea: '🌟',
     triplepea: '🌳',
     nutbowling: '🥥',
+    cabbagepult: '🥬',
     plantfood: '💚',
     shovel: '🪏',
 };
@@ -36,6 +37,7 @@ export const PLANT_COSTS = {
     primitivepea: 0,
     triplepea: 0,
     nutbowling: 0,
+    cabbagepult: 0,
     plantfood: 0,
 };
 
@@ -56,6 +58,7 @@ export const PLANT_COOLDOWNS = {
     primitivepea: 0,
     triplepea: 0,
     nutbowling: 0,
+    cabbagepult: 0,
     plantfood: 0,
 };
 

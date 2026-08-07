@@ -19,6 +19,7 @@ export const PLANT_TIPS = {
     primitivepea:  '原始豌豆 — 70 伤 + 眩晕击退',
     triplepea:     '三重豌豆 — 三行各一颗',
     nutbowling:    '坚果保龄 — 2 秒后沿当前行碾压',
+    cabbagepult:   '卷心菜投手 — 每 0.8 秒投一颗卷心菜，40 伤',
     plantfood:     '绿叶素 — 点植物开 2 秒大招（攻速 ×20）',
 };
 

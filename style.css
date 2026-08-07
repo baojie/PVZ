@@ -516,6 +516,47 @@ body {
   to   { transform: rotate(360deg); }
 }
 
+.projectile.cabbage {
+  width: 28px;
+  height: 28px;
+  background: radial-gradient(circle at 35% 30%, #eaffd0, #7cb342 60%, #33691e);
+  border: 2px solid #33691e;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #8bc34a, 0 0 20px rgba(85, 139, 47, 0.6);
+  animation: cabbage-spin 0.4s linear infinite;
+}
+
+@keyframes cabbage-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(-360deg); }
+}
+
+/* 绿叶素大招：巨型卷心菜飞向全场 */
+.giant-cabbage {
+  position: absolute;
+  font-size: 100px;
+  line-height: 1;
+  z-index: 60;
+  pointer-events: none;
+  transform-origin: center;
+  transition: left 0.6s ease-in, top 0.6s ease-in, transform 0.6s ease-in;
+  filter: drop-shadow(0 0 20px #7cb342) drop-shadow(0 0 40px #33691e);
+}
+
+.cabbage-shock {
+  position: absolute;
+  inset: 0;
+  z-index: 59;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 50%, rgba(139, 195, 74, 0.85), rgba(51, 105, 30, 0.35) 55%, transparent 75%);
+  animation: cabbage-shock 0.6s ease-out forwards;
+}
+
+@keyframes cabbage-shock {
+  from { opacity: 1;   transform: scale(0.3); }
+  to   { opacity: 0;   transform: scale(1.6); }
+}
+
 .zombie.stunned {
   filter: brightness(1.4) drop-shadow(0 0 8px #ffd700) drop-shadow(0 0 14px #c084fc) !important;
   animation: stun-shake 0.25s ease-in-out infinite alternate;
