@@ -173,14 +173,9 @@ class Game {
         this.sound.startBGM();
         this.setupLawnmowers();
 
-        const plantTypes = ['peashooter', 'wallnut', 'pitcher', 'glue', 'obsidian'];
-        for (let row = 0; row < this.height; row++) {
-            if (this.grid[row][0].length === 0) {
-                const type = plantTypes[Math.floor(Math.random() * plantTypes.length)];
-                spawnPlant(this, row, 0, type);
-            }
-        }
-
+        // 开局不再白送第 0 列那 5 株随机植物：里面的超级投手 / 胶水 / 黑曜石都是
+        // 秒杀弹（对博士按 800 折算），挂机 80 多秒就能把 64000 血的博士磨死，
+        // 等于第一局照样自动通关。现在空场开局，输出得自己种。
         if (this.wandererMode) {
             this.waveIndex = this.waves.length;
             const bH = this.height * this.cellHeight;
