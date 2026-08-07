@@ -1124,3 +1124,156 @@ button:active {
   color: #f1c40f;
   font-size: 48px;
 }
+
+/* ---------- 僵尸血量显示 ---------- */
+
+.zombie-hp {
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  /* .zombie 整体 scaleX(-1) 让僵尸面朝左，血量数字会跟着镜像成「008」，
+     这里再翻一次抵消掉 */
+  transform: translateX(-50%) scaleX(-1);
+  width: 52px;
+  height: 12px;
+  background: rgba(0, 0, 0, 0.65);
+  border: 1px solid rgba(0, 0, 0, 0.8);
+  border-radius: 3px;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 24;
+}
+
+.zombie-hp i {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  background: linear-gradient(to right, #e74c3c, #f39c12 60%, #2ecc71);
+  transition: width 0.12s linear;
+}
+
+.zombie-hp b {
+  position: absolute;
+  inset: 0;
+  font-size: 9px;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 0 0 2px #000, 0 0 3px #000;
+  text-align: center;
+  line-height: 12px;
+}
+
+/* ---------- 将王博士机甲 ---------- */
+
+.boss {
+  position: absolute;
+  z-index: 18;   /* 压在植物（20）下面，他是背景里的庞然大物 */
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.boss-rig {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 0.85;
+  filter: drop-shadow(0 0 16px rgba(120, 0, 160, 0.75));
+  transition: transform 0.5s ease;
+  transform-origin: 50% 90%;
+}
+
+.boss-head {
+  font-size: 130px;
+  transition: transform 0.5s ease;
+  transform-origin: 50% 100%;
+}
+
+.boss-mech {
+  font-size: 268px;
+}
+
+/* 低头：整台机甲前倾、脑袋压下来，这时候才打得到 */
+.boss.bowing .boss-rig {
+  transform: rotate(-12deg) translateY(26px);
+}
+
+.boss.bowing .boss-head {
+  transform: translateY(58px) rotate(-28deg) scale(1.05);
+}
+
+.boss.bowing {
+  filter: drop-shadow(0 0 22px #ffe082);
+}
+
+.boss-hp {
+  position: relative;
+  width: 210px;
+  height: 20px;
+  background: rgba(0, 0, 0, 0.72);
+  border: 2px solid #6a1b9a;
+  border-radius: 5px;
+  overflow: hidden;
+  flex: none;
+}
+
+.boss-hp-fill {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  background: linear-gradient(to right, #7b1fa2, #d500f9 60%, #ff4081);
+  transition: width 0.15s linear;
+}
+
+.boss-hp-text {
+  position: absolute;
+  inset: 0;
+  font-size: 12px;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 0 0 3px #000;
+  text-align: center;
+  line-height: 20px;
+}
+
+.boss-state {
+  margin-top: 2px;
+  font-size: 11px;
+  font-weight: bold;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 1px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.boss.bowing .boss-state {
+  background: rgba(255, 193, 7, 0.9);
+  color: #3e2723;
+}
+
+/* 放出一只僵尸时的舱门抖动 */
+.boss-release .boss-mech {
+  animation: boss-release 0.26s ease-out;
+}
+
+@keyframes boss-release {
+  0%   { transform: translateX(0)     scale(1); }
+  40%  { transform: translateX(-10px) scale(1.04); }
+  100% { transform: translateX(0)     scale(1); }
+}
+
+.boss-hit .boss-rig {
+  filter: brightness(2.6) drop-shadow(0 0 22px #fff59d);
+}
+
+.boss-dead {
+  animation: boss-dead 0.9s ease-in forwards;
+}
+
+@keyframes boss-dead {
+  0%   { opacity: 1; transform: rotate(0deg)  scale(1); }
+  100% { opacity: 0; transform: rotate(38deg) scale(0.55) translateY(120px); }
+}
