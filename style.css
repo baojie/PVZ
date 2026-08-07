@@ -677,6 +677,23 @@ body {
   100% { transform: translateX(0) scale(1); }
 }
 
+/* 超级机枪的连发数徽章：吃一次绿叶素涨一级 */
+.mg-badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background: rgba(0, 0, 0, 0.78);
+  color: #ffd54f;
+  font-size: 10px;
+  font-weight: bold;
+  padding: 1px 4px;
+  border-radius: 4px;
+  line-height: 1.4;
+  pointer-events: none;
+  z-index: 26;
+  text-shadow: 0 0 4px #ff9800;
+}
+
 .mg-muzzle {
   position: absolute;
   width: 60px;
