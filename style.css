@@ -785,6 +785,34 @@ body {
   text-shadow: 0 0 4px #00e5ff;
 }
 
+/* ---------- 红叶素 ---------- */
+
+/* 吃了红叶素的植物：红光罩着，5 秒后自己恢复 */
+.plant.redfood {
+  filter: drop-shadow(0 0 10px #ff5252) drop-shadow(0 0 20px rgba(244, 67, 54, 0.75));
+}
+
+/* 小红樱桃子弹：两颗小红果 + 一根绿梗 */
+.projectile.redcherry {
+  width: 16px;
+  height: 16px;
+  background: radial-gradient(circle at 34% 30%, #ff8a80, #e53935 58%, #8e0000);
+  border-radius: 50%;
+  box-shadow: 0 0 8px #ff5252, 0 0 16px rgba(229, 57, 53, 0.7);
+}
+
+.projectile.redcherry::before {
+  content: "";
+  position: absolute;
+  left: 45%;
+  bottom: 85%;
+  width: 2px;
+  height: 7px;
+  background: #43a047;
+  border-radius: 1px;
+  transform: rotate(12deg);
+}
+
 /* ---------- 阳光帝果 ---------- */
 
 /* 黄坚果 + 头顶一颗小一号的坚果，两颗的左右都长着向日葵花瓣，全是 CSS 画的 */

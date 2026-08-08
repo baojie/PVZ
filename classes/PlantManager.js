@@ -2,6 +2,8 @@ import { Plant } from './Plant.js';
 import { PLANT_COSTS, PLANT_COOLDOWNS } from './Constants.js';
 import { updateSunDisplay } from './SunManager.js';
 
+const RED_FOOD_MS = 5000;   // 红叶素持续多久
+
 export function spawnPlant(game, row, col, type) {
     const x = col * game.cellWidth;
     const y = row * game.cellHeight;
@@ -54,9 +56,27 @@ export function usePlantFood(game, row, col) {
     }
 }
 
+// 红叶素：点在植物上，让它接下来 5 秒打出小红樱桃，然后恢复原样
+export function useRedFood(game, row, col) {
+    const stack = game.grid[row][col];
+    const top = stack && stack.length > 0 ? stack[stack.length - 1] : null;
+    if (top && !top.markedForDeletion) {
+        top.redMs = RED_FOOD_MS;
+        if (top.element) top.element.classList.add('redfood');
+        game.showNotEnoughFeedback('❤️ 红樱桃 5 秒!');
+    } else {
+        game.showNotEnoughFeedback('需要点在植物上');
+    }
+}
+
 export function handleGridClick(game, row, col) {
     if (game.selectedPlant === 'plantfood') {
         usePlantFood(game, row, col);
+        return;
+    }
+
+    if (game.selectedPlant === 'redfood') {
+        useRedFood(game, row, col);
         return;
     }
 

@@ -32,6 +32,10 @@ const PROJECTILE_TYPES = {
                     piercing: true, bossDamage: 1800, width: 14, height: 14 },
     elecscatter:  { speed: 7,  damage: Infinity, cssClass: 'projectile elecscatter',
                     piercing: true, bossDamage: 1800, width: 12, height: 12 },
+
+    // 红叶素期间，植物打出来的一律换成这颗小红樱桃，每颗 1000 点伤害
+    redcherry:    { speed: 7,  damage: 1000, cssClass: 'projectile redcherry',
+                    width: 16, height: 16 },
 };
 
 export class Projectile extends Entity {

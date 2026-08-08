@@ -94,6 +94,15 @@ export class Plant extends Entity {
             }
         }
 
+        // 红叶素：这 5 秒里打出来的都是小红樱桃，到点恢复原来的样子
+        if (this.redMs && this.redMs > 0) {
+            this.redMs -= (game.deltaTime || 16);
+            if (this.redMs <= 0) {
+                this.redMs = 0;
+                if (this.element) this.element.classList.remove('redfood');
+            }
+        }
+
         runPlantBehavior(this, game);
     }
 

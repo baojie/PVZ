@@ -23,6 +23,7 @@ export const PLANT_EMOJI = {
     doomshroom: '☠️',
     sunemperor: '👑',
     plantfood: '💚',
+    redfood: '❤️',
     shovel: '🪏',
 };
 
@@ -51,6 +52,7 @@ export const PLANT_COSTS = {
     doomshroom: 0,
     sunemperor: 0,
     plantfood: 0,
+    redfood: 0,
 };
 
 export const PLANT_COOLDOWNS = {
@@ -78,6 +80,7 @@ export const PLANT_COOLDOWNS = {
     doomshroom: 0,
     sunemperor: 0,
     plantfood: 0,
+    redfood: 0,
 };
 
 export function setEmojiCursor(emoji) {

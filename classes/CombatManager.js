@@ -49,6 +49,8 @@ function nextDamageMult(plant) {
 // 只有 GROWS 里的植物吃伤害递增，其余（含全屏随机子弹）一律用弹种的固定伤害。
 export function spawnProjectile(game, x, y, type = 'normal', plant = null) {
     if (game.projectiles.length >= MAX_PROJECTILES) return null;
+    // 红叶素期间，这株植物打什么都变成小红樱桃（5 秒后自己恢复）
+    if (plant && plant.redMs > 0) type = 'redcherry';
     const proj = new Projectile(x, y, type);
     if (plant && GROWS.has(plant.type)) {
         const mult = nextDamageMult(plant);
