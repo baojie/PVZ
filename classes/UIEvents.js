@@ -2,6 +2,8 @@ import { PLANT_EMOJI, setEmojiCursor } from './Constants.js';
 import { handleCornCannonClick } from './CornCannon.js';
 import { collectSun } from './SunManager.js';
 import { removePlant, handleGridClick } from './PlantManager.js';
+import { mgClickUpgrade } from './SuperMG.js';
+import { sunEmperorClick } from './SunEmperor.js';
 
 export function setupEventListeners(game) {
     // Game mode buttons
@@ -109,6 +111,12 @@ export function setupEventListeners(game) {
         }
 
         if (handleCornCannonClick(game, e, row, col)) return;
+
+        // 绿叶素大招期间点超级机枪：每点一下连发数 +1，点几下加几连
+        if (!game.selectedPlant && mgClickUpgrade(game, row, col)) return;
+
+        // 空手点阳光帝果：回血 + 召唤一颗越来越大的坚果保龄球
+        if (!game.selectedPlant && sunEmperorClick(game, row, col)) return;
 
         if (game.selectedPlant) {
             handleGridClick(game, row, col);

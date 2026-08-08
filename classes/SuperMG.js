@@ -1,8 +1,9 @@
 // 超级机枪 🪖 —— 戴钢盔的豌豆。
 //
 // 常规：每 0.5 秒泼出一梭子豌豆，起步 6 颗，每颗 20 点伤害。
-// 升级：每吃一次绿叶素，这株的连发数永久 +1（6 → 7 → 8 …），喂几次涨几次。
-//       升级存在植物身上，铲掉就没了；同格叠种的每株各算各的。
+// 升级：喂一次绿叶素，连发数永久 +1（6 → 7 → 8 …）；而且在大招那 2 秒里
+//       每点这株一下再 +1，点几下加几连。升级存在植物身上，铲掉就没了；
+//       同格叠种的每株各算各的。
 // 散射：每打满 5 轮（约 2.5 秒）自动触发一次，向前扇形喷出 150 颗散射豌豆，
 //       每颗同样 20 伤，纵向速度从 -SPREAD 均匀铺到 +SPREAD，扫掉整个屏幕。
 
@@ -19,7 +20,7 @@ export function mgPeaCount(plant) {
     return plant._mgPeas || PEAS_PER_VOLLEY;
 }
 
-// 绿叶素：连发数永久 +1
+// 连发数永久 +1（喂绿叶素、大招期间点击都走这里）
 export function mgUpgrade(game, plant) {
     plant._mgPeas = mgPeaCount(plant) + 1;
     game.showNotEnoughFeedback(`🪖 连发 +1 → ${plant._mgPeas} 连`);
@@ -33,6 +34,19 @@ export function mgUpgrade(game, plant) {
         }
         badge.textContent = `${plant._mgPeas}连`;
     }
+}
+
+// 绿叶素大招期间（那 2 秒里），每点这株一下就再 +1 连 —— 手速有多快就加多少。
+// 大招没开的时候点它没有任何反应。点中了返回 true，让点击事件到此为止。
+// 只作用于这一格的栈顶那株（叠种时跑的也是栈顶那株）。
+export function mgClickUpgrade(game, row, col) {
+    const stack = game.grid[row] && game.grid[row][col];
+    if (!stack || stack.length === 0) return false;
+    const top = stack[stack.length - 1];
+    if (top.type !== 'supermg' || top.markedForDeletion) return false;
+    if (!(top.ultimateMs > 0)) return false;
+    mgUpgrade(game, top);
+    return true;
 }
 
 export function mgVolley(game, plant) {
