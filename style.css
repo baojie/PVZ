@@ -2,12 +2,15 @@
   --cell-width: 80px;
   --cell-height: 100px;
   --grid-rows: 5;
-  --grid-cols: 9;
+  --grid-cols: 12;      /* 最左边 3 列是蓝草坪 */
+  --blue-cols: 3;
   --board-width: calc(var(--cell-width) * var(--grid-cols));
   --board-height: calc(var(--cell-height) * var(--grid-rows));
   /* 种子卡越加越多，画布跟着加宽，让所有卡片能排成横着的一行 */
   --stage-width: 1280px;
   --board-x: calc((var(--stage-width) - var(--board-width)) / 2);
+  /* 青蓝色一直铺到蓝草坪的右边缘 */
+  --blue-edge: calc(var(--board-x) + var(--cell-width) * var(--blue-cols));
   --primary-font: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -35,8 +38,8 @@ body {
   background: #4a4;
   background: linear-gradient(
     to right,
-    #76c7c0 var(--board-x),
-    #5a9e5a var(--board-x)
+    #76c7c0 var(--blue-edge),
+    #5a9e5a var(--blue-edge)
   );
   border-radius: 8px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
@@ -123,7 +126,7 @@ body {
   display: flex;
   flex-wrap: nowrap;       /* 横着排，不折行 */
   overflow-x: auto;        /* 万一以后卡片再多，左右滚动兜底 */
-  gap: 3px;
+  gap: 2px;
   align-items: center;
   justify-content: center;
   background: #6d4c41;
@@ -190,8 +193,8 @@ body {
 .seed-packet {
   position: relative;
   flex: 0 0 auto;
-  width: 38px;
-  height: 46px;
+  width: 36px;
+  height: 44px;
   background: #a1887f;
   border: 2px solid #3e2723;
   border-radius: 4px;
@@ -232,7 +235,7 @@ body {
 }
 
 .seed-icon {
-  font-size: 17px;
+  font-size: 16px;
   line-height: 1;
   z-index: 1;
 }
@@ -287,227 +290,6 @@ body {
   white-space: nowrap;
 }
 
-/* ---------- 左边青蓝色地带：红瓦白墙的房子 + 石板院子 ---------- */
-
-/* 占满整片青蓝色地带：从棋盘顶边一路铺到画布底边 */
-#house {
-  position: absolute;
-  left: 0;
-  top: 120px;
-  width: var(--board-x);
-  bottom: 0;
-  z-index: 2;                 /* 压在背景上、在棋盘里的一切之下 */
-  pointer-events: auto;
-  overflow: hidden;
-}
-
-/* 红瓦屋顶：一层层瓦楞 + 竖向瓦缝，右边斜下来一个坡 */
-#house .h-roof {
-  position: absolute;
-  left: -10px;
-  right: 0;
-  top: 0;
-  height: 176px;
-  background:
-    repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.16) 0 2px, transparent 2px 22px),
-    repeating-linear-gradient(180deg, #f4784a 0 14px, #d64f27 14px 18px, #b83c1c 18px 20px);
-  clip-path: polygon(0 0, 100% 0, 100% 62%, 0 100%);
-  box-shadow: inset 0 -6px 10px rgba(0, 0, 0, 0.25);
-}
-
-/* 屋檐：屋顶下沿那条白边 */
-#house .h-roof::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 100%;
-  border-bottom: 6px solid #f6f1e6;
-  clip-path: polygon(0 0, 100% 0, 100% 62%, 0 100%);
-}
-
-/* 白墙 */
-#house .h-wall {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 150px;
-  height: 190px;
-  background: linear-gradient(180deg, #fbf7ee, #ece3d2 70%, #d8ccb6);
-  border-top: 4px solid #cdbfa6;
-  display: flex;
-  align-items: center;
-  justify-content: space-evenly;
-  padding: 0 8px;
-}
-
-/* 蓝色高窗：白框 + 十字格 */
-#house .h-window {
-  position: relative;
-  width: 62px;
-  height: 118px;
-  background: linear-gradient(160deg, #d8f1ff, #7cc0ec 45%, #3f8fd0);
-  border: 7px solid #fbfaf6;
-  border-radius: 6px;
-  box-shadow: 0 0 0 3px #b9ac95, inset 0 0 14px rgba(255, 255, 255, 0.7);
-}
-
-#house .h-window::before,
-#house .h-window::after {
-  content: "";
-  position: absolute;
-  background: #fbfaf6;
-}
-
-#house .h-window::before { left: 50%; top: 0; width: 6px; height: 100%; transform: translateX(-50%); }
-#house .h-window::after  { top: 50%; left: 0; height: 6px; width: 100%; transform: translateY(-50%); }
-
-/* 墙根的灌木丛 */
-#house .h-bush {
-  position: absolute;
-  border-radius: 50% 50% 42% 42%;
-  background: radial-gradient(circle at 35% 30%, #7cc34a, #43922f 55%, #24601d);
-  box-shadow: inset -6px -8px 12px rgba(0, 0, 0, 0.25);
-}
-
-#house .h-bush.b1 { left: -12px; top: 300px; width: 92px;  height: 66px; }
-#house .h-bush.b2 { left: 96px;  top: 314px; width: 74px;  height: 52px; }
-#house .h-bush.b3 { right: -14px; top: 306px; width: 88px; height: 60px; }
-
-/* 石板院子 */
-#house .h-patio {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 340px;
-  bottom: 0;
-  background:
-    repeating-linear-gradient(90deg, rgba(120, 120, 140, 0.55) 0 3px, transparent 3px 58px),
-    repeating-linear-gradient(180deg, rgba(120, 120, 140, 0.55) 0 3px, transparent 3px 44px),
-    linear-gradient(180deg, #dcdce6, #c3c3d2 60%, #aaaabb);
-}
-
-/* 遮阳伞：红白相间的伞面 + 伞杆 */
-#house .h-umbrella {
-  position: absolute;
-  left: 26px;
-  top: 6px;
-  width: 132px;
-  height: 96px;
-}
-
-#house .h-umbrella .u-canopy {
-  position: absolute;
-  left: 0;
-  top: 8px;
-  width: 132px;
-  height: 58px;
-  background: repeating-conic-gradient(from 180deg at 50% 100%,
-              #e53935 0deg 18deg, #fdfdfd 18deg 36deg);
-  border-radius: 66px 66px 0 0 / 58px 58px 0 0;
-  box-shadow: 0 4px 7px rgba(0, 0, 0, 0.32);
-}
-
-/* 伞尖 */
-#house .h-umbrella .u-canopy::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: -9px;
-  width: 7px;
-  height: 12px;
-  background: linear-gradient(180deg, #bdbdbd, #757575);
-  border-radius: 3px 3px 0 0;
-  transform: translateX(-50%);
-}
-
-#house .h-umbrella .u-pole {
-  position: absolute;
-  left: 50%;
-  top: 56px;
-  width: 6px;
-  height: 48px;
-  background: linear-gradient(180deg, #9e9e9e, #616161);
-  transform: translateX(-50%);
-}
-
-/* 伞下的圆桌 */
-#house .h-table {
-  position: absolute;
-  left: 46px;
-  top: 96px;
-  width: 92px;
-  height: 34px;
-  background: radial-gradient(ellipse at 40% 32%, #6b7a86, #37474f 65%, #22303a);
-  border-radius: 50%;
-  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.32);
-}
-
-/* 红色烧烤炉 */
-#house .h-grill {
-  position: absolute;
-  left: 150px;
-  top: 100px;
-  width: 84px;
-  height: 84px;
-}
-
-#house .h-grill .g-lid {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 84px;
-  height: 40px;
-  background: linear-gradient(180deg, #ff7043, #d32f2f 65%, #a01818);
-  border-radius: 42px 42px 4px 4px;
-}
-
-#house .h-grill .g-bowl {
-  position: absolute;
-  left: 6px;
-  top: 38px;
-  width: 72px;
-  height: 22px;
-  background: linear-gradient(180deg, #455a64, #263238);
-  border-radius: 0 0 36px 36px;
-}
-
-/* 三条腿：两边各斜一条，中间一条直的 */
-#house .h-grill .g-legs {
-  position: absolute;
-  left: 8px;
-  top: 58px;
-  width: 68px;
-  height: 30px;
-}
-
-#house .h-grill .g-legs::before,
-#house .h-grill .g-legs::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  width: 4px;
-  height: 30px;
-  background: #37474f;
-}
-
-#house .h-grill .g-legs::before { left: 10px;  transform: rotate(14deg); }
-#house .h-grill .g-legs::after  { right: 10px; transform: rotate(-14deg); }
-
-/* 院子最下面那道矮石墙 */
-#house .h-fence {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 34px;
-  background:
-    repeating-linear-gradient(90deg, rgba(90, 90, 110, 0.6) 0 3px, transparent 3px 52px),
-    linear-gradient(180deg, #e7e7ef, #b9b9c9 55%, #8f8fa2);
-  border-top: 3px solid #8f8fa2;
-}
-
 /* Game Board */
 #game-board {
   position: absolute;
@@ -524,6 +306,11 @@ body {
   width: var(--cell-width);
   height: var(--cell-height);
   border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 蓝草坪那 3 列：格线偏冷色，和绿草坪区分开 */
+.grid-cell.blue-lawn {
+  border-color: rgba(255, 255, 255, 0.22);
 }
 
 .stack-badge,
@@ -2111,4 +1898,134 @@ button:active {
 @keyframes boss-dead {
   0%   { opacity: 1; transform: rotate(0deg)  scale(1); }
   100% { opacity: 0; transform: rotate(38deg) scale(0.55) translateY(120px); }
+}
+
+/* ---------- 房子 🏠 ---------- */
+
+.house-plant {
+  position: relative;
+  display: block;
+  width: 56px;
+  height: 52px;
+}
+
+/* 红瓦屋顶：左右各斜下来一个坡 */
+.house-plant .hp-roof {
+  position: absolute;
+  left: -2px;
+  top: 0;
+  width: 60px;
+  height: 22px;
+  background: linear-gradient(180deg, #ef5350, #c62828);
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+
+.house-plant .hp-wall {
+  position: absolute;
+  left: 6px;
+  top: 20px;
+  width: 44px;
+  height: 32px;
+  background: linear-gradient(180deg, #fffdf7, #e6ddcb);
+  border: 2px solid #b9ab90;
+  border-radius: 2px;
+}
+
+.house-plant .hp-win {
+  position: absolute;
+  left: 5px;
+  top: 5px;
+  width: 13px;
+  height: 12px;
+  background: #4fc3f7;
+  border: 2px solid #fff;
+  box-shadow: inset 0 0 0 1px #90a4ae;
+}
+
+.house-plant .hp-door {
+  position: absolute;
+  right: 5px;
+  bottom: 0;
+  width: 14px;
+  height: 20px;
+  background: linear-gradient(180deg, #8d6e63, #5d4037);
+  border-radius: 3px 3px 0 0;
+}
+
+/* ---------- 礼物盒 🎁 ---------- */
+
+.gift-box {
+  position: relative;
+  display: block;
+  width: 46px;
+  height: 46px;
+  animation: gift-wiggle 1.6s ease-in-out infinite;
+}
+
+/* 红白相间的盒身：斜条纹 */
+.gift-box .gb-body {
+  position: absolute;
+  left: 3px;
+  bottom: 0;
+  width: 40px;
+  height: 32px;
+  background: repeating-linear-gradient(45deg, #e53935 0 8px, #fff 8px 16px);
+  border: 2px solid #b71c1c;
+  border-radius: 3px;
+}
+
+/* 盒盖 */
+.gift-box .gb-lid {
+  position: absolute;
+  left: 0;
+  top: 6px;
+  width: 46px;
+  height: 12px;
+  background: repeating-linear-gradient(45deg, #fff 0 8px, #e53935 8px 16px);
+  border: 2px solid #b71c1c;
+  border-radius: 3px;
+  z-index: 2;
+}
+
+/* 竖着的丝带 */
+.gift-box .gb-ribbon {
+  position: absolute;
+  left: 50%;
+  top: 6px;
+  width: 8px;
+  height: 40px;
+  margin-left: -4px;
+  background: #ffd54f;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+  z-index: 3;
+}
+
+/* 蝴蝶结 */
+.gift-box .gb-bow {
+  position: absolute;
+  left: 50%;
+  top: -2px;
+  width: 24px;
+  height: 12px;
+  margin-left: -12px;
+  z-index: 4;
+  background:
+    radial-gradient(circle at 25% 50%, #ffd54f 45%, transparent 46%),
+    radial-gradient(circle at 75% 50%, #ffd54f 45%, transparent 46%);
+}
+
+@keyframes gift-wiggle {
+  0%, 100% { transform: rotate(0deg)  scale(1); }
+  25%      { transform: rotate(-6deg) scale(1.04); }
+  75%      { transform: rotate(6deg)  scale(1.04); }
+}
+
+/* 礼物盒落点：闪一下，免得在满屏植物里找不着 */
+.grid-cell.gift-drop {
+  animation: gift-drop 0.9s ease-out;
+}
+
+@keyframes gift-drop {
+  0%   { box-shadow: inset 0 0 0 4px #ffd54f, 0 0 24px #ffd54f; }
+  100% { box-shadow: inset 0 0 0 4px transparent, 0 0 0 transparent; }
 }
