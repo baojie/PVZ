@@ -785,6 +785,61 @@ body {
   text-shadow: 0 0 4px #00e5ff;
 }
 
+/* ---------- 豌豆炸弹 ---------- */
+
+/* 左边双重射手的脸、右边豌豆的脸，中间一根樱桃梗把两颗头连起来 */
+.pea-bomb {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.02em;
+  line-height: 1;
+  filter: drop-shadow(0 0 6px rgba(139, 195, 74, 0.8));
+}
+
+.pea-bomb .pb-face {
+  font-size: 0.62em;
+  display: inline-block;
+}
+
+.pea-bomb .pb-face.l { transform: translateY(0.04em) rotate(-8deg); }
+.pea-bomb .pb-face.r { transform: translateY(0.04em) rotate(8deg); }
+
+/* 樱桃那根梗：两头各弯一下，从中间拱过去 */
+.pea-bomb .pb-stem {
+  position: absolute;
+  left: 50%;
+  top: -0.22em;
+  transform: translateX(-50%);
+  width: 0.5em;
+  height: 0.3em;
+  border: 0.07em solid #43a047;
+  border-bottom: none;
+  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+}
+
+/* 自爆时的那一圈绿光 */
+.peabomb-boom {
+  position: absolute;
+  width: 190px;
+  height: 190px;
+  margin: -95px 0 0 -95px;
+  z-index: 28;
+  pointer-events: none;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 50%,
+              rgba(240, 255, 210, 0.95),
+              rgba(139, 195, 74, 0.75) 45%,
+              rgba(56, 142, 60, 0) 75%);
+  animation: peabomb-boom 0.62s ease-out forwards;
+}
+
+@keyframes peabomb-boom {
+  from { opacity: 1; transform: scale(0.25); }
+  to   { opacity: 0; transform: scale(1.6); }
+}
+
 /* ---------- 红叶素 ---------- */
 
 /* 吃了红叶素的植物：红光罩着，5 秒后自己恢复 */

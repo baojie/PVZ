@@ -107,7 +107,8 @@ export class Projectile extends Entity {
             if (!this.piercing) { this.remove(); return; }
         }
 
-        if (this.x > game.boardWidth) {
+        // 飞出左右边界都回收 —— 豌豆炸弹会往左射，只判右边会漏
+        if (this.x > game.boardWidth || this.x + this.width < 0) {
             this.remove();
             return;
         }

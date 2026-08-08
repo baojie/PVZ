@@ -55,6 +55,8 @@ export class Plant extends Entity {
             supermg: '<span class="helmet-pea">🫛<span class="hp-helmet">🪖</span></span>',
             // 超级电能机枪豌豆：同一顶钢盔，豌豆本体染成青色（.elec-pea）
             elecmg: '<span class="helmet-pea elec-pea">🫛<span class="hp-helmet">🪖</span></span>',
+            // 豌豆炸弹：左边双重射手的脸、右边豌豆的脸，中间一根樱桃梗
+            peabomb: '<span class="pea-bomb"><i class="pb-stem"></i><span class="pb-face l">🌿</span><span class="pb-face r">🌱</span></span>',
             // 阳光帝果：黄坚果 + 头顶小坚果，两颗都带向日葵花瓣，见 .sun-emperor
             sunemperor: '<span class="sun-emperor"><span class="se-nut se-small"><i class="se-petal l"></i><i class="se-petal r"></i></span><span class="se-nut se-big"><i class="se-petal l"></i><i class="se-petal r"></i></span></span>',
             // 毁灭菇：灰柄黑伞，整株都是 CSS 画的，见 .doom-shroom

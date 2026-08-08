@@ -9,6 +9,7 @@ import { elecVolley, elecScatter } from './ElectricMG.js';
 import { iceBlast, iceStorm, iceInterval } from './IceShroom.js';
 import { doomBlast, doomUpgrade, doomGrow, DOOM_INTERVAL } from './DoomShroom.js';
 import { sunEmperorTick } from './SunEmperor.js';
+import { peaBombTick } from './PeaBomb.js';
 
 // 植物行为表：声明式描述每种植物每个 tick 该做什么。
 //
@@ -272,6 +273,7 @@ export const PLANT_BEHAVIORS = {
     iceshroom:     { tick: iceshroomTick },
     doomshroom:    { tick: doomshroomTick },
     sunemperor:    { tick: sunEmperorTick },
+    peabomb:       { tick: peaBombTick },
 };
 
 export function runPlantBehavior(plant, game) {
