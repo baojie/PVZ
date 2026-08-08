@@ -78,14 +78,27 @@ export class Projectile extends Entity {
         // 每颗子弹只能打博士一次。他有 190px 宽，穿透弹飞过去要几十帧，
         // 不卡这一下的话一颗水滴能连打 40 多次。
         const boss = game.boss;
+
+        // 寒冰子弹只要碰到他就把他冻住 —— 不看他低没低头（没低头也照样停住不放僵尸）
+        if (boss && !boss.markedForDeletion && this.type === 'ice' && !this._frozeBoss &&
+            this.x + this.width > boss.x && this.x < boss.x + boss.width &&
+            this.y + this.height > boss.y && this.y < boss.y + boss.height) {
+            this._frozeBoss = true;
+            boss.freeze(ICE_BULLET_FREEZE_MS);
+        }
+
         if (boss && !boss.markedForDeletion && boss.vulnerable && !this._hitBoss &&
             this.x + this.width > boss.x && this.x < boss.x + boss.width &&
             this.y + this.height > boss.y && this.y < boss.y + boss.height) {
             this._hitBoss = true;
-            // 必杀弹对博士折算成实数，同样吃这颗子弹的递增倍率
-            const dmg = this.damage === Infinity
-                ? Math.min(BOSS_SENTINEL_DAMAGE * (this.damageMult || 1), DAMAGE_CAP)
-                : this.damage;
+            // 打博士的基数：电能弹用自带的 bossDamage（1800 起步），必杀弹按一只
+            // 僵尸的满血折算，其余就是子弹自己的伤害。基数同样吃这颗子弹的递增
+            // 倍率，封顶 DAMAGE_CAP。
+            const base = this.bossDamage
+                ?? (this.damage === Infinity ? BOSS_SENTINEL_DAMAGE : null);
+            const dmg = base === null
+                ? this.damage
+                : Math.min(base * (this.damageMult || 1), DAMAGE_CAP);
             boss.takeDamage(dmg);
             if (!this.piercing) { this.remove(); return; }
         }

@@ -349,7 +349,9 @@ class Game {
         if (stats) {
             if (this.boss) {
                 const b = this.boss;
-                const state = b.markedForDeletion ? '已击败' : (b.vulnerable ? '低头中 · 快打!' : '无敌 · 放僵尸');
+                const state = b.markedForDeletion ? '已击败'
+                    : (b.frozenMs > 0 ? '❄️ 冻住 · 快打!'
+                    : (b.vulnerable ? '低头中 · 快打!' : '无敌 · 放僵尸'));
                 stats.textContent = `将王博士 ${Math.max(0, Math.round(b.health))}/${b.maxHealth} · 第 ${b.wave} 波 · ${state} · 场上 ${this.zombies.length}`;
             } else if (this.wandererMode) {
                 stats.textContent = `漫游模式 · 场上 ${this.zombies.length}`;

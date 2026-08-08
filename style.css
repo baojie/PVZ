@@ -1265,6 +1265,17 @@ button:active {
   100% { transform: translateX(0)     scale(1); }
 }
 
+/* 被寒冰停住的将王博士：整台机甲罩一层冰蓝，动作停在原地 */
+.boss.boss-frozen .boss-rig {
+  filter: brightness(1.1) saturate(0.7) drop-shadow(0 0 18px #4fc3f7) drop-shadow(0 0 30px #01579b);
+  transition: none;
+}
+
+.boss.boss-frozen .boss-state {
+  background: rgba(2, 136, 209, 0.92);
+  color: #e1f5fe;
+}
+
 .boss-hit .boss-rig {
   filter: brightness(2.6) drop-shadow(0 0 22px #fff59d);
 }

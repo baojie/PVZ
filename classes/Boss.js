@@ -57,6 +57,7 @@ export class Boss {
         this.spawnTimer = 0;
         this.spawnedInWave = 0;
         this.wave = 1;
+        this.frozenMs = 0;             // 被寒冰冻住还剩多久
         this.lineup = waveLineup(this.waveSize());
 
         this._buildDOM();
@@ -69,8 +70,17 @@ export class Boss {
         return Math.max(1, Math.round(ZOMBIES_PER_WAVE * m));
     }
 
+    // 低头的时候能打到他；被冻住的时候他整台机甲停在原地，也照样能打
     get vulnerable() {
-        return this.phase === 'bow';
+        return this.phase === 'bow' || this.frozenMs > 0;
+    }
+
+    // 寒冰菇的爆炸、寒冰射手的子弹都会把他冻住：冻住期间相位和放僵尸计时全停
+    // （既不放僵尸也不换阶段），而且他停在那儿不动，打得到。
+    freeze(ms) {
+        if (this.markedForDeletion) return;
+        this.frozenMs = Math.max(this.frozenMs, ms);
+        this.element?.classList.add('boss-frozen');
     }
 
     _buildDOM() {
@@ -104,12 +114,26 @@ export class Boss {
         this.hpFill.style.width = `${ratio * 100}%`;
         this.hpText.textContent = `${Math.max(0, Math.round(this.health))} / ${this.maxHealth}`;
         this.element.classList.toggle('bowing', this.vulnerable);
-        this.stateLabel.textContent = this.vulnerable ? '低头中 — 快打他!' : '无敌 · 放僵尸中';
+        this.stateLabel.textContent = this.frozenMs > 0
+            ? '❄️ 冻住了 — 快打他!'
+            : (this.vulnerable ? '低头中 — 快打他!' : '无敌 · 放僵尸中');
     }
 
     update(game) {
         if (this.markedForDeletion) return;
         const dt = game.deltaTime || 16;
+
+        // 冻住：什么都不推进，站在原地挨打
+        if (this.frozenMs > 0) {
+            this.frozenMs -= dt;
+            if (this.frozenMs <= 0) {
+                this.frozenMs = 0;
+                this.element?.classList.remove('boss-frozen');
+            }
+            this._render();
+            return;
+        }
+
         this.phaseTimer += dt;
 
         if (this.phase === 'spawn') {
