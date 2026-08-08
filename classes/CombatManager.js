@@ -27,10 +27,12 @@ export function hasAnyEnemy(game, minX) {
 const MAX_PROJECTILES = 700;
 
 // 子弹伤害递增：一株植物打出的每一颗子弹，都比它上一颗高 15%，复利叠加，
-// 封顶 6700 万。计数存在植物身上，所以每株各涨各的，铲掉重种就从头来。
-// 基础伤害 17000 起步，第 61 发触顶（17000 × 1.15^60 ≈ 6805 万，被削到 6700 万）。
+// 封顶 18000 —— 每株植物打出的伤害最多就是这个数，再涨也不给了。
+// 计数存在植物身上，所以每株各涨各的，铲掉重种就从头来。
+// 起点是弹种自己的原始伤害（豌豆 20、原始豌豆 70、卷心菜 40……），
+// 秒杀弹（Infinity）不乘，它对博士的折算值在 Projectile 里单独吃这个倍率。
 export const DAMAGE_GROWTH = 1.15;
-export const DAMAGE_CAP = 67_000_000;
+export const DAMAGE_CAP = 18_000;
 
 // 这一发的倍率 = 1.15^(已打发数)，第一发是 ×1
 function nextDamageMult(plant) {
@@ -47,8 +49,8 @@ export function spawnProjectile(game, x, y, type = 'normal', plant = null) {
     if (plant) {
         const mult = nextDamageMult(plant);
         proj.damageMult = mult;
-        // 兜底：现在所有弹种都是实数伤害了，但万一哪天又冒出 Infinity 的，
-        // 乘多少还是 Infinity，交给 Projectile 里的 boss 折算去处理
+        // 秒杀弹（Infinity）乘多少还是 Infinity，这里跳过；
+        // 它打博士的折算值在 Projectile 里单独乘 damageMult
         if (proj.damage !== Infinity) {
             proj.damage = Math.min(proj.damage * mult, DAMAGE_CAP);
         }

@@ -3,28 +3,35 @@ import { spawnPlant } from './PlantManager.js';
 import { BOSS_SENTINEL_DAMAGE } from './Boss.js';
 import { DAMAGE_CAP } from './CombatManager.js';
 
-// 弹道类型表：speed/damage/cssClass 是必填，其他字段按需附加。
-// piercing=true 表示命中后不消失（贯穿）。
-//
-// 每一颗子弹的伤害都是 17000（僵尸满血正好 800，所以对僵尸依旧是一发一个；
-// 对 6400 万血的将王博士就是实打实的 17000 一发）。以前用 Infinity 当「秒杀
-// 哨兵」的那几种弹（加特林 / 胶水 / 黑曜石 / 超级投手 / 水滴 / 保龄球）
-// 一并改成 17000，不再需要对博士做折算。
-export const BULLET_DAMAGE = 17000;
+// 一颗寒冰子弹能把将王博士停住多久
+const ICE_BULLET_FREEZE_MS = 2000;
 
+// 弹道类型表：speed/damage/cssClass 是必填，其他字段按需附加。
+// piercing=true 表示命中后不消失（贯穿）。Infinity 用作「秒杀」哨兵伤害 ——
+// 打博士时会折算成 BOSS_SENTINEL_DAMAGE，见下面的 boss 结算。
+//
+// 这里是每种弹的原始伤害（曾经统一改成过 17000，后来又改回来了）。
 const PROJECTILE_TYPES = {
-    normal:       { speed: 5,  damage: BULLET_DAMAGE, cssClass: 'projectile' },
-    gatling:      { speed: 10, damage: BULLET_DAMAGE, cssClass: 'projectile gatling' },
-    ice:          { speed: 5,  damage: BULLET_DAMAGE, cssClass: 'projectile ice' },
-    glue:         { speed: 7,  damage: BULLET_DAMAGE, cssClass: 'projectile glue',         piercing: true },
-    obsidian:     { speed: 8,  damage: BULLET_DAMAGE, cssClass: 'projectile obsidian',     piercing: true },
-    piercing:     { speed: 6,  damage: BULLET_DAMAGE, cssClass: 'projectile piercing',     piercing: true },
-    waterdrop:    { speed: 4,  damage: BULLET_DAMAGE, cssClass: 'projectile waterdrop',    piercing: true },
-    primitivepea: { speed: 6,  damage: BULLET_DAMAGE, cssClass: 'projectile primitivepea', stunMs: 2000 },
-    bowling:      { speed: 12, damage: BULLET_DAMAGE, cssClass: 'projectile bowling',      piercing: true, width: 56, height: 56 },
-    cabbage:      { speed: 6,  damage: BULLET_DAMAGE, cssClass: 'projectile cabbage',      width: 28, height: 28 },
-    mgpea:        { speed: 9,  damage: BULLET_DAMAGE, cssClass: 'projectile mgpea',        width: 14, height: 14 },
-    scatterpea:   { speed: 7,  damage: BULLET_DAMAGE, cssClass: 'projectile scatterpea',   width: 12, height: 12 },
+    normal:       { speed: 5,  damage: 20,       cssClass: 'projectile' },
+    gatling:      { speed: 10, damage: Infinity, cssClass: 'projectile gatling' },
+    ice:          { speed: 5,  damage: 20,       cssClass: 'projectile ice' },
+    glue:         { speed: 7,  damage: Infinity, cssClass: 'projectile glue',         piercing: true },
+    obsidian:     { speed: 8,  damage: Infinity, cssClass: 'projectile obsidian',     piercing: true },
+    piercing:     { speed: 6,  damage: Infinity, cssClass: 'projectile piercing',     piercing: true },
+    waterdrop:    { speed: 4,  damage: Infinity, cssClass: 'projectile waterdrop',    piercing: true },
+    primitivepea: { speed: 6,  damage: 70,       cssClass: 'projectile primitivepea', stunMs: 2000 },
+    bowling:      { speed: 12, damage: Infinity, cssClass: 'projectile bowling',      piercing: true, width: 56, height: 56 },
+    cabbage:      { speed: 6,  damage: 40,       cssClass: 'projectile cabbage',      width: 28, height: 28 },
+    mgpea:        { speed: 9,  damage: 20,       cssClass: 'projectile mgpea',        width: 14, height: 14 },
+    scatterpea:   { speed: 7,  damage: 20,       cssClass: 'projectile scatterpea',   width: 12, height: 12 },
+
+    // 超级电能机枪豌豆的两种电能弹：无限贯穿（命中不消失，一路打到屏幕右边），
+    // 对普通僵尸是无限点伤害；打将王博士时 1800 起步（bossDamage），
+    // 和别的子弹一样吃逐发 +15% 的递增，封顶 18000。
+    elecpea:      { speed: 9,  damage: Infinity, cssClass: 'projectile elecpea',
+                    piercing: true, bossDamage: 1800, width: 14, height: 14 },
+    elecscatter:  { speed: 7,  damage: Infinity, cssClass: 'projectile elecscatter',
+                    piercing: true, bossDamage: 1800, width: 12, height: 12 },
 };
 
 export class Projectile extends Entity {
@@ -35,6 +42,7 @@ export class Projectile extends Entity {
         this.speed = cfg.speed;
         this.damage = cfg.damage;
         this.piercing = !!cfg.piercing;
+        if (cfg.bossDamage) this.bossDamage = cfg.bossDamage;
         if (cfg.stunMs) this.stunMs = cfg.stunMs;
         if (cfg.width) this.width = cfg.width;
         if (cfg.height) this.height = cfg.height;

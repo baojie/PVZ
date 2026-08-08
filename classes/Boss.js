@@ -13,9 +13,9 @@ import { Zombie } from './Zombie.js';
 export const BOSS_HP = 64000000;   // 6400 万
 export const ZOMBIES_PER_WAVE = 20;
 
-// 兜底：万一还有伤害是 Infinity 的弹种（以前水滴 / 黑曜石 / 超级投手都是），
-// 打博士时按一只僵尸的满血折算，免得一颗就把血条打光。
-// 现在 Projectile 里所有弹种统一 17000 伤害，这条折算实际用不上了。
+// 水滴 / 黑曜石 / 超级投手这类子弹的伤害是 Infinity（对僵尸是「秒杀哨兵」）。
+// 直接照搬会让血条形同虚设 —— 一颗就打光。打博士时按一只僵尸的满血折算，
+// 再乘上这颗子弹的递增倍率（见 CombatManager 的 DAMAGE_GROWTH）。
 export const BOSS_SENTINEL_DAMAGE = 800;
 
 const SPAWN_PHASE_MS = 10000;                                  // 放僵尸阶段总时长
