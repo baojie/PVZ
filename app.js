@@ -21,7 +21,10 @@ class Game {
         this.sunCounter = document.getElementById('sun-amount');
         this.uiLayer = document.getElementById('ui-layer');
 
-        this.width = 9;
+        // 棋盘 12 列：最左边 3 列是「蓝草坪」（原来那条青蓝色空地），
+        // 右边 9 列是原来的绿草坪。两边都能种植物、喂绿叶素、用铲子。
+        this.width = 12;
+        this.blueCols = 3;
         this.height = 5;
         this.cellWidth = 80;
         this.cellHeight = 100;
@@ -93,7 +96,12 @@ class Game {
                 cell.style.top = `${row * this.cellHeight}px`;
                 cell.dataset.row = row;
                 cell.dataset.col = col;
-                if ((row + col) % 2 === 1) cell.style.backgroundColor = 'rgba(0, 50, 0, 0.1)';
+                if (col < this.blueCols) cell.classList.add('blue-lawn');
+                if ((row + col) % 2 === 1) {
+                    cell.style.backgroundColor = col < this.blueCols
+                        ? 'rgba(0, 40, 60, 0.10)'
+                        : 'rgba(0, 50, 0, 0.1)';
+                }
                 this.board.appendChild(cell);
             }
         }
