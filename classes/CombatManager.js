@@ -26,13 +26,17 @@ export function hasAnyEnemy(game, minX) {
 // 正常玩法离这个数很远，只有满屏叠种 + 超级机枪散射连喷才顶得到。
 const MAX_PROJECTILES = 700;
 
-// 子弹伤害递增：一株植物打出的每一颗子弹，都比它上一颗高 15%，复利叠加，
-// 封顶 18000 —— 每株植物打出的伤害最多就是这个数，再涨也不给了。
+// 子弹伤害递增：现在只有超级电能机枪豌豆 ⚡ 吃这一套 —— 它打出的每一颗电能弹
+// 都比上一颗高 15%，复利叠加，封顶 18000。别的植物一律用弹种自己的固定伤害，
+// 打多久都不会涨。
 // 计数存在植物身上，所以每株各涨各的，铲掉重种就从头来。
-// 起点是弹种自己的原始伤害（豌豆 20、原始豌豆 70、卷心菜 40……），
-// 秒杀弹（Infinity）不乘，它对博士的折算值在 Projectile 里单独吃这个倍率。
+// 电能弹对僵尸是 Infinity（乘多少还是 Infinity），倍率实际作用在它打博士的
+// 那 1800 基数上，见 Projectile 的 boss 结算。
 export const DAMAGE_GROWTH = 1.15;
 export const DAMAGE_CAP = 18_000;
+
+// 只有这些植物的子弹会越打越狠
+const GROWS = new Set(['elecmg']);
 
 // 这一发的倍率 = 1.15^(已打发数)，第一发是 ×1
 function nextDamageMult(plant) {
@@ -42,11 +46,11 @@ function nextDamageMult(plant) {
 }
 
 // 达到上限时返回 null —— 取返回值的调用方（超级机枪散射要设 vy）需要判空。
-// 传了 plant 就吃伤害递增；没传（比如全屏随机子弹）就用基础伤害。
+// 只有 GROWS 里的植物吃伤害递增，其余（含全屏随机子弹）一律用弹种的固定伤害。
 export function spawnProjectile(game, x, y, type = 'normal', plant = null) {
     if (game.projectiles.length >= MAX_PROJECTILES) return null;
     const proj = new Projectile(x, y, type);
-    if (plant) {
+    if (plant && GROWS.has(plant.type)) {
         const mult = nextDamageMult(plant);
         proj.damageMult = mult;
         // 秒杀弹（Infinity）乘多少还是 Infinity，这里跳过；
