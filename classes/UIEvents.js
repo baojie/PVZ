@@ -4,6 +4,7 @@ import { collectSun } from './SunManager.js';
 import { removePlant, handleGridClick } from './PlantManager.js';
 import { mgClickUpgrade } from './SuperMG.js';
 import { sunEmperorClick } from './SunEmperor.js';
+import { giftClick } from './House.js';
 
 export function setupEventListeners(game) {
     // Game mode buttons
@@ -125,6 +126,9 @@ export function setupEventListeners(game) {
 
         // 空手点阳光帝果：回血 + 召唤一颗越来越大的坚果保龄球
         if (!game.selectedPlant && sunEmperorClick(game, row, col)) return;
+
+        // 空手点礼物盒：拆开，变成随机一种植物
+        if (!game.selectedPlant && giftClick(game, row, col)) return;
 
         if (game.selectedPlant) {
             handleGridClick(game, row, col);

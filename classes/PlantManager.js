@@ -4,7 +4,14 @@ import { updateSunDisplay } from './SunManager.js';
 
 const RED_FOOD_MS = 5000;   // 红叶素持续多久
 
+// 蓝草坪（最左边 game.blueCols 列）只能种房子，别的植物一概种不下去；
+// 房子则是哪儿都能种。规则放在这儿，满屏铺植物的那些大招也一并受管。
+export function canPlantAt(game, col, type) {
+    return type === 'house' || col >= (game.blueCols || 0);
+}
+
 export function spawnPlant(game, row, col, type) {
+    if (!canPlantAt(game, col, type)) return null;
     const x = col * game.cellWidth;
     const y = row * game.cellHeight;
     const plant = new Plant(x, y, type);
@@ -14,6 +21,7 @@ export function spawnPlant(game, row, col, type) {
     updateCellDisplay(game, row, col);
     return plant;
 }
+
 
 export function removePlant(game, row, col) {
     const stack = game.grid[row][col];
@@ -77,6 +85,11 @@ export function handleGridClick(game, row, col) {
 
     if (game.selectedPlant === 'redfood') {
         useRedFood(game, row, col);
+        return;
+    }
+
+    if (!canPlantAt(game, col, game.selectedPlant)) {
+        game.showNotEnoughFeedback('🏠 蓝草坪只能种房子!');
         return;
     }
 

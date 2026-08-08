@@ -53,16 +53,44 @@ export class Projectile extends Entity {
         this.createDOM(cfg.cssClass, '');
     }
 
-    update(game) {
-        this.x += this.speed;
-        // vy 由发射方按需设置（超级机枪的散射豌豆），飞出上下边界就回收
-        if (this.vy) {
-            this.y += this.vy;
-            if (this.y < -this.height || this.y > game.height * game.cellHeight) {
-                this.remove();
-                return;
+    // 撞到棋盘四条边就原样弹回来，一直弹下去。
+    // 子弹唯一的消失方式是打到僵尸 —— 它不和植物做任何碰撞判定（碰撞只跑
+    // game.zombies 和游荡者），所以从植物身上飞过去时什么也不会发生。
+    bounce(game) {
+        const maxX = game.boardWidth - this.width;
+        const maxY = game.height * game.cellHeight - this.height;
+        let hit = false;
+
+        // 横向：所有子弹都在横着飞，撞左右两边一律弹回
+        if (this.x < 0)         { this.x = 0;    this.speed = Math.abs(this.speed);  hit = true; }
+        else if (this.x > maxX) { this.x = maxX; this.speed = -Math.abs(this.speed); hit = true; }
+
+        // 纵向：只有真在上下移动的子弹才谈得上反弹。没有 vy 的（比如加特林
+        // 出生点带随机偏移）可能一出生就贴着上下边，那只是夹回来。
+        if (this.y < 0 || this.y > maxY) {
+            const clamped = this.y < 0 ? 0 : maxY;
+            if (this.vy) {
+                this.y = clamped;
+                this.vy = clamped === 0 ? Math.abs(this.vy) : -Math.abs(this.vy);
+                hit = true;
+            } else {
+                this.y = clamped;
             }
         }
+
+        // 每弹一次都能再打一遍博士：清掉「只打一次」的标记
+        if (hit) {
+            this._hitBoss = false;
+            this._frozeBoss = false;
+        }
+    }
+
+    update(game) {
+        this.x += this.speed;
+        // vy 由发射方按需设置（超级机枪的散射豌豆、豌豆炸弹的四散豌豆）
+        if (this.vy) this.y += this.vy;
+
+        this.bounce(game);
         this.draw();
 
         if (this.type === 'bowling' && this.ultimate) {
@@ -107,11 +135,6 @@ export class Projectile extends Entity {
             if (!this.piercing) { this.remove(); return; }
         }
 
-        // 飞出左右边界都回收 —— 豌豆炸弹会往左射，只判右边会漏
-        if (this.x > game.boardWidth || this.x + this.width < 0) {
-            this.remove();
-            return;
-        }
 
         // Collision with Zombies
         for (const zombie of game.zombies) {

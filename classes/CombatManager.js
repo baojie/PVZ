@@ -45,7 +45,9 @@ function nextDamageMult(plant) {
     return Math.pow(DAMAGE_GROWTH, n);
 }
 
-// 达到上限时返回 null —— 取返回值的调用方（超级机枪散射要设 vy）需要判空。
+// 满员时不再生成新子弹，而不是顶掉场上已有的那颗 —— 已经在飞的子弹只能被
+// 僵尸吃掉，绝不能凭空消失（顶掉最老的会让子弹在半空中平白不见）。
+// 代价是穿透弹（打到僵尸也不消失）会一直占着槽位，攒满之后新子弹就发不出来了。
 // 只有 GROWS 里的植物吃伤害递增，其余（含全屏随机子弹）一律用弹种的固定伤害。
 export function spawnProjectile(game, x, y, type = 'normal', plant = null) {
     if (game.projectiles.length >= MAX_PROJECTILES) return null;

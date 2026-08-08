@@ -11,6 +11,7 @@ import { doomBlast, doomUpgrade, doomGrow, DOOM_INTERVAL } from './DoomShroom.js
 import { sunEmperorTick } from './SunEmperor.js';
 import { peaBombTick } from './PeaBomb.js';
 import { torchwoodTick } from './TorchWood.js';
+import { houseTick } from './House.js';
 
 // 植物行为表：声明式描述每种植物每个 tick 该做什么。
 //
@@ -276,6 +277,8 @@ export const PLANT_BEHAVIORS = {
     sunemperor:    { tick: sunEmperorTick },
     peabomb:       { tick: peaBombTick },
     torchwood:     { tick: torchwoodTick },
+    house:         { tick: houseTick },
+    // 礼物盒自己什么也不干，等着被点开
 };
 
 export function runPlantBehavior(plant, game) {
