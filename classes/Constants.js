@@ -23,6 +23,7 @@ export const PLANT_EMOJI = {
     doomshroom: '☠️',
     sunemperor: '👑',
     peabomb: '💣',
+    torchwood: '🔥',
     plantfood: '💚',
     redfood: '❤️',
     shovel: '🪏',
@@ -53,6 +54,7 @@ export const PLANT_COSTS = {
     doomshroom: 0,
     sunemperor: 0,
     peabomb: 0,
+    torchwood: 0,
     plantfood: 0,
     redfood: 0,
 };
@@ -82,6 +84,7 @@ export const PLANT_COOLDOWNS = {
     doomshroom: 0,
     sunemperor: 0,
     peabomb: 0,
+    torchwood: 0,
     plantfood: 0,
     redfood: 0,
 };

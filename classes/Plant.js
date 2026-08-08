@@ -55,6 +55,8 @@ export class Plant extends Entity {
             supermg: '<span class="helmet-pea">🫛<span class="hp-helmet">🪖</span></span>',
             // 超级电能机枪豌豆：同一顶钢盔，豌豆本体染成青色（.elec-pea）
             elecmg: '<span class="helmet-pea elec-pea">🫛<span class="hp-helmet">🪖</span></span>',
+            // 火炬树桩：一截树桩顶着一团火焰，都是 CSS 画的，见 .torch-wood
+            torchwood: '<span class="torch-wood"><i class="tw-flame"></i><i class="tw-stump"></i></span>',
             // 豌豆炸弹：左边双重射手的脸、右边豌豆的脸，中间一根樱桃梗
             peabomb: '<span class="pea-bomb"><i class="pb-stem"></i><span class="pb-face l">🌿</span><span class="pb-face r">🌱</span></span>',
             // 阳光帝果：黄坚果 + 头顶小坚果，两颗都带向日葵花瓣，见 .sun-emperor
