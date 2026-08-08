@@ -116,6 +116,26 @@
             <div class="seed-icon"><span class="helmet-pea">🫛<span class="hp-helmet">🪖</span></span></div>
             <div class="seed-cost">0</div>
           </div>
+          <div class="seed-packet" data-plant="elecmg">
+            <div class="cooldown-overlay"></div>
+            <div class="seed-icon"><span class="helmet-pea elec-pea">🫛<span class="hp-helmet">🪖</span></span></div>
+            <div class="seed-cost">0</div>
+          </div>
+          <div class="seed-packet" data-plant="iceshroom">
+            <div class="cooldown-overlay"></div>
+            <div class="seed-icon"><span class="ice-shroom"><span class="is-cap">🍄</span><span class="is-ice"></span></span></div>
+            <div class="seed-cost">0</div>
+          </div>
+          <div class="seed-packet" data-plant="doomshroom">
+            <div class="cooldown-overlay"></div>
+            <div class="seed-icon"><span class="doom-shroom"><span class="ds-cap"></span><span class="ds-stem"></span></span></div>
+            <div class="seed-cost">0</div>
+          </div>
+          <div class="seed-packet" data-plant="sunemperor">
+            <div class="cooldown-overlay"></div>
+            <div class="seed-icon"><span class="sun-emperor"><span class="se-nut se-small"><i class="se-petal l"></i><i class="se-petal r"></i></span><span class="se-nut se-big"><i class="se-petal l"></i><i class="se-petal r"></i></span></span></div>
+            <div class="seed-cost">0</div>
+          </div>
           <div class="seed-packet" data-plant="plantfood">
             <div class="cooldown-overlay"></div>
             <div class="seed-icon">💚</div>
@@ -164,16 +184,15 @@
               <li>☀️ 收集阳光（仅展示，植物全免费）</li>
               <li>🌱 点种子卡 → 点草坪格种植</li>
               <li>🪏 铲子可移除已种的植物</li>
-              <li>📈 每株植物打出的子弹，一发比一发强 15%（上限 6700 万）</li>
+              <li>📈 每株植物打出的子弹，一发比一发强 15%（上限 18000）</li>
               <li>🚜 每行一台割草机，突防自动清场</li>
               <li>🤖 <b>将王博士机甲</b> — 普通模式唯一的敌人，血量 6400 万</li>
-              <li>　└ 每颗子弹伤害 17000（僵尸 800 血，一发一个）</li>
               <li>　└ 每波放 20 只僵尸（从弱到强），每只 800 血、头顶显示血量</li>
               <li>　└ 放僵尸时无敌够不着；放完会低头 8 秒，趁机打他</li>
               <li>🌻 <b>向日葵</b> — 持续产阳光</li>
               <li>🌱 <b>豌豆射手</b> — 同行直射</li>
               <li>🌰 <b>坚果墙</b> — 高血量肉盾</li>
-              <li>❄️ <b>寒冰射手</b> — 命中减速 30%</li>
+              <li>❄️ <b>寒冰射手</b> — 命中减速 30%；打中将王博士把他停住 2 秒</li>
               <li>🌿 <b>双发射手</b> — 一次两颗豌豆</li>
               <li>🍒 <b>樱桃炸弹</b> — 0.8 秒 3×3 秒杀</li>
               <li>🥔 <b>土豆地雷</b> — 3 秒后踩中即炸</li>
@@ -183,12 +202,24 @@
               <li>💧 <b>水滴</b> — 每秒一发，穿透整行</li>
               <li>🌽 <b>玉米炮</b> — 自动追踪连续轰炸</li>
               <li>🔫 <b>机枪炮台</b> — 4 连射扫三行</li>
-              <li>🌟 <b>原始豌豆</b> — 眩晕击退</li>
+              <li>🌟 <b>原始豌豆</b> — 70 伤 + 眩晕击退</li>
               <li>🌳 <b>三重豌豆</b> — 三行各一颗</li>
               <li>🥥 <b>坚果保龄</b> — 2 秒后沿行碾压</li>
               <li>🥬 <b>卷心菜投手</b> — 每 0.8 秒投一颗</li>
               <li>🧲 <b>磁力菇</b> — 每 1.5 秒击退全场僵尸，再吸到自己这一行</li>
-              <li>🪖 <b>超级机枪</b> — 0.5 秒 6 连发，吃绿叶素永久 +1 连</li>
+              <li>🪖 <b>超级机枪</b> — 0.5 秒 6 连发；喂绿叶素 +1 连，大招 2 秒里每点一下再 +1</li>
+              <li>⚡ <b>超级电能机枪豌豆</b> — 0.5 秒 6 连发青色电能弹，无限贯穿</li>
+              <li>　└ 对僵尸无限点伤害；打博士 1800 起步（随递增涨到 18000）</li>
+              <li>　└ 每 5 轮自动散射 150 颗，每散射一次连发数永久 +1</li>
+              <li>🍄 <b>寒冰菇</b> — 每 5 秒全场寒冰爆炸：2 点伤害 + 冻住 5 秒（含将王博士）</li>
+              <li>　└ 绿叶素放冰暴：冻 10 秒，且这株的间隔永久 −1 秒（最低 1 秒）</li>
+              <li>　└ 博士被冻住时不放僵尸也不换阶段，站在原地随便打</li>
+              <li>☠️ <b>毁灭菇</b> — 每 5 秒紫色蘑菇云：全场 1800 点伤害</li>
+              <li>　└ 种下后自己会一直慢慢长大（每秒 +4%），没有上限</li>
+              <li>　└ 每喂一次绿叶素，伤害永久 +1800、个头再窜一截</li>
+              <li>👑 <b>阳光帝果</b> — 血量无限的黄坚果，头顶还顶一颗小坚果</li>
+              <li>　└ 阳光 ≥500 时空手点它：回满血 + 面前攒一颗保龄球，3 秒后滚出去</li>
+              <li>　└ 同时只攒一颗：滚出去之前每点一下，这颗球就更大一圈，只增不减</li>
               <li>💚 <b>绿叶素</b> — 点植物开 2 秒大招（攻速 ×20）</li>
             </ul>
             <div class="shortcuts">

@@ -5,6 +5,10 @@ import { cannonAutoFire } from './CornCannon.js';
 import { cabbageBarrage } from './CabbagePult.js';
 import { magnetPull, magnetUltimate } from './MagnetShroom.js';
 import { mgVolley, mgScatter, mgUpgrade } from './SuperMG.js';
+import { elecVolley, elecScatter } from './ElectricMG.js';
+import { iceBlast, iceStorm, iceInterval } from './IceShroom.js';
+import { doomBlast, doomUpgrade, doomGrow, DOOM_INTERVAL } from './DoomShroom.js';
+import { sunEmperorTick } from './SunEmperor.js';
 
 // 植物行为表：声明式描述每种植物每个 tick 该做什么。
 //
@@ -78,7 +82,7 @@ function cherryTick(plant, game) {
         plant._cherryUlt = true;
         const types = ['peashooter', 'sunflower', 'wallnut', 'iceshooter', 'doubleshooter',
                        'pitcher', 'glue', 'obsidian', 'gatling', 'waterdrop', 'corncannon',
-                       'primitivepea', 'triplepea', 'cabbagepult', 'supermg'];
+                       'primitivepea', 'triplepea', 'cabbagepult', 'supermg', 'elecmg', 'iceshroom', 'doomshroom', 'sunemperor'];
         for (let r = 0; r < game.height; r++) {
             for (let c = 0; c < game.width; c++) {
                 spawnPlant(game,r, c, types[Math.floor(Math.random() * types.length)]);
@@ -166,6 +170,61 @@ function supermgTick(plant, game) {
     }
 }
 
+// 超级电能机枪豌豆：0.5 秒一轮 6 连发无限贯穿电能弹，每打满 5 轮自动喷一次
+// 150 颗电能散射弹
+function elecmgTick(plant, game) {
+    if (plant.timer < 500) return;
+    plant.timer = 0;
+
+    const row = Math.floor(plant.y / game.cellHeight);
+    if (!(plant.ultimateMs > 0) && !hasEnemyInRow(game, row, plant.x)) return;
+
+    elecVolley(game, plant);
+
+    plant._elecVolleys = (plant._elecVolleys || 0) + 1;
+    if (plant._elecVolleys >= 5) {
+        plant._elecVolleys = 0;
+        elecScatter(game, plant);
+    }
+}
+
+// 寒冰菇：每 5 秒全场寒冰爆炸（2 点伤害 + 冻住全场）；
+// 绿叶素大招是冰暴，每放一次这株的间隔就永久缩短 1 秒
+function iceshroomTick(plant, game) {
+    if (plant.ultimateMs > 0) {
+        if (!plant._iceUlt) {
+            plant._iceUlt = true;
+            iceStorm(game, plant);
+        }
+        return;
+    }
+    plant._iceUlt = false;
+
+    if (plant.timer < iceInterval(plant)) return;
+    plant.timer = 0;
+    iceBlast(game, plant);
+}
+
+// 毁灭菇：每 5 秒紫色蘑菇云爆炸一次，全场 1800 点伤害；
+// 绿叶素大招每放一次，这株的爆炸伤害永久 +1800，云也跟着长大
+function doomshroomTick(plant, game) {
+    // 每帧都长一点，肉眼可见地越长越大，不封顶
+    doomGrow(plant, game);
+
+    if (plant.ultimateMs > 0) {
+        if (!plant._doomUlt) {
+            plant._doomUlt = true;
+            doomUpgrade(game, plant);
+        }
+        return;
+    }
+    plant._doomUlt = false;
+
+    if (plant.timer < DOOM_INTERVAL) return;
+    plant.timer = 0;
+    doomBlast(game, plant);
+}
+
 function magnetshroomTick(plant, game) {
     if (plant.ultimateMs > 0) {
         if (!plant._magnetUlt) {
@@ -209,6 +268,10 @@ export const PLANT_BEHAVIORS = {
     cabbagepult:   { tick: cabbagepultTick },
     magnetshroom:  { tick: magnetshroomTick },
     supermg:       { tick: supermgTick },
+    elecmg:        { tick: elecmgTick },
+    iceshroom:     { tick: iceshroomTick },
+    doomshroom:    { tick: doomshroomTick },
+    sunemperor:    { tick: sunEmperorTick },
 };
 
 export function runPlantBehavior(plant, game) {

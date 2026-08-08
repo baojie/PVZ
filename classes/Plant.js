@@ -8,7 +8,11 @@ export class Plant extends Entity {
         this.type = type;
         this.timer = 0;
 
-        if (type === 'wallnut') {
+        if (type === 'sunemperor') {
+            // 阳光帝果：血量无限，谁也啃不动
+            this.health = Infinity;
+            this.maxHealth = Infinity;
+        } else if (type === 'wallnut') {
             this.health = 9999999;
             this.maxHealth = 9999999;
         } else if (type === 'glue') {
@@ -49,6 +53,14 @@ export class Plant extends Entity {
             nutbowling: '🥥', cabbagepult: '🥬', magnetshroom: '🧲',
             // 超级机枪：豌豆本体上扣一顶钢盔，见 style.css 的 .helmet-pea
             supermg: '<span class="helmet-pea">🫛<span class="hp-helmet">🪖</span></span>',
+            // 超级电能机枪豌豆：同一顶钢盔，豌豆本体染成青色（.elec-pea）
+            elecmg: '<span class="helmet-pea elec-pea">🫛<span class="hp-helmet">🪖</span></span>',
+            // 阳光帝果：黄坚果 + 头顶小坚果，两颗都带向日葵花瓣，见 .sun-emperor
+            sunemperor: '<span class="sun-emperor"><span class="se-nut se-small"><i class="se-petal l"></i><i class="se-petal r"></i></span><span class="se-nut se-big"><i class="se-petal l"></i><i class="se-petal r"></i></span></span>',
+            // 毁灭菇：灰柄黑伞，整株都是 CSS 画的，见 .doom-shroom
+            doomshroom: '<span class="doom-shroom"><span class="ds-cap"></span><span class="ds-stem"></span></span>',
+            // 寒冰菇：蓝色的蘑菇，头顶顶着一排冰锥（都是 CSS 画的，见 .ice-shroom）
+            iceshroom: '<span class="ice-shroom"><span class="is-cap">🍄</span><span class="is-ice"></span></span>',
         };
         let icon = icons[type] || '';
 

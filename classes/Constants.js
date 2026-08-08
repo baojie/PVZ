@@ -18,6 +18,10 @@ export const PLANT_EMOJI = {
     cabbagepult: '🥬',
     magnetshroom: '🧲',
     supermg: '🪖',
+    elecmg: '⚡',
+    iceshroom: '🍄',
+    doomshroom: '☠️',
+    sunemperor: '👑',
     plantfood: '💚',
     shovel: '🪏',
 };
@@ -42,6 +46,10 @@ export const PLANT_COSTS = {
     cabbagepult: 0,
     magnetshroom: 0,
     supermg: 0,
+    elecmg: 0,
+    iceshroom: 0,
+    doomshroom: 0,
+    sunemperor: 0,
     plantfood: 0,
 };
 
@@ -65,6 +73,10 @@ export const PLANT_COOLDOWNS = {
     cabbagepult: 0,
     magnetshroom: 0,
     supermg: 0,
+    elecmg: 0,
+    iceshroom: 0,
+    doomshroom: 0,
+    sunemperor: 0,
     plantfood: 0,
 };
 
