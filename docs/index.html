@@ -176,6 +176,25 @@
         </div>
       </div>
 
+      <!-- 左边那片青蓝色地带：红瓦白墙的房子 + 石板院子（纯装饰，全是 CSS 画的） -->
+      <div id="house" data-tip="你家 — 僵尸进了这儿就输了">
+        <i class="h-roof"></i>
+        <i class="h-wall">
+          <i class="h-window"></i>
+          <i class="h-window"></i>
+          <i class="h-window"></i>
+        </i>
+        <i class="h-bush b1"></i>
+        <i class="h-bush b2"></i>
+        <i class="h-bush b3"></i>
+        <i class="h-patio">
+          <i class="h-umbrella"><i class="u-canopy"></i><i class="u-pole"></i></i>
+          <i class="h-table"></i>
+          <i class="h-grill"><i class="g-lid"></i><i class="g-bowl"></i><i class="g-legs"></i></i>
+        </i>
+        <i class="h-fence"></i>
+      </div>
+
       <!-- Game World -->
       <div id="game-board">
         <div id="background-layer"></div>
@@ -239,7 +258,7 @@
               <li>🌿🌱 <b>豌豆炸弹</b> — 种下 3 秒后自爆，100 颗豌豆围两圈一起射出去</li>
               <li>　└ 绿叶素：满地召唤会射豌豆的植物；红叶素：改射樱桃子弹</li>
               <li>🔥 <b>火炬树桩</b> — 豌豆类子弹穿过它变红，伤害 ×2</li>
-              <li>　└ 喂绿叶素火焰变蓝 ×4，再喂变紫 ×8（紫色到顶）</li>
+              <li>　└ 每喂一次绿叶素换一种彩虹色、倍率翻倍：红2→蓝4→紫8→橙16→黄32→绿64→青128</li>
               <li>💚 <b>绿叶素</b> — 点植物开 2 秒大招（攻速 ×20）</li>
               <li>❤️ <b>红叶素</b> — 点植物：它打 5 秒小红樱桃（每颗 1000），到点恢复</li>
             </ul>
