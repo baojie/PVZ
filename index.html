@@ -146,6 +146,11 @@
             <div class="seed-icon"><span class="torch-wood"><i class="tw-flame"></i><i class="tw-stump"></i></span></div>
             <div class="seed-cost">0</div>
           </div>
+          <div class="seed-packet" data-plant="house">
+            <div class="cooldown-overlay"></div>
+            <div class="seed-icon"><span class="house-plant"><i class="hp-roof"></i><i class="hp-wall"><i class="hp-win"></i><i class="hp-door"></i></i></span></div>
+            <div class="seed-cost">0</div>
+          </div>
           <div class="seed-packet" data-plant="plantfood">
             <div class="cooldown-overlay"></div>
             <div class="seed-icon">💚</div>
@@ -176,25 +181,6 @@
         </div>
       </div>
 
-      <!-- 左边那片青蓝色地带：红瓦白墙的房子 + 石板院子（纯装饰，全是 CSS 画的） -->
-      <div id="house" data-tip="你家 — 僵尸进了这儿就输了">
-        <i class="h-roof"></i>
-        <i class="h-wall">
-          <i class="h-window"></i>
-          <i class="h-window"></i>
-          <i class="h-window"></i>
-        </i>
-        <i class="h-bush b1"></i>
-        <i class="h-bush b2"></i>
-        <i class="h-bush b3"></i>
-        <i class="h-patio">
-          <i class="h-umbrella"><i class="u-canopy"></i><i class="u-pole"></i></i>
-          <i class="h-table"></i>
-          <i class="h-grill"><i class="g-lid"></i><i class="g-bowl"></i><i class="g-legs"></i></i>
-        </i>
-        <i class="h-fence"></i>
-      </div>
-
       <!-- Game World -->
       <div id="game-board">
         <div id="background-layer"></div>
@@ -216,7 +202,7 @@
           <div class="how-to-play">
             <ul>
               <li>☀️ 收集阳光（仅展示，植物全免费）</li>
-              <li>🌱 点种子卡 → 点草坪格种植</li>
+              <li>🌱 点种子卡 → 点草坪格种植（左边 3 列蓝草坪一样能种）</li>
               <li>🪏 铲子可移除已种的植物</li>
               <li>📈 只有 ⚡ 超级电能机枪豌豆越打越狠：一发比一发强 15%（上限 18000）</li>
               <li>🚜 每行一台割草机，突防自动清场</li>
@@ -259,6 +245,8 @@
               <li>　└ 绿叶素：满地召唤会射豌豆的植物；红叶素：改射樱桃子弹</li>
               <li>🔥 <b>火炬树桩</b> — 豌豆类子弹穿过它变红，伤害 ×2</li>
               <li>　└ 每喂一次绿叶素换一种彩虹色、倍率翻倍：红2→蓝4→紫8→橙16→黄32→绿64→青128</li>
+              <li>🏠 <b>房子</b> — 只能盖在棋盘左边的蓝色区域，一格一栋</li>
+              <li>　└ 绿叶素：草坪上随机一格冒出 🎁 礼物盒，空手点开变成随机植物（房子除外）</li>
               <li>💚 <b>绿叶素</b> — 点植物开 2 秒大招（攻速 ×20）</li>
               <li>❤️ <b>红叶素</b> — 点植物：它打 5 秒小红樱桃（每颗 1000），到点恢复</li>
             </ul>
