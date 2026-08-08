@@ -837,15 +837,36 @@ body {
 .sun-emperor .se-petal.l { right: 92%; transform: translateY(-50%) scaleX(-1); }
 .sun-emperor .se-petal.r { left: 92%; }
 
-/* 攒球期间摆在阳光帝果面前的那颗保龄球：点一下大一圈，滚出去之前一直在那儿转 */
+/* 阳光帝果的保龄球：黄色的球，两边各一片向日葵花瓣。
+   攒球期间摆在前面那一格的那颗、滚出去的那颗，共用这一套。 */
+.se-ball {
+  background: radial-gradient(circle at 32% 28%, #fff9c4, #ffd54f 48%, #f9a825 78%, #e08b00) !important;
+  border: 3px solid #b8730a !important;
+  border-radius: 50%;
+  box-shadow: 0 0 14px #ffc107, 0 0 28px rgba(255, 193, 7, 0.6) !important;
+  overflow: visible;
+}
+
+/* 球两边的花瓣，跟着球一起转 */
+.se-ball .se-ball-petal {
+  position: absolute;
+  top: 50%;
+  width: 45%;
+  height: 34%;
+  background: linear-gradient(90deg, #ffca28, #ff9800);
+  border-radius: 50% 0 50% 0;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.se-ball .se-ball-petal.l { right: 88%; transform: translateY(-50%) scaleX(-1); }
+.se-ball .se-ball-petal.r { left: 88%; }
+
+/* 攒球期间那颗：点一下大一圈，滚出去之前一直在那儿脉动 */
 .se-held-ball {
   position: absolute;
   z-index: 24;
   pointer-events: none;
-  background: radial-gradient(circle at 32% 30%, #d6a16d, #8b4513 65%, #3e2410);
-  border: 3px solid #2c1810;
-  border-radius: 50%;
-  box-shadow: 0 0 14px #8b4513, 0 0 26px rgba(255, 193, 7, 0.65);
   animation: se-held 0.9s ease-in-out infinite alternate;
   transition: width 0.15s ease-out, height 0.15s ease-out,
               left 0.15s ease-out, top 0.15s ease-out;
