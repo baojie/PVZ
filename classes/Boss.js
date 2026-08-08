@@ -134,10 +134,13 @@ export class Boss {
             return;
         }
 
-        this.phaseTimer += dt;
+        // J / H 调的就是这个倍率：博士整套节奏都按它走 —— 放僵尸放得更密，
+        // 低头也来得更快（相应地，低头那 8 秒也过得更快）
+        const rate = game.bossSpawnRate || 1;
+        this.phaseTimer += dt * rate;
 
         if (this.phase === 'spawn') {
-            this.spawnTimer += dt;
+            this.spawnTimer += dt * rate;
             while (this.spawnTimer >= SPAWN_INTERVAL && this.spawnedInWave < this.lineup.length) {
                 this.spawnTimer -= SPAWN_INTERVAL;
                 this._releaseZombie(game);

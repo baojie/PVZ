@@ -30,7 +30,15 @@ export function setupEventListeners(game) {
         }
         if (e.code === 'KeyH') {
             game.zombieSpeedBoost = (game.zombieSpeedBoost || 1) / 3;
-            game.showNotEnoughFeedback(`🐢 僵尸减速 ×${game.zombieSpeedBoost.toFixed(3)}`);
+            // 顺带把将王博士放僵尸的速度也压下去
+            game.bossSpawnRate = (game.bossSpawnRate || 1) / 3;
+            game.showNotEnoughFeedback(
+                `🐢 僵尸减速 ×${game.zombieSpeedBoost.toFixed(3)} · 博士节奏 ×${game.bossSpawnRate.toFixed(3)}`);
+        }
+        if (e.code === 'KeyJ') {
+            game.bossSpawnRate = (game.bossSpawnRate || 1) * 3;
+            game.showNotEnoughFeedback(
+                `🤖 博士节奏 ×${game.bossSpawnRate}（放僵尸更密 · 低头更快）`);
         }
         if (e.code === 'Escape') {
             game.selectedPlant = null;

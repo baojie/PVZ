@@ -57,6 +57,7 @@ class Game {
         this.cannonIntervals = [];
         this.zombieSpeedMultiplier = 1;
         this.zombieSpeedBoost = 1;
+        this.bossSpawnRate = 1;      // J 加速 / H 减速将王博士放僵尸
         this.randomBullets = false;
         this.plantSpeedMultiplier = 1;
 
