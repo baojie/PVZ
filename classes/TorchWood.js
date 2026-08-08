@@ -1,19 +1,24 @@
 // 火炬树桩 🔥🪵 —— 一截树桩，上面顶着一团火焰。
 //
 // 豌豆类的子弹从它这一格飞过去时会被点着：子弹变成红色，伤害 ×2。
-// 绿叶素大招：火焰从红变蓝，倍率再 ×2（×4）；再来一次变紫，再 ×2（×8）。
-// 紫色就是顶了，再喂绿叶素也不会更强。
+// 绿叶素大招：火焰每喂一次换一种颜色，倍率跟着翻一倍。
+// 一共走完彩虹的七种颜色：红 ×2 → 蓝 ×4 → 紫 ×8 → 橙 ×16 → 黄 ×32 →
+// 绿 ×64 → 青 ×128。青火就是顶了，再喂绿叶素也不会更强。
 //
 // 每颗子弹在同一根树桩上只点一次，但连着穿过几根树桩会一根一根叠上去。
 
 // 会被点着的「豌豆类」子弹
 const PEA_TYPES = new Set(['normal', 'ice', 'gatling', 'primitivepea', 'mgpea', 'scatterpea']);
 
-// 火焰的三段颜色：红 ×2 → 蓝 ×4 → 紫 ×8
+// 火焰的七段颜色，把彩虹七色用满，每换一种颜色倍率翻一倍
 const LEVELS = [
     { name: '红', cls: 'torch-red',    bullet: 'torched-red',    mult: 2 },
     { name: '蓝', cls: 'torch-blue',   bullet: 'torched-blue',   mult: 4 },
     { name: '紫', cls: 'torch-purple', bullet: 'torched-purple', mult: 8 },
+    { name: '橙', cls: 'torch-orange', bullet: 'torched-orange', mult: 16 },
+    { name: '黄', cls: 'torch-yellow', bullet: 'torched-yellow', mult: 32 },
+    { name: '绿', cls: 'torch-green',  bullet: 'torched-green',  mult: 64 },
+    { name: '青', cls: 'torch-cyan',   bullet: 'torched-cyan',   mult: 128 },
 ];
 
 let torchSeq = 0;
@@ -30,7 +35,7 @@ export function torchMult(plant) {
 export function torchUpgrade(game, plant) {
     const lv = torchLevel(plant);
     if (lv >= LEVELS.length - 1) {
-        game.showNotEnoughFeedback(`🔥 已经是紫火了，到顶了（×${torchMult(plant)}）`);
+        game.showNotEnoughFeedback(`🔥 已经是青火了，七色走完到顶（×${torchMult(plant)}）`);
         return;
     }
     plant._torchLv = lv + 1;
@@ -96,7 +101,7 @@ function ignite(game, plant) {
         if (p.bossDamage) p.bossDamage *= cfg.mult;
 
         if (p.element) {
-            p.element.classList.remove('torched-red', 'torched-blue', 'torched-purple');
+            for (const l of LEVELS) p.element.classList.remove(l.bullet);
             p.element.classList.add('torched', cfg.bullet);
         }
     }

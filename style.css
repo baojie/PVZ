@@ -801,6 +801,10 @@ body {
 
 .plant.torch-blue   .torch-wood { --flame-a: #e3f7ff; --flame-b: #40c4ff; --flame-c: #0277bd; }
 .plant.torch-purple .torch-wood { --flame-a: #f7e4ff; --flame-b: #ba68c8; --flame-c: #6a1b9a; }
+.plant.torch-orange .torch-wood { --flame-a: #fff3e0; --flame-b: #ff9100; --flame-c: #e65100; }
+.plant.torch-yellow .torch-wood { --flame-a: #fffde7; --flame-b: #ffea00; --flame-c: #f9a825; }
+.plant.torch-green  .torch-wood { --flame-a: #f1fff0; --flame-b: #76ff03; --flame-c: #2e7d32; }
+.plant.torch-cyan   .torch-wood { --flame-a: #e0fffb; --flame-b: #18ffff; --flame-c: #00838f; }
 
 /* 树桩：一截棕色的桩子，顶上一圈浅色的年轮切面 */
 .torch-wood .tw-stump {
@@ -878,6 +882,26 @@ body {
 .projectile.torched-purple {
   background: radial-gradient(circle at 35% 30%, #f3e5f5, #ab47bc 55%, #4a148c) !important;
   box-shadow: 0 0 9px #ce93d8, 0 0 18px rgba(106, 27, 154, 0.8) !important;
+}
+
+.projectile.torched-orange {
+  background: radial-gradient(circle at 35% 30%, #fff3e0, #ff9100 55%, #e65100) !important;
+  box-shadow: 0 0 9px #ffab40, 0 0 18px rgba(230, 81, 0, 0.8) !important;
+}
+
+.projectile.torched-yellow {
+  background: radial-gradient(circle at 35% 30%, #fffde7, #ffea00 55%, #f9a825) !important;
+  box-shadow: 0 0 9px #ffee58, 0 0 18px rgba(249, 168, 37, 0.8) !important;
+}
+
+.projectile.torched-green {
+  background: radial-gradient(circle at 35% 30%, #f1fff0, #76ff03 55%, #2e7d32) !important;
+  box-shadow: 0 0 9px #b2ff59, 0 0 18px rgba(46, 125, 50, 0.8) !important;
+}
+
+.projectile.torched-cyan {
+  background: radial-gradient(circle at 35% 30%, #e0fffb, #18ffff 55%, #00838f) !important;
+  box-shadow: 0 0 10px #84ffff, 0 0 20px rgba(0, 131, 143, 0.85) !important;
 }
 
 /* ---------- 豌豆炸弹 ---------- */
