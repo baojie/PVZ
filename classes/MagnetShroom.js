@@ -107,8 +107,9 @@ export function magnetUltimate(game, plant) {
     const ws = game.wandererSystem;
     const wCount = ws ? ws.count : 0;
 
-    if (targets.length === 0 && wCount === 0) {
-        flash(game, '🧲 场上没有僵尸!');
+    const boss = game.boss && !game.boss.markedForDeletion ? game.boss : null;
+    if (targets.length === 0 && wCount === 0 && !boss) {
+        flash(game, '🧲 场上没有目标!');
         return;
     }
 
@@ -151,6 +152,14 @@ export function magnetUltimate(game, plant) {
 // 第三段：引爆
 function detonate(game, rowY, targets) {
     game.sound.playExplosion();
+
+    // 博士那台机甲吸不动，但磁场引爆照样罩得到他。走 takeDamage，
+    // 所以他没低头 / 没被冻住时依旧无敌。
+    const boss = game.boss;
+    if (boss && !boss.markedForDeletion) {
+        boss.takeDamage(ULT_DAMAGE);
+        blastAt(game, boss.x + boss.width / 2, boss.y + boss.height / 2);
+    }
 
     const band = document.createElement('div');
     band.className = 'magnet-blast-band';

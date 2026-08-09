@@ -52,17 +52,23 @@ export class Plant extends Entity {
         const icons = {
             peashooter: '🌱', sunflower: '🌻', wallnut: '🌰',
             iceshooter: '❄️', doubleshooter: '🌿', cherry: '🍒', potato: '🥔',
-            pitcher: '🎯', glue: '🧿', obsidian: '🗿', gatling: '🔫', waterdrop: '💧',
+ glue: '🧿', obsidian: '🗿', gatling: '🔫', waterdrop: '💧',
             corncannon: '🌽', primitivepea: '🌟', triplepea: '🌳',
-            nutbowling: '🥥', cabbagepult: '🥬', magnetshroom: '🧲',
+            nutbowling: '🥥', magnetshroom: '🧲',
+            // 卷心菜投手：圆卷心菜架在投石座上，和西瓜 / 玉米投手一套长相
+            cabbagepult: '<span class="cabbage-pult"><i class="cp-cabbage"></i><i class="cp-base"></i></span>',
             // 超级机枪：豌豆本体上扣一顶钢盔，见 style.css 的 .helmet-pea
             supermg: '<span class="helmet-pea">🫛<span class="hp-helmet">🪖</span></span>',
             // 超级电能机枪豌豆：同一顶钢盔，豌豆本体染成青色（.elec-pea）
             elecmg: '<span class="helmet-pea elec-pea">🫛<span class="hp-helmet">🪖</span></span>',
             // 火炬树桩：一截树桩顶着一团火焰，都是 CSS 画的，见 .torch-wood
             torchwood: '<span class="torch-wood"><i class="tw-flame"></i><i class="tw-stump"></i></span>',
+            // 玉米投手：玉米棒架在投石座上，大招时探出炮管
+            kernelpult: '<span class="kernel-pult"><i class="kp-barrel"></i><i class="kp-corn"></i><i class="kp-base"></i></span>',
             // 西瓜投手：绿条纹西瓜架在投石座上，大招时探出炮管
             melonpult: '<span class="melon-pult"><i class="mp-barrel"></i><i class="mp-melon"></i><i class="mp-base"></i></span>',
+            // 超级投手：卷心菜 / 西瓜 / 玉米三个投手摞成一摞（都是 CSS 画的）
+            pitcher: '<span class="super-pult"><i class="sp-cabbage"></i><i class="sp-melon"></i><i class="sp-corn"></i><i class="sp-stump"></i></span>',
             // 房子：红瓦白墙 + 一扇窗一扇门，整栋 CSS 画的
             house: '<span class="house-plant"><i class="hp-roof"></i><i class="hp-wall"><i class="hp-win"></i><i class="hp-door"></i></i></span>',
             // 礼物盒：红白相间的盒子 + 一条竖丝带和一个蝴蝶结

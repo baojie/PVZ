@@ -4,6 +4,8 @@
 // 路障 / 铁桶 / 铁门 / 报纸护甲），直接砸在目标头上 —— 落点伤害不走
 // Zombie.takeDamage 的护盾判定，所以任何护甲都挡不住这「无数点」伤害。
 
+import { BOSS_SENTINEL_DAMAGE } from './Boss.js';
+
 const LOB_MS = 700;        // 单颗卷心菜的飞行时间
 const ARC_HEIGHT = 180;    // 抛物线弧顶高度（px）
 const STAGGER_MS = 40;     // 每颗之间的错开，打出连发感
@@ -18,9 +20,11 @@ export function cabbageBarrage(game, plant) {
     if (ws) {
         for (let i = 0; i < ws.count; i++) targets.push({ wandererIdx: i });
     }
+    // 博士也算一个目标 —— 场上只剩他的时候，大招不该直接哑掉
+    if (game.boss && !game.boss.markedForDeletion) targets.push({ boss: game.boss });
 
     if (targets.length === 0) {
-        flash(game, '🥬 场上没有僵尸!');
+        flash(game, '🥬 场上没有目标!');
         return;
     }
 
@@ -31,6 +35,11 @@ export function cabbageBarrage(game, plant) {
 
 // 目标当前位置（僵尸会一直走，飞行途中要跟着更新）。目标没了返回 null。
 function targetCenter(game, t) {
+    if (t.boss) {
+        const b = t.boss;
+        if (b.markedForDeletion) return null;
+        return { x: b.x + b.width / 2, y: b.y + b.height / 2 };
+    }
     if (t.zombie) {
         const z = t.zombie;
         if (z.markedForDeletion) return null;
@@ -75,7 +84,12 @@ function lobCabbage(game, plant, t, delay) {
 }
 
 function smash(game, t, c) {
-    if (t.zombie) {
+    if (t.boss) {
+        // 走 takeDamage：没低头 / 没被冻住时他本来就是无敌的
+        // 对僵尸是直接清血的「无数点」，对博士按一只僵尸的满血折算
+        // （BOSS_SENTINEL_DAMAGE 就是干这个的），否则一发就把他打光
+        t.boss.takeDamage(BOSS_SENTINEL_DAMAGE);
+    } else if (t.zombie) {
         const z = t.zombie;
         if (z.markedForDeletion) return;
         // 直接清血，绕过 takeDamage 的报纸 / 铁门护盾判定

@@ -808,6 +808,142 @@ body {
   text-shadow: 0 0 4px #00e5ff;
 }
 
+/* ---------- 卷心菜投手 ---------- */
+
+/* 圆卷心菜架在木头投石座上，和西瓜 / 玉米投手一个样式家族 */
+.cabbage-pult {
+  position: relative;
+  display: inline-block;
+  width: 1em;
+  height: 0.92em;
+  vertical-align: middle;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.35));
+}
+
+/* 卷心菜：圆球 + 一圈圈菜叶的纹路 */
+.cabbage-pult .cp-cabbage {
+  position: absolute;
+  left: 50%;
+  top: 0.03em;
+  transform: translateX(-50%);
+  width: 0.62em;
+  height: 0.58em;
+  border-radius: 50%;
+  background:
+    repeating-radial-gradient(circle at 38% 32%,
+      rgba(255, 255, 255, 0.35) 0 0.03em, transparent 0.03em 0.12em),
+    radial-gradient(circle at 36% 30%, #eaffd0, #8bc34a 55%, #33691e);
+  box-shadow: inset -0.06em -0.08em 0.12em rgba(0, 0, 0, 0.28);
+}
+
+/* 菜心那道浅色的芯 */
+.cabbage-pult .cp-cabbage::after {
+  content: "";
+  position: absolute;
+  left: 34%;
+  top: 26%;
+  width: 0.18em;
+  height: 0.14em;
+  background: radial-gradient(ellipse at 50% 50%, rgba(255, 255, 255, 0.85), rgba(200, 240, 160, 0));
+  border-radius: 50%;
+}
+
+.cabbage-pult .cp-base {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 0.78em;
+  height: 0.3em;
+  background: linear-gradient(180deg, #a1673c, #6d4326);
+  border: 0.035em solid #4e2f19;
+  border-radius: 0.06em 0.06em 0.14em 0.14em;
+}
+
+/* ---------- 玉米投手 ---------- */
+
+/* 玉米棒架在木头投石座上；开大招时从底下探出炮管 */
+.kernel-pult {
+  position: relative;
+  display: inline-block;
+  width: 1em;
+  height: 0.92em;
+  vertical-align: middle;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.35));
+}
+
+.kernel-pult .kp-corn {
+  position: absolute;
+  left: 50%;
+  top: 0.02em;
+  transform: translateX(-50%) rotate(-14deg);
+  width: 0.36em;
+  height: 0.6em;
+  border-radius: 50% 50% 45% 45%;
+  background:
+    repeating-linear-gradient(90deg, rgba(180, 120, 0, 0.55) 0 0.04em, transparent 0.04em 0.1em),
+    repeating-linear-gradient(180deg, rgba(180, 120, 0, 0.45) 0 0.04em, transparent 0.04em 0.1em),
+    linear-gradient(180deg, #ffe082, #ffc107 55%, #e8a000);
+  box-shadow: inset -0.05em -0.06em 0.1em rgba(0, 0, 0, 0.28);
+}
+
+.kernel-pult .kp-base {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 0.78em;
+  height: 0.3em;
+  background: linear-gradient(180deg, #a1673c, #6d4326);
+  border: 0.035em solid #4e2f19;
+  border-radius: 0.06em 0.06em 0.14em 0.14em;
+}
+
+.kernel-pult .kp-barrel {
+  position: absolute;
+  left: 46%;
+  top: 0.42em;
+  width: 0;
+  height: 0.22em;
+  background: linear-gradient(180deg, #78909c, #37474f);
+  border-radius: 0.04em;
+  transition: width 0.18s ease-out;
+}
+
+.plant.kernel-cannon .kernel-pult .kp-barrel { width: 0.8em; }
+
+.plant.kernel-cannon .kernel-pult {
+  filter: drop-shadow(0 0 8px #ffca28) drop-shadow(0 0 16px rgba(230, 170, 20, 0.8));
+}
+
+/* 飞在天上的黄油：一块黄方块 */
+.lob-butter {
+  position: absolute;
+  z-index: 45;
+  pointer-events: none;
+  background: linear-gradient(160deg, #fff8c4, #ffd54f 55%, #f0a800);
+  border: 2px solid #b8860b;
+  border-radius: 3px;
+  box-shadow: 0 0 8px rgba(255, 213, 79, 0.85);
+  filter: drop-shadow(0 6px 6px rgba(0, 0, 0, 0.35));
+}
+
+.lob-butter.big {
+  border-width: 3px;
+  border-radius: 5px;
+  box-shadow: 0 0 14px rgba(255, 213, 79, 0.9);
+}
+
+.butter-splash {
+  position: absolute;
+  z-index: 44;
+  pointer-events: none;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 50%, rgba(255, 250, 210, 0.95), rgba(255, 193, 7, 0.8) 45%, rgba(240, 168, 0, 0) 75%);
+  animation: melon-splash 0.45s ease-out forwards;
+}
+
+
 /* ---------- 西瓜投手 ---------- */
 
 /* 绿条纹西瓜架在木头投石座上；开大招时从底下探出一根炮管 */
@@ -1451,6 +1587,29 @@ body {
   animation: none;
   pointer-events: none;
   z-index: 31;
+}
+
+/* 被黄油定住的僵尸：头顶顶一块黄方块，盖掉眩晕那套金光抖动 */
+.zombie.buttered {
+  filter: brightness(1.08) saturate(1.1) drop-shadow(0 0 7px #ffd54f) !important;
+  animation: none !important;
+}
+
+.zombie.buttered::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -6px;
+  transform: translateX(-50%);
+  width: 26px;
+  height: 20px;
+  background: linear-gradient(160deg, #fff8c4, #ffd54f 55%, #f0a800);
+  border: 2px solid #b8860b;
+  border-radius: 3px;
+  box-shadow: 0 0 8px rgba(255, 213, 79, 0.9);
+  animation: none;
+  pointer-events: none;
+  z-index: 32;
 }
 
 /* Lawnmower */
@@ -2120,4 +2279,173 @@ button:active {
 @keyframes gift-drop {
   0%   { box-shadow: inset 0 0 0 4px #ffd54f, 0 0 24px #ffd54f; }
   100% { box-shadow: inset 0 0 0 4px transparent, 0 0 0 transparent; }
+}
+
+/* 圆西瓜：绿皮 + 深绿条纹的球，代替 🍉（那是切开的一牙，不是整颗） */
+.lob-melon.round {
+  border-radius: 50%;
+  background:
+    repeating-conic-gradient(from 0deg at 50% 50%,
+      #1b5e20 0deg 12deg, #43a047 12deg 30deg),
+    radial-gradient(circle at 34% 28%, #a5d6a7, #388e3c 60%, #1b5e20);
+  background-blend-mode: soft-light, normal;
+  border: 2px solid #14421a;
+  box-shadow: inset -4px -5px 10px rgba(0, 0, 0, 0.4),
+              inset 4px 4px 8px rgba(255, 255, 255, 0.25);
+}
+
+/* 高光，让它看着是个球而不是个圆片 */
+.lob-melon.round::after {
+  content: "";
+  position: absolute;
+  left: 22%;
+  top: 16%;
+  width: 26%;
+  height: 20%;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.55);
+  filter: blur(1px);
+}
+
+/* ---------- 超级投手：三个投手摞在一起 ---------- */
+
+.super-pult {
+  position: relative;
+  display: block;
+  width: 54px;
+  height: 62px;
+}
+
+/* 三样东西共用的圆底子 */
+.super-pult i {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 50%;
+}
+
+/* 最上面：卷心菜（浅绿，带一圈叶脉） */
+.super-pult .sp-cabbage {
+  top: 0;
+  width: 24px;
+  height: 22px;
+  background: radial-gradient(circle at 38% 32%, #eaffd0, #7cb342 62%, #33691e);
+  border: 1.5px solid #33691e;
+  box-shadow: inset -2px -2px 4px rgba(0, 0, 0, 0.28);
+}
+
+/* 中间：西瓜（深绿条纹球，和抛出去的那颗一个样） */
+.super-pult .sp-melon {
+  top: 17px;
+  width: 32px;
+  height: 30px;
+  background:
+    repeating-conic-gradient(from 0deg at 50% 50%, #1b5e20 0deg 12deg, #43a047 12deg 30deg),
+    radial-gradient(circle at 34% 28%, #a5d6a7, #388e3c 60%, #1b5e20);
+  background-blend-mode: soft-light, normal;
+  border: 1.5px solid #14421a;
+  box-shadow: inset -3px -3px 6px rgba(0, 0, 0, 0.35);
+}
+
+/* 下面：玉米（黄色，带一排玉米粒的格纹） */
+.super-pult .sp-corn {
+  top: 38px;
+  width: 30px;
+  height: 20px;
+  border-radius: 8px;
+  background:
+    repeating-linear-gradient(90deg, rgba(140, 90, 0, 0.35) 0 1px, transparent 1px 6px),
+    repeating-linear-gradient(180deg, rgba(140, 90, 0, 0.35) 0 1px, transparent 1px 6px),
+    linear-gradient(180deg, #ffe082, #f9a825);
+  border: 1.5px solid #b8860b;
+}
+
+/* 底座树桩 */
+.super-pult .sp-stump {
+  top: 54px;
+  width: 40px;
+  height: 9px;
+  border-radius: 4px;
+  background: linear-gradient(180deg, #a1887f, #5d4037);
+}
+
+/* 大招蓄力时整摞发紫光 */
+.plant.ultimate .super-pult,
+.super-charged .super-pult {
+  filter: drop-shadow(0 0 10px #b39ddb) drop-shadow(0 0 20px #7e57c2);
+}
+
+/* ---------- 三合一抛射物 ---------- */
+
+.lob-tri {
+  position: absolute;
+  z-index: 45;
+  pointer-events: none;
+  filter: drop-shadow(0 6px 6px rgba(0, 0, 0, 0.35));
+}
+
+.lob-tri i {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 50%;
+}
+
+/* 三层各占约三分之一，用 % 定位，这样放大到大招尺寸也不走样 */
+.lob-tri .tp-cabbage {
+  top: 0;
+  width: 60%;
+  height: 34%;
+  background: radial-gradient(circle at 38% 32%, #eaffd0, #7cb342 62%, #33691e);
+  border: 1px solid #33691e;
+}
+
+.lob-tri .tp-melon {
+  top: 28%;
+  width: 84%;
+  height: 46%;
+  background:
+    repeating-conic-gradient(from 0deg at 50% 50%, #1b5e20 0deg 12deg, #43a047 12deg 30deg),
+    radial-gradient(circle at 34% 28%, #a5d6a7, #388e3c 60%, #1b5e20);
+  background-blend-mode: soft-light, normal;
+  border: 1px solid #14421a;
+}
+
+.lob-tri .tp-corn {
+  top: 70%;
+  width: 74%;
+  height: 30%;
+  border-radius: 22%;
+  background:
+    repeating-linear-gradient(90deg, rgba(140, 90, 0, 0.35) 0 1px, transparent 1px 5px),
+    linear-gradient(180deg, #ffe082, #f9a825);
+  border: 1px solid #b8860b;
+}
+
+.lob-tri.big {
+  filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.45)) drop-shadow(0 0 16px rgba(179, 157, 219, 0.9));
+}
+
+/* 同排没有下一只了：掉到地上摔一下 */
+.lob-tri.falling {
+  z-index: 44;
+}
+
+.lob-tri.landed {
+  animation: tri-land 0.26s ease-out forwards;
+}
+
+@keyframes tri-land {
+  0%   { opacity: 1; transform: scale(1)   rotate(0deg); }
+  100% { opacity: 0; transform: scale(0.6) rotate(25deg) translateY(6px); }
+}
+
+/* 落点溅开 */
+.tri-splash {
+  position: absolute;
+  z-index: 44;
+  pointer-events: none;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 50%, rgba(240, 255, 210, 0.95), rgba(149, 117, 205, 0.75) 45%, rgba(94, 53, 177, 0) 75%);
+  animation: melon-splash 0.45s ease-out forwards;
 }
