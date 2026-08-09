@@ -1,5 +1,5 @@
 import { Plant } from './Plant.js';
-import { PLANT_COSTS, PLANT_COOLDOWNS } from './Constants.js';
+import { PLANT_COSTS, PLANT_COOLDOWNS, PLANT_EMOJI, setEmojiCursor } from './Constants.js';
 import { updateSunDisplay } from './SunManager.js';
 
 const RED_FOOD_MS = 5000;   // 红叶素持续多久
@@ -77,7 +77,67 @@ export function useRedFood(game, row, col) {
     }
 }
 
+// ---------- 手套 🧤：把种好的植物整株搬走 ----------
+//
+// 点第一下抓起栈顶那株（连它一身的状态一起：融合星级、超级机枪的连发数、
+// 火炬树桩的火色、毁灭菇涨上去的伤害……都跟着走），点第二下放下。
+// 搬的是同一个 Plant 对象，不是重新种一株，所以这些状态一点都不会丢。
+
+export function grabWithGlove(game, row, col) {
+    const stack = game.grid[row][col];
+    if (!stack || stack.length === 0) return;   // 空格子静默忽略，不弹提示
+    const plant = stack.pop();
+    updateCellDisplay(game, row, col);
+
+    game.heldPlant = plant;
+    game.heldFrom = { row, col };
+    plant.element?.classList.add('held');
+    // 抓起来不弹提示：光标换成这株植物 + 它自己半透明带虚线框，已经够看出来了
+    setEmojiCursor(PLANT_EMOJI[plant.type] || PLANT_EMOJI.glove);
+}
+
+export function dropWithGlove(game, row, col) {
+    const plant = game.heldPlant;
+    if (!canPlantAt(game, col, plant.type)) {
+        game.showNotEnoughFeedback('🏠 蓝草坪只能放房子!');
+        return;
+    }
+
+    plant.x = col * game.cellWidth;
+    plant.y = row * game.cellHeight;
+    plant.draw();
+    // 倭瓜记着「老家」在哪儿，搬完得跟着更新，不然它砸完会跳回老地方
+    if (plant._sqHome !== undefined) { plant._sqHome = plant.x; plant._sqHomeY = plant.y; }
+
+    game.grid[row][col].push(plant);
+    updateCellDisplay(game, row, col);
+    plant.element?.classList.remove('held');
+
+    game.heldPlant = null;
+    game.heldFrom = null;
+    setEmojiCursor(PLANT_EMOJI.glove);
+    game.sound.playPlant();
+}
+
+// Esc / 换工具时把手里那株放回原处，别让它凭空消失
+export function returnHeldPlant(game) {
+    if (!game.heldPlant) return;
+    const { row, col } = game.heldFrom;
+    dropWithGlove(game, row, col);
+    game.showNotEnoughFeedback('🧤 放回原处了');
+}
+
+export function handleGloveClick(game, row, col) {
+    if (game.heldPlant) dropWithGlove(game, row, col);
+    else grabWithGlove(game, row, col);
+}
+
 export function handleGridClick(game, row, col) {
+    if (game.selectedPlant === 'glove') {
+        handleGloveClick(game, row, col);
+        return;
+    }
+
     if (game.selectedPlant === 'plantfood') {
         usePlantFood(game, row, col);
         return;

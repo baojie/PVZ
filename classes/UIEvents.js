@@ -1,7 +1,7 @@
 import { PLANT_EMOJI, setEmojiCursor } from './Constants.js';
 import { handleCornCannonClick } from './CornCannon.js';
 import { collectSun } from './SunManager.js';
-import { removePlant, handleGridClick } from './PlantManager.js';
+import { removePlant, handleGridClick, returnHeldPlant } from './PlantManager.js';
 import { mgClickUpgrade } from './SuperMG.js';
 import { sunEmperorClick } from './SunEmperor.js';
 import { giftClick } from './House.js';
@@ -42,6 +42,7 @@ export function setupEventListeners(game) {
                 `🤖 博士节奏 ×${game.bossSpawnRate}（放僵尸更密 · 低头更快）`);
         }
         if (e.code === 'Escape') {
+            returnHeldPlant(game);   // 手里还攥着植物就先放回原处
             game.selectedPlant = null;
             game.cannonTarget = null;
             game.cannonIntervals.forEach(id => clearInterval(id));
@@ -140,6 +141,7 @@ export function setupEventListeners(game) {
         if (packet.id === 'shovel-btn') return;
         packet.addEventListener('click', () => {
             if (packet.classList.contains('cooldown')) return;
+            if (packet.dataset.plant !== 'glove') returnHeldPlant(game);
             game.shovelMode = false;
             document.getElementById('shovel-btn').classList.remove('selected');
             document.querySelectorAll('.seed-packet').forEach(p => p.classList.remove('selected'));
@@ -151,6 +153,7 @@ export function setupEventListeners(game) {
 
     // Shovel
     document.getElementById('shovel-btn').addEventListener('click', () => {
+        returnHeldPlant(game);
         game.shovelMode = !game.shovelMode;
         document.getElementById('shovel-btn').classList.toggle('selected', game.shovelMode);
         if (game.shovelMode) {
