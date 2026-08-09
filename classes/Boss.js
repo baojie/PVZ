@@ -22,8 +22,10 @@ const SPAWN_PHASE_MS = 10000;                                  // 放僵尸阶�
 const SPAWN_INTERVAL = SPAWN_PHASE_MS / ZOMBIES_PER_WAVE;      // 每 500ms 一只
 const BOW_MS = 8000;                                           // 低头（可攻击）时长
 
-const BOSS_W = 250;
-const BOSS_H = 470;
+// 机甲非常大：碰撞盒 480×640，实际画面还要再乘 .boss-scale 的放大倍数，
+// 上下略微探出棋盘（被画布裁掉一点），显得他把整个右半边塞满
+const BOSS_W = 480;
+const BOSS_H = 640;
 
 // 他手里就一摞报纸，放出来的自然全是报纸僵尸 —— 不再按从弱到强轮换别的类型。
 const SPAWN_TYPE = 'newspaper';
@@ -45,7 +47,8 @@ export class Boss {
 
         const boardH = game.height * game.cellHeight;
         this.x = game.boardWidth - BOSS_W + 70;   // 略微探出右边界，显得他挤满整个屏幕
-        this.y = (boardH - BOSS_H) / 2;
+        // 机甲很高：往上挪一截，保证底下的报纸和脚完整落在画布里
+        this.y = (boardH - BOSS_H) / 2 - 60;
 
         this.phase = 'spawn';          // 'spawn' | 'bow'
         this.phaseTimer = 0;
@@ -92,8 +95,30 @@ export class Boss {
                 <span class="boss-hp-text"></span>
             </div>
             <div class="boss-rig">
-                <div class="boss-head">🧟</div>
-                <div class="boss-paper">📰</div>
+              <div class="boss-scale">
+                <div class="boss-head">
+                    <i class="bh-skull"></i>
+                    <i class="bh-rivets"></i>
+                    <i class="bh-eye l"></i>
+                    <i class="bh-eye r"></i>
+                    <i class="bh-mouth"></i>
+                    <i class="bh-antenna"></i>
+                    <span class="bh-pilot">🧟</span>
+                </div>
+                <i class="boss-neck"></i>
+                <div class="boss-body">
+                    <i class="bb-shoulder l"></i>
+                    <i class="bb-shoulder r"></i>
+                    <i class="bb-torso"></i>
+                    <i class="bb-core"></i>
+                    <i class="bb-arm l"></i>
+                    <i class="bb-arm r"></i>
+                    <i class="bb-hip"></i>
+                    <i class="bb-leg l"><i class="bb-boot"></i></i>
+                    <i class="bb-leg r"><i class="bb-boot"></i></i>
+                    <div class="boss-paper">📰</div>
+                </div>
+              </div>
             </div>
             <div class="boss-state"></div>`;
         this.game.board.appendChild(el);
