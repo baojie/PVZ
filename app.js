@@ -9,6 +9,8 @@ import { spawnSun, updateSunDisplay } from './classes/SunManager.js';
 import { spawnPlant, updateCellDisplay } from './classes/PlantManager.js';
 import { setupTooltip, PLANT_TIPS } from './classes/Tooltip.js';
 import { Boss } from './classes/Boss.js';
+import { dropTrophy, clearTrophy } from './classes/Trophy.js';
+import { showCardPicker, applyChosenCards } from './classes/CardPicker.js';
 
 // Lawnmower resting position (px) — sits just left of the lawn so the icon
 // is mostly visible. See triggerLawnmower / setupLawnmowers.
@@ -31,6 +33,7 @@ class Game {
         this.boardWidth = this.width * this.cellWidth;
 
         this.sound = new SoundManager();
+        this.level = 1;
         this.plantCount = 1;
 
         this._resetGameState();
@@ -53,6 +56,8 @@ class Game {
         this.grid = Array(this.height).fill(null).map(() => Array(this.width).fill(null).map(() => []));
 
         this.boss = null;
+        this.heldPlant = null;   // 手套抓在手里的那株
+        this.heldFrom = null;
         this.selectedPlant = null;
         this.shovelMode = false;
         this.cannonTarget = null;
@@ -171,8 +176,17 @@ class Game {
         this.waves = generateWaves(this.zombieCountMultiplier, this.waveCountSetting);
     }
 
+    // 每一关开打之前先选卡：选完才真正开始
     start() {
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('game-over-screen').classList.add('hidden');
+        document.getElementById('victory-screen').classList.add('hidden');
+        showCardPicker(this, () => this.beginLevel());
+    }
+
+    beginLevel() {
         this.readSettings();
+        applyChosenCards(this);
         updateSunDisplay(this);
         document.getElementById('start-screen').classList.add('hidden');
         document.getElementById('game-over-screen').classList.add('hidden');
@@ -203,6 +217,7 @@ class Game {
         this.wandererSystem = null;
         this.boss?.remove();
         this.boss = null;
+        clearTrophy(this);
         this.plants.forEach(p => p.remove());
         this.zombies.forEach(z => z.remove());
         this.projectiles.forEach(p => p.remove());
@@ -225,6 +240,8 @@ class Game {
         this.wandererSystem = null;
         this.boss?.remove();
         this.boss = null;
+        clearTrophy(this);
+        this.level = 1;   // 回首页重新从第 1 关开始
         this.plants.forEach(p => p.remove());
         this.zombies.forEach(z => z.remove());
         this.projectiles.forEach(p => p.remove());
@@ -361,7 +378,7 @@ class Game {
                 const state = b.markedForDeletion ? '已击败'
                     : (b.frozenMs > 0 ? '❄️ 冻住 · 快打!'
                     : (b.vulnerable ? '低头中 · 快打!' : '无敌 · 放僵尸'));
-                stats.textContent = `将王博士 ${Math.max(0, Math.round(b.health))}/${b.maxHealth} · 第 ${b.wave} 波 · ${state} · 场上 ${this.zombies.length}`;
+                stats.textContent = `第 ${this.level} 关 · 将王博士 ${Math.max(0, Math.round(b.health))}/${b.maxHealth} · 第 ${b.wave} 波 · ${state} · 场上 ${this.zombies.length}`;
             } else if (this.wandererMode) {
                 stats.textContent = `漫游模式 · 场上 ${this.zombies.length}`;
             } else if (this.waveIndex >= this.waves.length) {
@@ -421,7 +438,16 @@ class Game {
             const { r, c } = cells[i];
             spawnPlant(this, r, c, allTypes[Math.floor(Math.random() * allTypes.length)]);
         }
-        document.getElementById('victory-screen').classList.remove('hidden');
+        // 掉一个金奖杯，点它进下一关。这里不弹胜利遮罩 —— 遮罩会盖住棋盘，
+        // 杯子就点不到了。
+        dropTrophy(this, () => this.nextLevel());
+    }
+
+    nextLevel() {
+        this.level++;
+        // restart 现在会先弹选卡界面，博士要等 beginLevel 才创建，
+        // 所以这儿别去读 this.boss.maxHealth（那时候还是 null）
+        this.restart();
     }
 }
 

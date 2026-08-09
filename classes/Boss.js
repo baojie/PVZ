@@ -10,7 +10,7 @@
 
 import { Zombie } from './Zombie.js';
 
-export const BOSS_HP = 64000000;   // 6400 万
+export const BOSS_HP = 64000000;   // 6400 万（第 1 关；每过一关 ×关卡数）
 export const ZOMBIES_PER_WAVE = 20;
 
 // 水滴 / 黑曜石 / 超级投手这类子弹的伤害是 Infinity（对僵尸是「秒杀哨兵」）。
@@ -42,8 +42,9 @@ export function waveLineup(n) {
 export class Boss {
     constructor(game) {
         this.game = game;
-        this.health = BOSS_HP;
-        this.maxHealth = BOSS_HP;
+        // 血量随关卡线性上涨：第 1 关 6400 万、第 2 关 1.28 亿、第 3 关 1.92 亿…
+        this.maxHealth = BOSS_HP * (game.level || 1);
+        this.health = this.maxHealth;
         this.width = BOSS_W;
         this.height = BOSS_H;
         this.markedForDeletion = false;
