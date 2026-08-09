@@ -147,6 +147,16 @@
             <div class="seed-icon"><span class="torch-wood"><i class="tw-flame"></i><i class="tw-stump"></i></span></div>
             <div class="seed-cost">0</div>
           </div>
+          <div class="seed-packet" data-plant="trophypult">
+            <div class="cooldown-overlay"></div>
+            <div class="seed-icon"><span class="trophy-pult"><i class="tp-cup">🏆</i><i class="tp-board"></i></span></div>
+            <div class="seed-cost">0</div>
+          </div>
+          <div class="seed-packet" data-plant="nukecherry">
+            <div class="cooldown-overlay"></div>
+            <div class="seed-icon"><span class="nuke-cherry"><i class="nc-cap"></i><i class="nc-stem"></i><span class="nc-cherry">🍒</span></span></div>
+            <div class="seed-cost">0</div>
+          </div>
           <div class="seed-packet" data-plant="squash">
             <div class="cooldown-overlay"></div>
             <div class="seed-icon"><span class="squash-fruit"><i class="sq-body"></i><i class="sq-eye l"></i><i class="sq-eye r"></i><i class="sq-stem"></i></span></div>
@@ -230,13 +240,13 @@
               <li>🧤 手套：点一下抓起植物（连它的升级一起），再点一格放下 · Esc 放回原处</li>
               <li>📈 只有 ⚡ 超级电能机枪豌豆越打越狠：一发比一发强 15%（上限 18000）</li>
               <li>🚜 每行一台割草机，突防自动清场</li>
-              <li>🤖 <b>将王博士机甲</b> — 普通模式唯一的敌人，血量 6400 万</li>
+              <li>🤖 <b>报纸将王</b> — 普通模式唯一的敌人，血量 6400 万</li>
               <li>　└ 每波放 20 只僵尸（从弱到强），每只 800 血、头顶显示血量</li>
               <li>　└ 放僵尸时无敌够不着；放完会低头 8 秒，趁机打他</li>
               <li>🌻 <b>向日葵</b> — 持续产阳光</li>
               <li>🌱 <b>豌豆射手</b> — 同行直射</li>
               <li>🌰 <b>坚果墙</b> — 高血量肉盾</li>
-              <li>❄️ <b>寒冰射手</b> — 命中减速 30%；打中将王博士把他停住 2 秒</li>
+              <li>❄️ <b>寒冰射手</b> — 命中减速 30%；打中报纸将王把他停住 2 秒</li>
               <li>🌿 <b>双发射手</b> — 一次两颗豌豆</li>
               <li>🍒 <b>樱桃炸弹</b> — 0.8 秒 3×3 秒杀</li>
               <li>🥔 <b>土豆地雷</b> — 3 秒后踩中即炸</li>
@@ -255,11 +265,11 @@
               <li>🧲 <b>磁力菇</b> — 每 1.5 秒击退全场僵尸，再吸到自己这一行</li>
               <li>🪖 <b>超级机枪</b> — 0.5 秒 6 连发；喂绿叶素 +1 连，大招 2 秒里每点一下再 +1</li>
               <li>⚡ <b>超级电能机枪豌豆</b> — 0.5 秒 6 连发青色电能弹，无限贯穿</li>
-              <li>　└ 对僵尸无限点伤害；打博士 1800 起步（随递增涨到 18000）</li>
+              <li>　└ 对僵尸无限点伤害；打将王 1800 起步（随递增涨到 18000）</li>
               <li>　└ 每 5 轮自动散射 150 颗，每散射一次连发数永久 +1</li>
-              <li>🍄 <b>寒冰菇</b> — 每 5 秒全场寒冰爆炸：2 点伤害 + 冻住 5 秒（含将王博士）</li>
+              <li>🍄 <b>寒冰菇</b> — 每 5 秒全场寒冰爆炸：2 点伤害 + 冻住 5 秒（含报纸将王）</li>
               <li>　└ 绿叶素放冰暴：冻 10 秒，且这株的间隔永久 −1 秒（最低 1 秒）</li>
-              <li>　└ 博士被冻住时不放僵尸也不换阶段，站在原地随便打</li>
+              <li>　└ 将王被冻住时不放僵尸也不换阶段，站在原地随便打</li>
               <li>☠️ <b>毁灭菇</b> — 每 5 秒紫色蘑菇云：全场 1800 点伤害</li>
               <li>　└ 种下后自己会一直慢慢长大（每秒 +4%），没有上限</li>
               <li>　└ 每喂一次绿叶素，伤害永久 +1800、个头再窜一截</li>
@@ -273,8 +283,14 @@
               <li>　└ 每喂一次绿叶素换一种彩虹色、倍率翻倍：红2→蓝4→紫8→橙16→黄32→绿64→青128</li>
               <li>🏠 <b>房子</b> — 只能盖在棋盘左边的蓝色区域，一格一栋</li>
               <li>　└ 绿叶素：草坪上随机一格冒出 🎁 礼物盒，空手点开变成随机植物（房子除外）</li>
+              <li>🏆 <b>奖杯投手</b> — 每 5 秒往草坪抛一个奖杯，落地等你点</li>
+              <li>　└ 80% 金杯 = 点一下直接通关；20% <b>铜杯</b> = 点一下直接输</li>
+              <li>☢️ <b>核爆樱桃</b> — 种下 3 秒自爆：红色巨型蘑菇云 + 一圈扩散的红烟</li>
+              <li>　└ 红烟扫到的僵尸头上再炸一朵小蘑菇云，1800 点</li>
+              <li>　└ 体型越大甩出的二次烟越多：普通 1 · 路障 2 · 铁桶 3 · 铁门 4 · 将王 6</li>
+              <li>　└ 绿叶素：满地召唤会爆炸的植物（樱桃 / 土豆 / 毁灭菇 / 豌豆炸弹）</li>
               <li>🍈 <b>倭瓜</b> — 血量无限；<b>前后</b> 3 格有僵尸就盯 3 秒 → 朝它跳一格 → 飞起来砸下去</li>
-              <li>　└ 低头的将王博士也砸，一下一万点</li>
+              <li>　└ 低头的报纸将王也砸，一下一万点</li>
               <li>　└ 压扁落点那一格的僵尸；砸完跳回原位，不会碎</li>
               <li>　└ 绿叶素：满场乱跳，随机砸死 5 只僵尸再跳回原位</li>
               <li>🌽 <b>玉米投手</b> — 抛越过障碍物的黄油：50 伤 + 把僵尸定住 5 秒</li>
@@ -290,8 +306,8 @@
               <kbd>Space</kbd> 暂停
               <kbd>F</kbd> 植物攻速 ×3
               <kbd>G</kbd> 僵尸加速 ×3
-              <kbd>H</kbd> 僵尸减速 ×3（博士节奏也慢 ×3）
-              <kbd>J</kbd> 博士节奏 ×3（放僵尸更密 · 低头更快）
+              <kbd>H</kbd> 僵尸减速 ×3（将王节奏也慢 ×3）
+              <kbd>J</kbd> 将王节奏 ×3（放僵尸更密 · 低头更快）
               <kbd>Esc</kbd> 取消选择
               <kbd>🏠</kbd> 返回首页
             </div>
