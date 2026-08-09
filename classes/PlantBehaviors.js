@@ -2,7 +2,7 @@ import { hasEnemyInRow, hasAnyEnemy, spawnProjectile, cherryBomb } from './Comba
 import { spawnSun } from './SunManager.js';
 import { spawnPlant } from './PlantManager.js';
 import { cannonAutoFire } from './CornCannon.js';
-import { cabbageBarrage } from './CabbagePult.js';
+import { cabbageBarrage, cabbageLob, CABBAGE_INTERVAL } from './CabbagePult.js';
 import { magnetPull, magnetUltimate } from './MagnetShroom.js';
 import { mgVolley, mgScatter, mgUpgrade } from './SuperMG.js';
 import { elecVolley, elecScatter } from './ElectricMG.js';
@@ -12,6 +12,9 @@ import { sunEmperorTick } from './SunEmperor.js';
 import { peaBombTick } from './PeaBomb.js';
 import { torchwoodTick } from './TorchWood.js';
 import { melonLob, melonSniper, melonCherryVolley, MELON_INTERVAL } from './MelonPult.js';
+import { superLob, superVolley, SUPER_INTERVAL } from './SuperPult.js';
+import { kernelLob, kernelButterVolley, kernelCherryVolley, KERNEL_INTERVAL } from './KernelPult.js';
+import { squashTick } from './Squash.js';
 import { houseTick } from './House.js';
 
 // 植物行为表：声明式描述每种植物每个 tick 该做什么。
@@ -86,7 +89,7 @@ function cherryTick(plant, game) {
         plant._cherryUlt = true;
         const types = ['peashooter', 'sunflower', 'wallnut', 'iceshooter', 'doubleshooter',
                        'pitcher', 'glue', 'obsidian', 'gatling', 'waterdrop', 'corncannon',
-                       'primitivepea', 'triplepea', 'cabbagepult', 'supermg', 'elecmg', 'iceshroom', 'doomshroom', 'sunemperor', 'melonpult'];
+                       'primitivepea', 'triplepea', 'cabbagepult', 'supermg', 'elecmg', 'iceshroom', 'doomshroom', 'sunemperor', 'melonpult', 'kernelpult', 'squash'];
         for (let r = 0; r < game.height; r++) {
             for (let c = 0; c < game.width; c++) {
                 spawnPlant(game,r, c, types[Math.floor(Math.random() * types.length)]);
@@ -141,9 +144,9 @@ function cabbagepultTick(plant, game) {
         return;
     }
     plant._cabbageUlt = false;
-    if (plant.timer < 800) return;
+    if (plant.timer < CABBAGE_INTERVAL) return;
     plant.timer = 0;
-    fireRow(plant, game, [['cabbage', 20]]);
+    cabbageLob(game, plant);
 }
 
 // 超级机枪：0.5 秒一轮 6 连发，每打满 5 轮自动喷一次 150 颗散射豌豆
@@ -256,6 +259,48 @@ function melonpultTick(plant, game) {
     melonLob(game, plant);
 }
 
+// 玉米投手：每 1.2 秒抛一块越过障碍物的黄油（50 伤 + 定住 5 秒）；
+// 绿叶素几只僵尸就几块巨型黄油（100 伤）；红叶素改抛红樱桃（1500 伤）
+function kernelpultTick(plant, game) {
+    if (plant.redMs > 0) {
+        if (!plant._kernelRed) {
+            plant._kernelRed = true;
+            kernelCherryVolley(game, plant);
+        }
+        return;
+    }
+    plant._kernelRed = false;
+
+    if (plant.ultimateMs > 0) {
+        if (!plant._kernelUlt) {
+            plant._kernelUlt = true;
+            kernelButterVolley(game, plant);
+        }
+        return;
+    }
+    plant._kernelUlt = false;
+
+    if (plant.timer < KERNEL_INTERVAL) return;
+    plant.timer = 0;
+    kernelLob(game, plant);
+}
+
+// 超级投手：三合一抛射，砸中后在同排里一路弹下去；绿叶素对全场各来一发巨大的
+function superpultTick(plant, game) {
+    if (plant.ultimateMs > 0) {
+        if (!plant._superUlt) {
+            plant._superUlt = true;
+            superVolley(game, plant);
+        }
+        return;
+    }
+    plant._superUlt = false;
+
+    if (plant.timer < SUPER_INTERVAL) return;
+    plant.timer = 0;
+    superLob(game, plant);
+}
+
 function magnetshroomTick(plant, game) {
     if (plant.ultimateMs > 0) {
         if (!plant._magnetUlt) {
@@ -280,7 +325,6 @@ function nutbowlingTick(plant, game) {
 
 export const PLANT_BEHAVIORS = {
     peashooter:    { interval: 100,  kind: 'row',         shots: [['normal', 20]] },
-    pitcher:       { interval: 1500, kind: 'row',         shots: [['piercing', 20]] },
     glue:          { interval: 500,  kind: 'row',         shots: [['glue', 20]] },
     iceshooter:    { interval: 100,  kind: 'row',         shots: [['ice', 20]] },
     doubleshooter: { interval: 100,  kind: 'row',         shots: [['normal', 15], ['normal', 35]] },
@@ -306,6 +350,9 @@ export const PLANT_BEHAVIORS = {
     peabomb:       { tick: peaBombTick },
     torchwood:     { tick: torchwoodTick },
     melonpult:     { tick: melonpultTick },
+    pitcher:       { tick: superpultTick },
+    kernelpult:    { tick: kernelpultTick },
+    squash:        { tick: squashTick },
     house:         { tick: houseTick },
     // 礼物盒自己什么也不干，等着被点开
 };
