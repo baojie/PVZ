@@ -20,7 +20,8 @@
         <button id="sound-toggle" data-tip="音效开关">🔊</button>
         <button id="home-btn" data-tip="返回首页">🏠</button>
 
-        <div id="seed-bank">
+        <div id="seed-row">
+          <div id="seed-bank">
           <div class="seed-packet" data-plant="peashooter">
             <div class="cooldown-overlay"></div>
             <div class="seed-icon">🌱</div>
@@ -68,7 +69,7 @@
           </div>
           <div class="seed-packet" data-plant="pitcher">
             <div class="cooldown-overlay"></div>
-            <div class="seed-icon">🎯</div>
+            <div class="seed-icon"><span class="super-pult"><i class="sp-cabbage"></i><i class="sp-melon"></i><i class="sp-corn"></i><i class="sp-stump"></i></span></div>
             <div class="seed-cost">0</div>
           </div>
           <div class="seed-packet" data-plant="gatling">
@@ -103,7 +104,7 @@
           </div>
           <div class="seed-packet" data-plant="cabbagepult">
             <div class="cooldown-overlay"></div>
-            <div class="seed-icon">🥬</div>
+            <div class="seed-icon"><span class="cabbage-pult"><i class="cp-cabbage"></i><i class="cp-base"></i></span></div>
             <div class="seed-cost">0</div>
           </div>
           <div class="seed-packet" data-plant="magnetshroom">
@@ -146,6 +147,16 @@
             <div class="seed-icon"><span class="torch-wood"><i class="tw-flame"></i><i class="tw-stump"></i></span></div>
             <div class="seed-cost">0</div>
           </div>
+          <div class="seed-packet" data-plant="squash">
+            <div class="cooldown-overlay"></div>
+            <div class="seed-icon"><span class="squash-fruit"><i class="sq-body"></i><i class="sq-eye l"></i><i class="sq-eye r"></i><i class="sq-stem"></i></span></div>
+            <div class="seed-cost">0</div>
+          </div>
+          <div class="seed-packet" data-plant="kernelpult">
+            <div class="cooldown-overlay"></div>
+            <div class="seed-icon"><span class="kernel-pult"><i class="kp-barrel"></i><i class="kp-corn"></i><i class="kp-base"></i></span></div>
+            <div class="seed-cost">0</div>
+          </div>
           <div class="seed-packet" data-plant="melonpult">
             <div class="cooldown-overlay"></div>
             <div class="seed-icon"><span class="melon-pult"><i class="mp-barrel"></i><i class="mp-melon"></i><i class="mp-base"></i></span></div>
@@ -166,6 +177,11 @@
             <div class="seed-icon">❤️</div>
             <div class="seed-cost">0</div>
           </div>
+          <div class="seed-packet" data-plant="glove">
+            <div class="cooldown-overlay"></div>
+            <div class="seed-icon"><span class="glove-tool"><i class="gl-palm"></i><i class="gl-thumb"></i><i class="gl-cuff"></i></span></div>
+            <div class="seed-cost">0</div>
+          </div>
           <div id="shovel-btn" class="seed-packet">
             <div class="seed-icon">🪏</div>
             <div class="seed-cost">铲</div>
@@ -174,6 +190,7 @@
             <button id="plant-count-dec">−</button>
             <input id="plant-count-input" type="number" min="1" max="1000000" value="1" />
             <button id="plant-count-inc">+</button>
+          </div>
           </div>
         </div>
 
@@ -207,8 +224,10 @@
           <div class="how-to-play">
             <ul>
               <li>☀️ 收集阳光（仅展示，植物全免费）</li>
+              <li>🃏 每关开打前先选卡：可以全选，也可以一张都不选</li>
               <li>🌱 点种子卡 → 点草坪格种植（左边 3 列蓝草坪一样能种）</li>
               <li>🪏 铲子可移除已种的植物</li>
+              <li>🧤 手套：点一下抓起植物（连它的升级一起），再点一格放下 · Esc 放回原处</li>
               <li>📈 只有 ⚡ 超级电能机枪豌豆越打越狠：一发比一发强 15%（上限 18000）</li>
               <li>🚜 每行一台割草机，突防自动清场</li>
               <li>🤖 <b>将王博士机甲</b> — 普通模式唯一的敌人，血量 6400 万</li>
@@ -223,14 +242,16 @@
               <li>🥔 <b>土豆地雷</b> — 3 秒后踩中即炸</li>
               <li>🧿 <b>黑胶神</b> — 穿行黑胶，近乎冻结</li>
               <li>🗿 <b>黑曜石战神</b> — 上中下三行扫射</li>
-              <li>🎯 <b>超级投手</b> — 穿透整行</li>
+              <li>🥬🍉🌽 <b>超级投手</b> — 卷心菜 / 西瓜 / 玉米三个投手摞在一起</li>
+              <li>　└ 抛出三合一子弹 240 伤，砸中后在同一排里<b>一直弹</b>，把这排弹空了才落地</li>
+              <li>　└ 绿叶素：对全场每个目标各来一发巨大的三合一，2400 伤，穿越障碍物</li>
               <li>💧 <b>水滴</b> — 每秒一发，无视护盾秒杀</li>
               <li>🌽 <b>玉米炮</b> — 自动追踪连续轰炸</li>
               <li>🔫 <b>机枪炮台</b> — 4 连射扫三行</li>
               <li>🌟 <b>原始豌豆</b> — 70 伤 + 眩晕击退</li>
               <li>🌳 <b>三重豌豆</b> — 三行各一颗</li>
               <li>🥥 <b>坚果保龄</b> — 2 秒后沿行碾压</li>
-              <li>🥬 <b>卷心菜投手</b> — 每 0.8 秒投一颗，40 伤</li>
+              <li>🥬 <b>卷心菜投手</b> — 每 0.8 秒抛一颗，越过障碍物砸头，40 伤</li>
               <li>🧲 <b>磁力菇</b> — 每 1.5 秒击退全场僵尸，再吸到自己这一行</li>
               <li>🪖 <b>超级机枪</b> — 0.5 秒 6 连发；喂绿叶素 +1 连，大招 2 秒里每点一下再 +1</li>
               <li>⚡ <b>超级电能机枪豌豆</b> — 0.5 秒 6 连发青色电能弹，无限贯穿</li>
@@ -252,6 +273,12 @@
               <li>　└ 每喂一次绿叶素换一种彩虹色、倍率翻倍：红2→蓝4→紫8→橙16→黄32→绿64→青128</li>
               <li>🏠 <b>房子</b> — 只能盖在棋盘左边的蓝色区域，一格一栋</li>
               <li>　└ 绿叶素：草坪上随机一格冒出 🎁 礼物盒，空手点开变成随机植物（房子除外）</li>
+              <li>🍈 <b>倭瓜</b> — 血量无限；<b>前后</b> 3 格有僵尸就盯 3 秒 → 朝它跳一格 → 飞起来砸下去</li>
+              <li>　└ 低头的将王博士也砸，一下一万点</li>
+              <li>　└ 压扁落点那一格的僵尸；砸完跳回原位，不会碎</li>
+              <li>　└ 绿叶素：满场乱跳，随机砸死 5 只僵尸再跳回原位</li>
+              <li>🌽 <b>玉米投手</b> — 抛越过障碍物的黄油：50 伤 + 把僵尸定住 5 秒</li>
+              <li>　└ 绿叶素：几只僵尸就几块巨型黄油（100 伤）；红叶素：红樱桃 1500 伤</li>
               <li>🍉 <b>西瓜投手</b> — 每 1.2 秒抛一颗越过障碍物的西瓜，100 伤</li>
               <li>　└ 绿叶素：变西瓜狙击炮，几只僵尸就几发巨型西瓜（700 伤）</li>
               <li>　└ 红叶素：几只僵尸就几颗巨型红樱桃，落地一万伤</li>
