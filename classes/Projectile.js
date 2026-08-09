@@ -3,12 +3,12 @@ import { spawnPlant } from './PlantManager.js';
 import { BOSS_SENTINEL_DAMAGE } from './Boss.js';
 import { DAMAGE_CAP } from './CombatManager.js';
 
-// 一颗寒冰子弹能把将王博士停住多久
+// 一颗寒冰子弹能把报纸将王停住多久
 const ICE_BULLET_FREEZE_MS = 2000;
 
 // 弹道类型表：speed/damage/cssClass 是必填，其他字段按需附加。
 // piercing=true 表示命中后不消失（贯穿）。Infinity 用作「秒杀」哨兵伤害 ——
-// 打博士时会折算成 BOSS_SENTINEL_DAMAGE，见下面的 boss 结算。
+// 打将王时会折算成 BOSS_SENTINEL_DAMAGE，见下面的 boss 结算。
 //
 // 这里是每种弹的原始伤害（曾经统一改成过 17000，后来又改回来了）。
 const PROJECTILE_TYPES = {
@@ -25,16 +25,17 @@ const PROJECTILE_TYPES = {
     scatterpea:   { speed: 7,  damage: 20,       cssClass: 'projectile scatterpea',   width: 12, height: 12 },
 
     // 超级电能机枪豌豆的两种电能弹：无限贯穿（命中不消失，一路打到屏幕右边），
-    // 对普通僵尸是无限点伤害；打将王博士时 1800 起步（bossDamage），
+    // 对普通僵尸是无限点伤害；打报纸将王时 1800 起步（bossDamage），
     // 和别的子弹一样吃逐发 +15% 的递增，封顶 18000。
     elecpea:      { speed: 9,  damage: Infinity, cssClass: 'projectile elecpea',
                     piercing: true, bossDamage: 1800, width: 14, height: 14 },
     elecscatter:  { speed: 7,  damage: Infinity, cssClass: 'projectile elecscatter',
                     piercing: true, bossDamage: 1800, width: 12, height: 12 },
 
-    // 红叶素期间，植物打出来的一律换成这颗小红樱桃，每颗 1000 点伤害
+    // 红叶素期间，植物打出来的一律换成小红樱桃，每颗 1000 点伤害。
+    // 长相直接用樱桃炸弹那颗 🍒 —— 两颗连梗的樱桃，不是一颗光秃秃的红球。
     redcherry:    { speed: 7,  damage: 1000, cssClass: 'projectile redcherry',
-                    width: 16, height: 16 },
+                    content: '🍒', width: 20, height: 20 },
 };
 
 export class Projectile extends Entity {
@@ -49,7 +50,7 @@ export class Projectile extends Entity {
         if (cfg.stunMs) this.stunMs = cfg.stunMs;
         if (cfg.width) this.width = cfg.width;
         if (cfg.height) this.height = cfg.height;
-        this.createDOM(cfg.cssClass, '');
+        this.createDOM(cfg.cssClass, cfg.content || '');
     }
 
     // 撞到棋盘四条边就原样弹回来，一直弹下去。
@@ -77,7 +78,7 @@ export class Projectile extends Entity {
             }
         }
 
-        // 每弹一次都能再打一遍博士：清掉「只打一次」的标记
+        // 每弹一次都能再打一遍将王：清掉「只打一次」的标记
         if (hit) {
             this._hitBoss = false;
             this._frozeBoss = false;
@@ -105,8 +106,8 @@ export class Projectile extends Entity {
             }
         }
 
-        // 将王博士机甲：只有低头时才吃伤害，没低头就是够不着，子弹直接飞过去
-        // 每颗子弹只能打博士一次。他有 190px 宽，穿透弹飞过去要几十帧，
+        // 报纸将王：只有低头时才吃伤害，没低头就是够不着，子弹直接飞过去
+        // 每颗子弹只能打将王一次。他有 190px 宽，穿透弹飞过去要几十帧，
         // 不卡这一下的话一颗水滴能连打 40 多次。
         const boss = game.boss;
 
@@ -122,7 +123,7 @@ export class Projectile extends Entity {
             this.x + this.width > boss.x && this.x < boss.x + boss.width &&
             this.y + this.height > boss.y && this.y < boss.y + boss.height) {
             this._hitBoss = true;
-            // 打博士的基数：电能弹用自带的 bossDamage（1800 起步），必杀弹按一只
+            // 打将王的基数：电能弹用自带的 bossDamage（1800 起步），必杀弹按一只
             // 僵尸的满血折算，其余就是子弹自己的伤害。基数同样吃这颗子弹的递增
             // 倍率，封顶 DAMAGE_CAP。
             const base = this.bossDamage
