@@ -1,7 +1,20 @@
 import { Projectile } from './Projectile.js';
 
+// 将王博士低头（或被冻住）的时候就是个能打的靶子。他不在 game.zombies 里，
+// 不单独算的话，场上没僵尸时植物会以为「没敌人」而集体停火 —— 他低着头也没人打他。
+// 他那台机甲很高，纵向压着好几行，所以要看行区间有没有重叠。
+export function bossTargetInRow(game, row, minX) {
+    const b = game.boss;
+    if (!b || b.markedForDeletion || !b.vulnerable) return false;
+    if (b.x + b.width <= minX) return false;
+    const top = Math.floor(b.y / game.cellHeight);
+    const bottom = Math.floor((b.y + b.height - 1) / game.cellHeight);
+    return row >= top && row <= bottom;
+}
+
 export function hasEnemyInRow(game, row, minX) {
     if (game.zombies.some(z => Math.floor(z.y / game.cellHeight) === row && z.x > minX)) return true;
+    if (bossTargetInRow(game, row, minX)) return true;
     if (!game.wandererSystem) return false;
     const ws = game.wandererSystem;
     for (let i = 0; i < ws.count; i++) {
@@ -12,6 +25,8 @@ export function hasEnemyInRow(game, row, minX) {
 
 export function hasAnyEnemy(game, minX) {
     if (game.zombies.some(z => z.x > minX)) return true;
+    const b = game.boss;
+    if (b && !b.markedForDeletion && b.vulnerable && b.x + b.width > minX) return true;
     if (!game.wandererSystem) return false;
     const ws = game.wandererSystem;
     for (let i = 0; i < ws.count; i++) {
