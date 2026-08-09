@@ -61,6 +61,8 @@ export class Plant extends Entity {
             elecmg: '<span class="helmet-pea elec-pea">🫛<span class="hp-helmet">🪖</span></span>',
             // 火炬树桩：一截树桩顶着一团火焰，都是 CSS 画的，见 .torch-wood
             torchwood: '<span class="torch-wood"><i class="tw-flame"></i><i class="tw-stump"></i></span>',
+            // 西瓜投手：绿条纹西瓜架在投石座上，大招时探出炮管
+            melonpult: '<span class="melon-pult"><i class="mp-barrel"></i><i class="mp-melon"></i><i class="mp-base"></i></span>',
             // 房子：红瓦白墙 + 一扇窗一扇门，整栋 CSS 画的
             house: '<span class="house-plant"><i class="hp-roof"></i><i class="hp-wall"><i class="hp-win"></i><i class="hp-door"></i></i></span>',
             // 礼物盒：红白相间的盒子 + 一条竖丝带和一个蝴蝶结

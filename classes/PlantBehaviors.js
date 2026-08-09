@@ -11,6 +11,7 @@ import { doomBlast, doomUpgrade, doomGrow, DOOM_INTERVAL } from './DoomShroom.js
 import { sunEmperorTick } from './SunEmperor.js';
 import { peaBombTick } from './PeaBomb.js';
 import { torchwoodTick } from './TorchWood.js';
+import { melonLob, melonSniper, melonCherryVolley, MELON_INTERVAL } from './MelonPult.js';
 import { houseTick } from './House.js';
 
 // 植物行为表：声明式描述每种植物每个 tick 该做什么。
@@ -85,7 +86,7 @@ function cherryTick(plant, game) {
         plant._cherryUlt = true;
         const types = ['peashooter', 'sunflower', 'wallnut', 'iceshooter', 'doubleshooter',
                        'pitcher', 'glue', 'obsidian', 'gatling', 'waterdrop', 'corncannon',
-                       'primitivepea', 'triplepea', 'cabbagepult', 'supermg', 'elecmg', 'iceshroom', 'doomshroom', 'sunemperor'];
+                       'primitivepea', 'triplepea', 'cabbagepult', 'supermg', 'elecmg', 'iceshroom', 'doomshroom', 'sunemperor', 'melonpult'];
         for (let r = 0; r < game.height; r++) {
             for (let c = 0; c < game.width; c++) {
                 spawnPlant(game,r, c, types[Math.floor(Math.random() * types.length)]);
@@ -228,6 +229,33 @@ function doomshroomTick(plant, game) {
     doomBlast(game, plant);
 }
 
+// 西瓜投手：每 1.2 秒朝同行最前面那只僵尸抛一颗西瓜（100 伤，越过障碍物）；
+// 绿叶素变成西瓜狙击炮，场上几只僵尸就打几发巨型西瓜（700 伤）；
+// 红叶素改打巨型红樱桃（一万伤）
+function melonpultTick(plant, game) {
+    if (plant.redMs > 0) {
+        if (!plant._melonRed) {
+            plant._melonRed = true;
+            melonCherryVolley(game, plant);
+        }
+        return;
+    }
+    plant._melonRed = false;
+
+    if (plant.ultimateMs > 0) {
+        if (!plant._melonUlt) {
+            plant._melonUlt = true;
+            melonSniper(game, plant);
+        }
+        return;
+    }
+    plant._melonUlt = false;
+
+    if (plant.timer < MELON_INTERVAL) return;
+    plant.timer = 0;
+    melonLob(game, plant);
+}
+
 function magnetshroomTick(plant, game) {
     if (plant.ultimateMs > 0) {
         if (!plant._magnetUlt) {
@@ -277,6 +305,7 @@ export const PLANT_BEHAVIORS = {
     sunemperor:    { tick: sunEmperorTick },
     peabomb:       { tick: peaBombTick },
     torchwood:     { tick: torchwoodTick },
+    melonpult:     { tick: melonpultTick },
     house:         { tick: houseTick },
     // 礼物盒自己什么也不干，等着被点开
 };
