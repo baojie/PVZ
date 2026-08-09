@@ -63,6 +63,10 @@ export class Plant extends Entity {
             elecmg: '<span class="helmet-pea elec-pea">🫛<span class="hp-helmet">🪖</span></span>',
             // 火炬树桩：一截树桩顶着一团火焰，都是 CSS 画的，见 .torch-wood
             torchwood: '<span class="torch-wood"><i class="tw-flame"></i><i class="tw-stump"></i></span>',
+            // 奖杯投手：一块板子上摆着一个奖杯
+            trophypult: '<span class="trophy-pult"><i class="tp-cup">🏆</i><i class="tp-board"></i></span>',
+            // 核爆樱桃：红樱桃摞在一朵红色的毁灭菇上
+            nukecherry: '<span class="nuke-cherry"><i class="nc-cap"></i><i class="nc-stem"></i><span class="nc-cherry">🍒</span></span>',
             // 倭瓜：一个带网纹的哈密瓜，睁着两只眼睛盯人
             squash: '<span class="squash-fruit"><i class="sq-body"></i><i class="sq-eye l"></i><i class="sq-eye r"></i><i class="sq-stem"></i></span>',
             // 玉米投手：玉米棒架在投石座上，大招时探出炮管

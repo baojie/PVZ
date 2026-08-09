@@ -11,6 +11,7 @@ import { setupTooltip, PLANT_TIPS } from './classes/Tooltip.js';
 import { Boss } from './classes/Boss.js';
 import { dropTrophy, clearTrophy } from './classes/Trophy.js';
 import { showCardPicker, applyChosenCards } from './classes/CardPicker.js';
+import { clearPultTrophies } from './classes/TrophyPult.js';
 
 // Lawnmower resting position (px) — sits just left of the lawn so the icon
 // is mostly visible. See triggerLawnmower / setupLawnmowers.
@@ -65,7 +66,7 @@ class Game {
         this.cannonIntervals = [];
         this.zombieSpeedMultiplier = 1;
         this.zombieSpeedBoost = 1;
-        this.bossSpawnRate = 1;      // J 加速 / H 减速将王博士放僵尸
+        this.bossSpawnRate = 1;      // J 加速 / H 减速报纸将王放僵尸
         this.randomBullets = false;
         this.plantSpeedMultiplier = 1;
 
@@ -197,7 +198,7 @@ class Game {
         this.setupLawnmowers();
 
         // 开局不再白送第 0 列那 5 株随机植物：里面的超级投手 / 胶水 / 黑曜石都是
-        // 秒杀弹（对博士按 800 折算），挂机 80 多秒就能把 64000 血的博士磨死，
+        // 秒杀弹（对将王按 800 折算），挂机 80 多秒就能把 64000 血的将王磨死，
         // 等于第一局照样自动通关。现在空场开局，输出得自己种。
         if (this.wandererMode) {
             this.waveIndex = this.waves.length;
@@ -218,6 +219,7 @@ class Game {
         this.boss?.remove();
         this.boss = null;
         clearTrophy(this);
+        clearPultTrophies(this);
         this.plants.forEach(p => p.remove());
         this.zombies.forEach(z => z.remove());
         this.projectiles.forEach(p => p.remove());
@@ -241,6 +243,7 @@ class Game {
         this.boss?.remove();
         this.boss = null;
         clearTrophy(this);
+        clearPultTrophies(this);
         this.level = 1;   // 回首页重新从第 1 关开始
         this.plants.forEach(p => p.remove());
         this.zombies.forEach(z => z.remove());
@@ -334,7 +337,7 @@ class Game {
         this.updateProgressBar();
 
         if (this.boss) {
-            // 有博士时，胜负只看他 —— 僵尸是无限的，杀不完
+            // 有将王时，胜负只看他 —— 僵尸是无限的，杀不完
             if (this.boss.markedForDeletion && !this.won) {
                 this.won = true;
                 setTimeout(() => this.victory(), 1000);
@@ -378,7 +381,7 @@ class Game {
                 const state = b.markedForDeletion ? '已击败'
                     : (b.frozenMs > 0 ? '❄️ 冻住 · 快打!'
                     : (b.vulnerable ? '低头中 · 快打!' : '无敌 · 放僵尸'));
-                stats.textContent = `第 ${this.level} 关 · 将王博士 ${Math.max(0, Math.round(b.health))}/${b.maxHealth} · 第 ${b.wave} 波 · ${state} · 场上 ${this.zombies.length}`;
+                stats.textContent = `第 ${this.level} 关 · 报纸将王 ${Math.max(0, Math.round(b.health))}/${b.maxHealth} · 第 ${b.wave} 波 · ${state} · 场上 ${this.zombies.length}`;
             } else if (this.wandererMode) {
                 stats.textContent = `漫游模式 · 场上 ${this.zombies.length}`;
             } else if (this.waveIndex >= this.waves.length) {
@@ -445,7 +448,7 @@ class Game {
 
     nextLevel() {
         this.level++;
-        // restart 现在会先弹选卡界面，博士要等 beginLevel 才创建，
+        // restart 现在会先弹选卡界面，将王要等 beginLevel 才创建，
         // 所以这儿别去读 this.boss.maxHealth（那时候还是 null）
         this.restart();
     }

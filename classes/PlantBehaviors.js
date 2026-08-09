@@ -15,6 +15,8 @@ import { melonLob, melonSniper, melonCherryVolley, MELON_INTERVAL } from './Melo
 import { superLob, superVolley, SUPER_INTERVAL } from './SuperPult.js';
 import { kernelLob, kernelButterVolley, kernelCherryVolley, KERNEL_INTERVAL } from './KernelPult.js';
 import { squashTick } from './Squash.js';
+import { nukeCherryTick } from './NukeCherry.js';
+import { trophyPultTick } from './TrophyPult.js';
 import { houseTick } from './House.js';
 
 // 植物行为表：声明式描述每种植物每个 tick 该做什么。
@@ -353,6 +355,8 @@ export const PLANT_BEHAVIORS = {
     pitcher:       { tick: superpultTick },
     kernelpult:    { tick: kernelpultTick },
     squash:        { tick: squashTick },
+    nukecherry:    { tick: nukeCherryTick },
+    trophypult:    { tick: trophyPultTick },
     house:         { tick: houseTick },
     // 礼物盒自己什么也不干，等着被点开
 };
