@@ -49,8 +49,9 @@ function nextDamageMult(plant) {
 // 僵尸吃掉，绝不能凭空消失（顶掉最老的会让子弹在半空中平白不见）。
 // 代价是穿透弹（打到僵尸也不消失）会一直占着槽位，攒满之后新子弹就发不出来了。
 // 只有 GROWS 里的植物吃伤害递增，其余（含全屏随机子弹）一律用弹种的固定伤害。
-export function spawnProjectile(game, x, y, type = 'normal', plant = null) {
-    if (game.projectiles.length >= MAX_PROJECTILES) return null;
+// force=true 无视上限硬发（豌豆炸弹的 100 颗必须一颗不少地射出去）。
+export function spawnProjectile(game, x, y, type = 'normal', plant = null, force = false) {
+    if (!force && game.projectiles.length >= MAX_PROJECTILES) return null;
     // 红叶素期间，这株植物打什么都变成小红樱桃（5 秒后自己恢复）
     if (plant && plant.redMs > 0) type = 'redcherry';
     const proj = new Projectile(x, y, type);
