@@ -1,5 +1,5 @@
 // PVZ headless playthrough — opens the game, plays a normal round against
-// 将王博士 and saves screenshots to ../screenshot/.
+// 报纸将王 and saves screenshots to ../screenshot/.
 //
 // Usage:
 //   ./run.sh -d 1644           # run the static server
@@ -66,7 +66,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   await sleep(120);
   await shot('02-settings');
 
-  // 普通版：将王博士开局就站在棋盘最右侧，僵尸全由他放出来。
+  // 普通版：报纸将王开局就站在棋盘最右侧，僵尸全由他放出来。
   await page.click('#start-btn');
   await page.waitForFunction(
     () => window.game && window.game.isRunning === true && !!window.game.boss,

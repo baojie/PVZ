@@ -36,12 +36,12 @@ function targetInRange(game, plant) {
     }
     if (best) return best;
 
-    // 没有僵尸就看看将王博士够不够得着 —— 他纵向占满整片草坪，哪一行都算数，
+    // 没有僵尸就看看报纸将王够不够得着 —— 他纵向占满整片草坪，哪一行都算数，
     // 只在他低头 / 被冻住（也就是打得到）的时候才扑上去，免得白跳一趟
     return bossInRange(game, plant) ? 'boss' : null;
 }
 
-// 博士的左半边落在前方三格之内，而且这会儿打得到
+// 将王的左半边落在前方三格之内，而且这会儿打得到
 function bossInRange(game, plant) {
     const b = game.boss;
     if (!b || b.markedForDeletion || !b.vulnerable) return false;
@@ -225,12 +225,12 @@ function slam(plant, game) {
         hit++;
     }
 
-    // 落点压到博士身上也算一下：走他自己的 takeDamage，没低头 / 没被冻住时
+    // 落点压到将王身上也算一下：走他自己的 takeDamage，没低头 / 没被冻住时
     // 这一下会被他吞掉（跟子弹一个规矩）
     const b = game.boss;
     if (b && !b.markedForDeletion && b.x < right && b.x + b.width > left) {
         if (b.takeDamage(SLAM_DAMAGE)) {
-            game.showNotEnoughFeedback(`🍈 砸了将王博士 ${SLAM_DAMAGE} 点!`);
+            game.showNotEnoughFeedback(`🍈 砸了报纸将王 ${SLAM_DAMAGE} 点!`);
             hit++;
         }
     }

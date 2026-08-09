@@ -9,8 +9,8 @@ const ARC_HEIGHT = 190;     // 抛物线弧顶高度（px）
 export const STAGGER_MS = 45;      // 齐射时每发之间的错开
 export const MAX_STAGGER = 500;
 
-// 场上所有能打的目标：僵尸 + 游荡者 + 将王博士。
-// 博士也算一个 —— 不然场上只剩他的时候，大招会以为「没有目标」直接哑掉。
+// 场上所有能打的目标：僵尸 + 游荡者 + 报纸将王。
+// 将王也算一个 —— 不然场上只剩他的时候，大招会以为「没有目标」直接哑掉。
 // 砸到他身上仍然走 boss.takeDamage，所以他没低头 / 没被冻住时照样是无敌的。
 export function collectTargets(game) {
     const targets = [];
@@ -26,7 +26,7 @@ export function collectTargets(game) {
 }
 
 // 同行最靠前（最靠左但还在植物右边）的那个目标，返回 lob 用的目标描述符。
-// 同行没有僵尸时，低头（或被冻住）的将王博士也算一个 —— 他不在 game.zombies 里，
+// 同行没有僵尸时，低头（或被冻住）的报纸将王也算一个 —— 他不在 game.zombies 里，
 // 不单独算的话，场上没僵尸时抛射植物会一直不开火。
 export function frontTarget(game, plant) {
     const row = Math.floor(plant.y / game.cellHeight);

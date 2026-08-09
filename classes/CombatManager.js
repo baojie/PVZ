@@ -1,8 +1,8 @@
 import { Projectile } from './Projectile.js';
 
-// 将王博士低头（或被冻住）的时候就是个能打的靶子。他不在 game.zombies 里，
+// 报纸将王低头（或被冻住）的时候就是个能打的靶子。他不在 game.zombies 里，
 // 不单独算的话，场上没僵尸时植物会以为「没敌人」而集体停火 —— 他低着头也没人打他。
-// 他那台机甲很高，纵向压着好几行，所以要看行区间有没有重叠。
+// 他个头很高，纵向压着好几行，所以要看行区间有没有重叠。
 export function bossTargetInRow(game, row, minX) {
     const b = game.boss;
     if (!b || b.markedForDeletion || !b.vulnerable) return false;
@@ -45,7 +45,7 @@ const MAX_PROJECTILES = 700;
 // 都比上一颗高 15%，复利叠加，封顶 18000。别的植物一律用弹种自己的固定伤害，
 // 打多久都不会涨。
 // 计数存在植物身上，所以每株各涨各的，铲掉重种就从头来。
-// 电能弹对僵尸是 Infinity（乘多少还是 Infinity），倍率实际作用在它打博士的
+// 电能弹对僵尸是 Infinity（乘多少还是 Infinity），倍率实际作用在它打将王的
 // 那 1800 基数上，见 Projectile 的 boss 结算。
 export const DAMAGE_GROWTH = 1.15;
 export const DAMAGE_CAP = 18_000;
@@ -74,7 +74,7 @@ export function spawnProjectile(game, x, y, type = 'normal', plant = null, force
         const mult = nextDamageMult(plant);
         proj.damageMult = mult;
         // 秒杀弹（Infinity）乘多少还是 Infinity，这里跳过；
-        // 它打博士的折算值在 Projectile 里单独乘 damageMult
+        // 它打将王的折算值在 Projectile 里单独乘 damageMult
         if (proj.damage !== Infinity) {
             proj.damage = Math.min(proj.damage * mult, DAMAGE_CAP);
         }

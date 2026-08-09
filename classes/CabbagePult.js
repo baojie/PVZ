@@ -39,7 +39,7 @@ export function cabbageBarrage(game, plant) {
     if (ws) {
         for (let i = 0; i < ws.count; i++) targets.push({ wandererIdx: i });
     }
-    // 博士也算一个目标 —— 场上只剩他的时候，大招不该直接哑掉
+    // 将王也算一个目标 —— 场上只剩他的时候，大招不该直接哑掉
     if (game.boss && !game.boss.markedForDeletion) targets.push({ boss: game.boss });
 
     if (targets.length === 0) {
@@ -105,7 +105,7 @@ function lobCabbage(game, plant, t, delay) {
 function smash(game, t, c) {
     if (t.boss) {
         // 走 takeDamage：没低头 / 没被冻住时他本来就是无敌的
-        // 对僵尸是直接清血的「无数点」，对博士按一只僵尸的满血折算
+        // 对僵尸是直接清血的「无数点」，对将王按一只僵尸的满血折算
         // （BOSS_SENTINEL_DAMAGE 就是干这个的），否则一发就把他打光
         t.boss.takeDamage(BOSS_SENTINEL_DAMAGE);
     } else if (t.zombie) {

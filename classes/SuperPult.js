@@ -6,7 +6,7 @@
 //       这时候没得弹了，才掉到地上。
 //       优先弹给「刚砸过的那只之外」的僵尸；整排只剩一只时就在它身上反复砸。
 //       每跳都实打实扣 240，所以这一排迟早被清空，弹射自然收敛。
-// 绿叶素大招：对全场每一个目标（含将王博士）各抛一发**巨大**的三合一，
+// 绿叶素大招：对全场每一个目标（含报纸将王）各抛一发**巨大**的三合一，
 //       穿越一切障碍物，落点 2400 点。
 //
 // 抛物线飞行、落点绕过护甲这些公共逻辑在 Lob.js 里。
@@ -55,7 +55,7 @@ function throwAt(game, plant, target, from = null) {
         cls: 'lob-tri', html: TRI_HTML, size: SIZE, from,
         damage: SUPER_DAMAGE, splashCls: 'tri-splash',
         after: (g, t, c) => {
-            // 砸在博士身上就没得弹了 —— 他不在任何一「排」里，直接落地
+            // 砸在将王身上就没得弹了 —— 他不在任何一「排」里，直接落地
             if (!t.zombie) { fallToGround(g, c); return; }
             const next = nextInRow(g, t.zombie.y, c.x, t.zombie);
             if (next) throwAt(g, plant, { zombie: next }, { x: c.x - SIZE / 2, y: c.y - SIZE / 2 });

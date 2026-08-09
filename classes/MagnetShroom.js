@@ -153,7 +153,7 @@ export function magnetUltimate(game, plant) {
 function detonate(game, rowY, targets) {
     game.sound.playExplosion();
 
-    // 博士那台机甲吸不动，但磁场引爆照样罩得到他。走 takeDamage，
+    // 报纸将王本人吸不动，但磁场引爆照样罩得到他。走 takeDamage，
     // 所以他没低头 / 没被冻住时依旧无敌。
     const boss = game.boss;
     if (boss && !boss.markedForDeletion) {

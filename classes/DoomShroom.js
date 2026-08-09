@@ -1,7 +1,7 @@
 // 毁灭菇 ☠️ —— 灰色的菌柄，黑色的伞盖。
 //
 // 普通攻击：每 5 秒爆炸一次，掀起一朵紫色蘑菇云，对全场僵尸造成 1800 点伤害。
-//           将王博士也在打击范围里（他没低头也没被冻住的时候照样够不着，
+//           报纸将王也在打击范围里（他没低头也没被冻住的时候照样够不着，
 //           伤害会被他自己吞掉）。
 // 绿叶素大招：每放一次，这一株的爆炸伤害永久 +1800（1800 → 3600 → 5400 …），
 //           蘑菇云也跟着长大一圈，没有上限。喂几次涨几次。
@@ -43,7 +43,7 @@ function doomLevel(plant) {
     return Math.round(doomDamage(plant) / DAMAGE_STEP);
 }
 
-// 一次爆炸：全场僵尸各吃一发，博士也挨一下
+// 一次爆炸：全场僵尸各吃一发，将王也挨一下
 export function doomBlast(game, plant) {
     const dmg = doomDamage(plant);
     let hits = 0;
@@ -58,7 +58,7 @@ export function doomBlast(game, plant) {
         hits++;
     }
 
-    // 博士：没低头 / 没被冻住的时候 takeDamage 会自己把伤害吞掉
+    // 将王：没低头 / 没被冻住的时候 takeDamage 会自己把伤害吞掉
     if (game.boss && !game.boss.markedForDeletion) game.boss.takeDamage(dmg);
 
     cloud(game, plant, doomLevel(plant));

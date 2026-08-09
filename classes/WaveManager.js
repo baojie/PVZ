@@ -31,7 +31,7 @@ export function spawnZombie(game, row, type = 'normal') {
 }
 
 export function updateWaves(game, deltaTime) {
-    // 普通 / 融合模式的僵尸现在全部由将王博士机甲放出（见 Boss.js），
+    // 普通 / 融合模式的僵尸现在全部由报纸将王放出（见 Boss.js），
     // 这里只剩游荡者模式和「没有 boss」时的兜底路径。
     if (game.boss) return;
     if (game.waveIndex >= game.waves.length) return;
