@@ -50,17 +50,21 @@ export class Plant extends Entity {
 
         // Visuals
         const icons = {
-            peashooter: '🌱', sunflower: '🌻', wallnut: '🌰',
+            sunflower: '🌻', wallnut: '🌰',
+            // 豌豆射手：照着 reference/plants/r1c1-crown-pea.png 画的戴皇冠豌豆
+            peashooter: '<span class="crown-pea"><i class="cw-leaf"></i><i class="cw-head"></i><i class="cw-barrel"></i><i class="cw-eye"></i><i class="cw-crown"></i><i class="cw-stem"></i><i class="cw-foot l"></i><i class="cw-foot r"></i></span>',
             iceshooter: '❄️', doubleshooter: '🌿', cherry: '🍒', potato: '🥔',
  glue: '🧿', obsidian: '🗿', gatling: '🔫', waterdrop: '💧',
-            corncannon: '🌽', primitivepea: '🌟', triplepea: '🌳',
+            corncannon: '🌽', triplepea: '🌳',
+            // 原始豌豆：照着 reference/plants/r1c5-skull-helmet-pea.png 画的兽骨盔豌豆
+            primitivepea: '<span class="skull-pea"><i class="sk-head"></i><i class="sk-barrel"></i><i class="sk-eye"></i><i class="sk-skull"></i><i class="sk-frill"></i><i class="sk-horn top"></i><i class="sk-horn side"></i><i class="sk-socket"></i><i class="sk-collar"></i><i class="sk-foot l"></i><i class="sk-foot r"></i></span>',
             nutbowling: '🥥', magnetshroom: '🧲',
             // 卷心菜投手：圆卷心菜架在投石座上，和西瓜 / 玉米投手一套长相
             cabbagepult: '<span class="cabbage-pult"><i class="cp-cabbage"></i><i class="cp-base"></i></span>',
             // 超级机枪：豌豆本体上扣一顶钢盔，见 style.css 的 .helmet-pea
-            supermg: '<span class="helmet-pea">🫛<span class="hp-helmet">🪖</span></span>',
+            supermg: '<span class="helmet-pea"><i class="hp-collar"></i><i class="hp-head"></i><i class="hp-barrel"></i><i class="hp-brow l"></i><i class="hp-brow r"></i><i class="hp-eye l"></i><i class="hp-eye r"></i><i class="hp-helmet"></i><i class="hp-badge"></i><i class="hp-strap"></i><i class="hp-stem"></i><i class="hp-foot l"></i><i class="hp-foot r"></i></span>',
             // 超级电能机枪豌豆：同一顶钢盔，豌豆本体染成青色（.elec-pea）
-            elecmg: '<span class="helmet-pea elec-pea">🫛<span class="hp-helmet">🪖</span></span>',
+            elecmg: '<span class="helmet-pea elec-pea"><i class="hp-collar"></i><i class="hp-head"></i><i class="hp-barrel"></i><i class="hp-brow l"></i><i class="hp-brow r"></i><i class="hp-eye l"></i><i class="hp-eye r"></i><i class="hp-helmet"></i><i class="hp-badge"></i><i class="hp-strap"></i><i class="hp-stem"></i><i class="hp-foot l"></i><i class="hp-foot r"></i></span>',
             // 火炬树桩：一截树桩顶着一团火焰，都是 CSS 画的，见 .torch-wood
             torchwood: '<span class="torch-wood"><i class="tw-flame"></i><i class="tw-stump"></i></span>',
             // 大喷菇：紫色大烟壶 + 朝右的喷口，底下一张小绿脸

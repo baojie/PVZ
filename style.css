@@ -668,21 +668,500 @@ body {
 
 /* ---------- 超级机枪 ---------- */
 
-/* 豌豆本体上扣一顶钢盔。种子卡和棋盘上用同一段结构，靠 em 跟随字号缩放。 */
-.helmet-pea {
+/* ---------- 原始豌豆（兽骨盔版） ---------- */
+
+/* 照着 reference/plants/r1c5-skull-helmet-pea.png 画的：绿豌豆扣着一顶白骨头盔，
+   盔上一只弯角、侧面一只小角，后面披着骨质颈盾，脖子上一圈草裙。 */
+.skull-pea {
   position: relative;
   display: inline-block;
+  width: 1.1em;
+  height: 1em;
+  vertical-align: middle;
   line-height: 1;
 }
 
+/* 豆头 */
+.skull-pea .sk-head {
+  position: absolute;
+  left: 0.3em;
+  top: 0.32em;
+  width: 0.5em;
+  height: 0.46em;
+  border-radius: 50%;
+  background: radial-gradient(circle at 34% 28%, #e2ffae, #9ada4e 45%, #5f9e2c 100%);
+  border: 0.03em solid #457a1f;
+}
+
+/* 右边炮管 */
+.skull-pea .sk-barrel {
+  position: absolute;
+  right: 0.02em;
+  top: 0.4em;
+  width: 0.34em;
+  height: 0.28em;
+  border-radius: 0.05em 0.14em 0.14em 0.05em;
+  background: linear-gradient(180deg, #d5f59c, #93d148 55%, #5f9e2c);
+  border: 0.03em solid #457a1f;
+}
+
+.skull-pea .sk-barrel::after {
+  content: "";
+  position: absolute;
+  right: 0.02em;
+  top: 50%;
+  width: 0.12em;
+  height: 0.18em;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 40% 40%, #4a4a4a, #111);
+}
+
+.skull-pea .sk-eye {
+  position: absolute;
+  left: 0.52em;
+  top: 0.44em;
+  width: 0.11em;
+  height: 0.13em;
+  background: #fff;
+  border: 0.022em solid #2f3a1c;
+  border-radius: 50%;
+}
+
+.skull-pea .sk-eye::after {
+  content: "";
+  position: absolute;
+  left: 34%;
+  top: 30%;
+  width: 44%;
+  height: 46%;
+  background: #1f2412;
+  border-radius: 50%;
+}
+
+/* 后面披着的骨质颈盾（那一大片） */
+.skull-pea .sk-frill {
+  position: absolute;
+  left: 0.02em;
+  top: 0.16em;
+  width: 0.5em;
+  height: 0.48em;
+  border-radius: 46% 30% 34% 44%;
+  background: radial-gradient(circle at 40% 30%, #f5f1e4, #d8d2c0 55%, #b0a894 100%);
+  border: 0.03em solid #8d8676;
+  transform: rotate(-8deg);
+}
+
+/* 颈盾上的骨孔 */
+.skull-pea .sk-frill::after {
+  content: "";
+  position: absolute;
+  inset: 0.06em;
+  background:
+    radial-gradient(circle at 28% 32%, rgba(120, 112, 96, 0.55) 0 0.05em, transparent 0.055em),
+    radial-gradient(circle at 62% 26%, rgba(120, 112, 96, 0.45) 0 0.04em, transparent 0.045em),
+    radial-gradient(circle at 40% 66%, rgba(120, 112, 96, 0.4)  0 0.045em, transparent 0.05em);
+}
+
+/* 扣在头上的白骨盔 */
+.skull-pea .sk-skull {
+  position: absolute;
+  left: 0.24em;
+  top: 0.2em;
+  width: 0.46em;
+  height: 0.34em;
+  border-radius: 50% 50% 36% 36%;
+  background: linear-gradient(180deg, #fbf8ef, #e2dccb 55%, #c3bba6);
+  border: 0.03em solid #8d8676;
+  transform: rotate(-6deg);
+}
+
+/* 盔上的眼窝 */
+.skull-pea .sk-socket {
+  position: absolute;
+  left: 0.42em;
+  top: 0.3em;
+  width: 0.1em;
+  height: 0.08em;
+  background: #6b6355;
+  border-radius: 50%;
+  transform: rotate(-10deg);
+}
+
+/* 头顶那只往前弯的大角 + 侧面一只小角 */
+.skull-pea .sk-horn {
+  position: absolute;
+  background: linear-gradient(180deg, #fbf8ef, #cfc7b2);
+  border: 0.025em solid #8d8676;
+}
+
+.skull-pea .sk-horn.top {
+  left: 0.5em;
+  top: 0.12em;
+  width: 0.2em;
+  height: 0.14em;
+  border-radius: 60% 20% 60% 20%;
+  transform: rotate(-28deg);
+}
+
+.skull-pea .sk-horn.side {
+  left: 0.24em;
+  top: 0.14em;
+  width: 0.13em;
+  height: 0.1em;
+  border-radius: 60% 20% 60% 20%;
+  transform: rotate(-52deg);
+}
+
+/* 脖子上那圈草裙 */
+.skull-pea .sk-collar {
+  position: absolute;
+  left: 0.22em;
+  top: 0.7em;
+  width: 0.56em;
+  height: 0.14em;
+  background:
+    radial-gradient(ellipse at 18% 40%, #8bc34a 0 0.08em, transparent 0.09em),
+    radial-gradient(ellipse at 50% 55%, #7cb342 0 0.09em, transparent 0.1em),
+    radial-gradient(ellipse at 82% 40%, #8bc34a 0 0.08em, transparent 0.09em);
+}
+
+.skull-pea .sk-foot {
+  position: absolute;
+  bottom: 0.02em;
+  width: 0.22em;
+  height: 0.11em;
+  background: radial-gradient(ellipse at 40% 35%, #aed581, #689f38 70%);
+  border: 0.025em solid #4e7d24;
+  border-radius: 50%;
+}
+
+.skull-pea .sk-foot.l { left: 0.3em; transform: rotate(-12deg); }
+.skull-pea .sk-foot.r { left: 0.56em; transform: rotate(12deg); }
+
+/* ---------- 豌豆射手（皇冠版） ---------- */
+
+/* 照着 reference/plants/r1c1-crown-pea.png 画的：绿豌豆头戴金皇冠、镶红宝石，
+   左边一片叶子，右边一根炮管。尺寸走 em，跟着字号缩放。 */
+.crown-pea {
+  position: relative;
+  display: inline-block;
+  width: 1.05em;
+  height: 1em;
+  vertical-align: middle;
+  line-height: 1;
+}
+
+/* 豆头 */
+.crown-pea .cw-head {
+  position: absolute;
+  left: 0.16em;
+  top: 0.26em;
+  width: 0.54em;
+  height: 0.5em;
+  border-radius: 50%;
+  background: radial-gradient(circle at 34% 28%, #e2ffae, #9ada4e 45%, #5f9e2c 100%);
+  border: 0.03em solid #457a1f;
+}
+
+/* 右边炮管 */
+.crown-pea .cw-barrel {
+  position: absolute;
+  right: 0.03em;
+  top: 0.36em;
+  width: 0.34em;
+  height: 0.27em;
+  border-radius: 0.05em 0.14em 0.14em 0.05em;
+  background: linear-gradient(180deg, #d5f59c, #93d148 55%, #5f9e2c);
+  border: 0.03em solid #457a1f;
+}
+
+.crown-pea .cw-barrel::after {
+  content: "";
+  position: absolute;
+  right: 0.02em;
+  top: 50%;
+  width: 0.12em;
+  height: 0.18em;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 40% 40%, #4a4a4a, #111);
+}
+
+/* 一只大眼睛 */
+.crown-pea .cw-eye {
+  position: absolute;
+  left: 0.42em;
+  top: 0.38em;
+  width: 0.13em;
+  height: 0.15em;
+  background: #fff;
+  border: 0.022em solid #2f3a1c;
+  border-radius: 50%;
+}
+
+.crown-pea .cw-eye::after {
+  content: "";
+  position: absolute;
+  left: 34%;
+  top: 30%;
+  width: 44%;
+  height: 46%;
+  background: #1f2412;
+  border-radius: 50%;
+}
+
+/* 头上那片叶子 */
+.crown-pea .cw-leaf {
+  position: absolute;
+  left: 0.06em;
+  top: 0.24em;
+  width: 0.24em;
+  height: 0.13em;
+  background: linear-gradient(120deg, #8bc34a, #4e7d24);
+  border-radius: 50% 0 50% 0;
+  transform: rotate(-24deg);
+}
+
+/* 金皇冠：三个尖 + 底座金环 + 三颗红宝石 */
+.crown-pea .cw-crown {
+  position: absolute;
+  left: 0.2em;
+  top: 0.08em;
+  width: 0.42em;
+  height: 0.22em;
+  background: linear-gradient(180deg, #ffe082, #ffc107 55%, #e0a100);
+  clip-path: polygon(0 100%, 0 34%, 17% 66%, 33% 6%, 50% 60%, 67% 6%, 83% 66%, 100% 34%, 100% 100%);
+  filter: drop-shadow(0 0.01em 0.02em rgba(0, 0, 0, 0.35));
+}
+
+/* 冠底那道金箍 + 红宝石 */
+.crown-pea .cw-crown::after {
+  content: "";
+  position: absolute;
+  left: -0.02em;
+  right: -0.02em;
+  bottom: -0.05em;
+  height: 0.09em;
+  background:
+    radial-gradient(circle at 22% 50%, #e53935 0 0.025em, transparent 0.028em),
+    radial-gradient(circle at 50% 50%, #e53935 0 0.028em, transparent 0.031em),
+    radial-gradient(circle at 78% 50%, #e53935 0 0.025em, transparent 0.028em),
+    linear-gradient(180deg, #ffd54f, #e0a100);
+  border-radius: 0.03em;
+}
+
+/* 茎 + 两片叶子脚 */
+.crown-pea .cw-stem {
+  position: absolute;
+  left: 0.4em;
+  top: 0.7em;
+  width: 0.05em;
+  height: 0.18em;
+  background: linear-gradient(180deg, #7cb342, #558b2f);
+  border-radius: 0.02em;
+}
+
+.crown-pea .cw-foot {
+  position: absolute;
+  bottom: 0.02em;
+  width: 0.24em;
+  height: 0.11em;
+  background: radial-gradient(ellipse at 40% 35%, #aed581, #689f38 70%);
+  border: 0.025em solid #4e7d24;
+  border-radius: 50%;
+}
+
+.crown-pea .cw-foot.l { left: 0.18em; transform: rotate(-12deg); }
+.crown-pea .cw-foot.r { left: 0.46em; transform: rotate(12deg); }
+
+/* 照着 reference/plants/r4c2-helmet-pea.png 画的：绿豌豆戴深蓝钢盔，
+   盔上金星 + 金杠，一脸不高兴，右边一根炮管。种子卡和棋盘共用同一段结构，
+   尺寸全走 em，跟着字号缩放。 */
+.helmet-pea {
+  position: relative;
+  display: inline-block;
+  width: 1.05em;
+  height: 1em;
+  vertical-align: middle;
+  line-height: 1;
+}
+
+/* 豆头 */
+.helmet-pea .hp-head {
+  position: absolute;
+  left: 0.12em;
+  top: 0.3em;
+  width: 0.56em;
+  height: 0.5em;
+  border-radius: 50%;
+  background: radial-gradient(circle at 34% 30%, #d7f59a, #96cf46 45%, #5c9c2e 100%);
+  border: 0.03em solid #3f7220;
+}
+
+/* 右边那根炮管 */
+.helmet-pea .hp-barrel {
+  position: absolute;
+  right: 0.02em;
+  top: 0.4em;
+  width: 0.36em;
+  height: 0.28em;
+  border-radius: 0.05em 0.14em 0.14em 0.05em;
+  background: linear-gradient(180deg, #cdee92, #8dc63f 55%, #5c9c2e);
+  border: 0.03em solid #3f7220;
+}
+
+/* 炮口 */
+.helmet-pea .hp-barrel::after {
+  content: "";
+  position: absolute;
+  right: 0.02em;
+  top: 50%;
+  width: 0.12em;
+  height: 0.18em;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 40% 40%, #4a4a4a, #111);
+}
+
+/* 一脸不高兴的眉毛和眼睛 */
+.helmet-pea .hp-eye {
+  position: absolute;
+  top: 0.44em;
+  width: 0.09em;
+  height: 0.11em;
+  background: #fff;
+  border: 0.02em solid #2f3a1c;
+  border-radius: 50%;
+}
+
+.helmet-pea .hp-eye::after {
+  content: "";
+  position: absolute;
+  left: 30%;
+  top: 32%;
+  width: 46%;
+  height: 46%;
+  background: #1f2412;
+  border-radius: 50%;
+}
+
+.helmet-pea .hp-eye.l { left: 0.3em; }
+.helmet-pea .hp-eye.r { left: 0.44em; }
+
+.helmet-pea .hp-brow {
+  position: absolute;
+  top: 0.4em;
+  width: 0.12em;
+  height: 0.035em;
+  background: #2f3a1c;
+  border-radius: 0.02em;
+}
+
+.helmet-pea .hp-brow.l { left: 0.27em; transform: rotate(14deg); }
+.helmet-pea .hp-brow.r { left: 0.42em; transform: rotate(-6deg); }
+
+/* 深蓝钢盔：宽帽檐 + 略微歪戴 */
 .helmet-pea .hp-helmet {
   position: absolute;
-  left: 50%;
-  top: -0.28em;
-  transform: translateX(-50%) rotate(-8deg);
-  font-size: 0.62em;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.55));
+  left: 0.04em;
+  top: 0.14em;
+  width: 0.74em;
+  height: 0.34em;
+  border-radius: 0.4em 0.4em 0.1em 0.1em;
+  background: linear-gradient(180deg, #4a6079 0%, #2f4257 55%, #1c2b3a 100%);
+  border: 0.03em solid #16222e;
+  transform: rotate(-7deg);
+  box-shadow: inset 0 0.05em 0.05em rgba(255, 255, 255, 0.28);
 }
+
+/* 帽檐：比帽身宽一圈 */
+.helmet-pea .hp-helmet::after {
+  content: "";
+  position: absolute;
+  left: -0.06em;
+  right: -0.09em;
+  bottom: -0.045em;
+  height: 0.1em;
+  background: linear-gradient(180deg, #35495f, #16222e);
+  border-radius: 0.06em;
+}
+
+/* 盔上的金星 + 金杠 */
+.helmet-pea .hp-badge {
+  position: absolute;
+  left: 0.12em;
+  top: 0.19em;
+  width: 0.56em;
+  height: 0.14em;
+  transform: rotate(-7deg);
+  background:
+    radial-gradient(circle at 8% 60%,  #ffca28 0 0.028em, transparent 0.03em),
+    radial-gradient(circle at 22% 45%, #ffca28 0 0.028em, transparent 0.03em),
+    radial-gradient(circle at 36% 35%, #ffca28 0 0.028em, transparent 0.03em);
+}
+
+/* 右边那两道人字金杠 */
+.helmet-pea .hp-badge::after {
+  content: "";
+  position: absolute;
+  right: 0.02em;
+  top: 0;
+  width: 0.2em;
+  height: 0.13em;
+  background: #ffca28;
+  clip-path: polygon(0 34%, 50% 0, 100% 34%, 100% 52%, 50% 18%, 0 52%,
+                     0 76%, 50% 42%, 100% 76%, 100% 94%, 50% 60%, 0 94%);
+}
+
+/* 下巴带 */
+.helmet-pea .hp-strap {
+  position: absolute;
+  left: 0.16em;
+  top: 0.42em;
+  width: 0.05em;
+  height: 0.22em;
+  background: linear-gradient(180deg, #2f4257, #16222e);
+  border-radius: 0.02em;
+  transform: rotate(6deg);
+}
+
+/* 脖子上的绿叶领 */
+.helmet-pea .hp-collar {
+  position: absolute;
+  left: 0.08em;
+  top: 0.66em;
+  width: 0.6em;
+  height: 0.16em;
+  background:
+    radial-gradient(ellipse at 20% 50%, #7cb342 0 0.09em, transparent 0.1em),
+    radial-gradient(ellipse at 50% 40%, #8bc34a 0 0.1em, transparent 0.11em),
+    radial-gradient(ellipse at 80% 55%, #7cb342 0 0.09em, transparent 0.1em);
+}
+
+/* 茎和两片叶子脚 */
+.helmet-pea .hp-stem {
+  position: absolute;
+  left: 0.36em;
+  top: 0.74em;
+  width: 0.05em;
+  height: 0.16em;
+  background: linear-gradient(180deg, #7cb342, #558b2f);
+  border-radius: 0.02em;
+}
+
+.helmet-pea .hp-foot {
+  position: absolute;
+  bottom: 0.02em;
+  width: 0.22em;
+  height: 0.1em;
+  background: radial-gradient(ellipse at 40% 35%, #aed581, #689f38 70%);
+  border: 0.025em solid #4e7d24;
+  border-radius: 50%;
+}
+
+.helmet-pea .hp-foot.l { left: 0.16em; transform: rotate(-12deg); }
+.helmet-pea .hp-foot.r { left: 0.42em; transform: rotate(12deg); }
 
 /* 散射大招时的后坐力 */
 .plant.mg-recoil {
