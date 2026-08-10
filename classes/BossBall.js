@@ -4,7 +4,7 @@
 // 把沿途的植物**压扁**（直接铲掉），只有坚果和血量无限的植物压不动。
 // 寒冰菇每爆炸一次，会把场上所有的球一起消掉。
 //
-// 球的速度跟着 J / H 的节奏倍率走。
+// 球速是固定的，不跟 J / H 的节奏倍率走。
 
 const BALL_SPEED = 0.075;     // px/ms，慢慢滚（按 J 会跟着加速）
 const CRUSH_RANGE = 46;       // 离植物中心多近算压到
@@ -39,26 +39,17 @@ export function updateBossBalls(game, dt) {
     const balls = game.bossBalls;
     if (!balls || balls.length === 0) return;
 
-    const rate = game.bossSpawnRate || 1;   // 按 J 加速
-
     for (let i = balls.length - 1; i >= 0; i--) {
         const b = balls[i];
         if (b.stopped) continue;      // 被挡住的寒冰球就停在原地
-        b.x -= BALL_SPEED * dt * rate;
+        b.x -= BALL_SPEED * dt;
         b.el.style.left = `${b.x}px`;
 
-        // 撞到坚果 / 无敌植物：熔岩球当场碎掉，寒冰球只是被挡住，
-        // 停在那儿不动（要清掉它得靠寒冰菇）
+        // 撞到坚果 / 无敌植物：熔岩球和寒冰球一样，都只是被**挡住**，
+        // 停在那儿不动，不会消失（要清掉它得靠寒冰菇）
         if (crushRow(game, b)) {
-            if (b.kind === 'ice') {
-                b.stopped = true;
-                b.el.classList.add('stopped');
-            } else {
-                blockFx(game, b);
-                b.el.remove();
-                balls.splice(i, 1);
-                continue;
-            }
+            b.stopped = true;
+            b.el.classList.add('stopped');
         }
 
         if (b.x < -80) {
@@ -105,16 +96,6 @@ function guardFx(plant) {
     setTimeout(() => plant.element?.classList.remove('ball-guard'), 420);
 }
 
-// 球撞碎在挡路的植物身上
-function blockFx(game, b) {
-    const el = document.createElement('div');
-    el.className = `boss-ball-burst ${b.kind}`;
-    el.style.left = `${b.x}px`;
-    el.style.top = `${b.y + 30}px`;
-    game.board.appendChild(el);
-    setTimeout(() => el.remove(), 420);
-    game.sound?.playExplosion();
-}
 
 // 被压扁时那一下的印子
 function squashFx(game, plant) {
