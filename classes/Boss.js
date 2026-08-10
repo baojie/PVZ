@@ -104,6 +104,7 @@ export class Boss {
                     <i class="bh-mouth"></i>
                     <i class="bh-antenna"></i>
                     <span class="bh-pilot">🧟</span>
+                    <span class="bh-flag">🏳️</span>
                 </div>
                 <i class="boss-neck"></i>
                 <div class="boss-body">
@@ -217,8 +218,9 @@ export class Boss {
 
     die() {
         this.markedForDeletion = true;
+        // 散架：头和两只脚各自掉下去，驾驶舱那只僵尸举白旗
         this.element?.classList.add('boss-dead');
-        setTimeout(() => this.element?.remove(), 900);
+        setTimeout(() => this.element?.remove(), 2400);
     }
 
     remove() {

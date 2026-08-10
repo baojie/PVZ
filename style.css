@@ -2436,7 +2436,7 @@ button:active {
   /* 没低头的时候整台机甲往上顶出画布：脑袋在天上够不着，
      画面里留下身子、胳膊和整只踩在地上的大铁靴 —— 和原版一个道理。
      这里写死 px：百分比会跟着机甲高度变，脚很容易又被画布切掉。 */
-  transform: translateY(-620px);
+  transform: translateY(-880px);
 }
 
 /* 整台机甲统一放大：外面那层负责低头 / 冻结的形变，这层只管尺寸。
@@ -2597,7 +2597,7 @@ button:active {
 .boss-body {
   position: relative;
   width: 330px;
-  height: 520px;   /* 下半截留给腿和脚 */
+  height: 730px;   /* 下半截留给加长的腿和大铁靴 */
 }
 
 /* 胸甲 */
@@ -2686,8 +2686,8 @@ button:active {
 .boss-body .bb-leg {
   position: absolute;
   top: 318px;
-  width: 76px;
-  height: 132px;
+  width: 104px;
+  height: 330px;
   background: linear-gradient(180deg, #b0bec5, #78909c 55%, #455a64);
   border: 6px solid #37474f;
   border-radius: 14px 14px 8px 8px;
@@ -2698,25 +2698,25 @@ button:active {
 .boss-body .bb-leg::after {
   content: "";
   position: absolute;
-  left: -8px;
-  right: -8px;
-  top: 52px;
-  height: 30px;
+  left: -10px;
+  right: -10px;
+  top: 150px;
+  height: 44px;
   background: linear-gradient(180deg, #eceff1, #78909c);
   border: 5px solid #37474f;
   border-radius: 10px;
 }
 
-.boss-body .bb-leg.l { left: 34px; }
-.boss-body .bb-leg.r { right: 34px; }
+.boss-body .bb-leg.l { left: 22px; }
+.boss-body .bb-leg.r { right: 22px; }
 
 /* 大铁靴：往外探出去一截，踩在地上 */
 .boss-body .bb-boot {
   position: absolute;
-  left: -22px;
-  bottom: -46px;
-  width: 122px;
-  height: 56px;
+  left: -30px;
+  bottom: -58px;
+  width: 168px;
+  height: 76px;
   background: linear-gradient(180deg, #607d8b, #37474f 55%, #263238);
   border: 6px solid #263238;
   border-radius: 12px 26px 14px 14px;
@@ -2752,6 +2752,88 @@ button:active {
   transform: translateX(-50%) rotate(4deg) translateY(10px);
 }
 
+/* ---- 阵亡：散架 ---- */
+
+/* 整台机甲先僵一下，颜色发暗 */
+.boss.boss-dead .boss-rig {
+  filter: grayscale(0.45) brightness(0.8);
+  transition: none;
+  /* 散架时把整台机甲往上顶一点，头和脚掉下来才看得见 */
+  transform: translateY(-260px) !important;
+}
+
+/* 脑袋整个掉下去 */
+.boss.boss-dead .boss-head {
+  animation: boss-head-fall 0.85s cubic-bezier(0.55, 0, 0.85, 0.6) forwards;
+}
+
+@keyframes boss-head-fall {
+  0%   { transform: translate(0, 0)         rotate(0deg); }
+  20%  { transform: translate(-12px, -22px) rotate(-6deg); }
+  100% { transform: translate(-70px, 230px) rotate(-58deg); }
+}
+
+/* 两只脚各自散开摔出去 */
+.boss.boss-dead .bb-leg.l { animation: boss-leg-fall-l 0.8s ease-in forwards; }
+.boss.boss-dead .bb-leg.r { animation: boss-leg-fall-r 0.8s ease-in forwards; }
+
+@keyframes boss-leg-fall-l {
+  0%   { transform: translate(0, 0)          rotate(0deg); }
+  100% { transform: translate(-150px, 120px) rotate(-72deg); }
+}
+
+@keyframes boss-leg-fall-r {
+  0%   { transform: translate(0, 0)         rotate(0deg); }
+  100% { transform: translate(160px, 140px) rotate(78deg); }
+}
+
+/* 身子往下塌一截 */
+.boss.boss-dead .bb-torso,
+.boss.boss-dead .bb-shoulder,
+.boss.boss-dead .bb-arm,
+.boss.boss-dead .bb-hip,
+.boss.boss-dead .boss-paper {
+  animation: boss-slump 0.9s ease-in forwards;
+}
+
+@keyframes boss-slump {
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(70px) rotate(5deg); }
+}
+
+/* 驾驶舱那只僵尸：探出来举白旗 */
+.bh-flag {
+  position: absolute;
+  right: 4px;
+  top: -78px;
+  font-size: 56px;
+  line-height: 1;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.boss.boss-dead .bh-pilot {
+  animation: boss-pilot-out 0.8s ease-out forwards;
+}
+
+@keyframes boss-pilot-out {
+  0%   { transform: translate(0, 0) rotate(0deg); }
+  100% { transform: translate(76px, -80px) rotate(10deg); }
+}
+
+.boss.boss-dead .bh-flag {
+  animation: boss-flag-wave 0.8s ease-out forwards;
+}
+
+@keyframes boss-flag-wave {
+  0%   { opacity: 0; transform: translate(0, 16px) rotate(-24deg); }
+  35%  { opacity: 1; transform: translate(60px, -60px) rotate(10deg); }
+  60%  { transform: translate(70px, -86px) rotate(-10deg); }
+  80%  { transform: translate(64px, -78px) rotate(10deg); }
+  100% { opacity: 1; transform: translate(68px, -84px) rotate(-2deg); }
+}
+
 /* ---- 三个小反馈 ---- */
 
 /* 放僵尸：肩甲往外开一下 */
@@ -2781,7 +2863,7 @@ button:active {
 /* 低头：整个人前倾、脑袋压下来，这时候才打得到 */
 /* 低头：整台机甲压下来，脑袋从天上探进草坪，这时候才打得到 */
 .boss.bowing .boss-rig {
-  transform: translateY(6%) rotate(-8deg);
+  transform: translateY(-150px) rotate(-6deg);
 }
 
 .boss.bowing .boss-head {
@@ -2864,13 +2946,16 @@ button:active {
   filter: brightness(2.6) drop-shadow(0 0 22px #fff59d);
 }
 
+/* 散架期间整台不要再转着缩没了（那会把头 / 脚掉下来的动画整个盖住），
+   只在最后 0.4 秒淡出收场 */
 .boss-dead {
-  animation: boss-dead 0.9s ease-in forwards;
+  animation: boss-dead 1.6s ease-in forwards;
 }
 
 @keyframes boss-dead {
-  0%   { opacity: 1; transform: rotate(0deg)  scale(1); }
-  100% { opacity: 0; transform: rotate(38deg) scale(0.55) translateY(120px); }
+  0%   { opacity: 1; }
+  70%  { opacity: 1; }
+  100% { opacity: 0; }
 }
 
 /* ---------- 房子 🏠 ---------- */
