@@ -51,9 +51,11 @@ export class Plant extends Entity {
         // Visuals
         const icons = {
             sunflower: '🌻', wallnut: '🌰',
+            // 双重射手：照着 reference/plants/r1c2-leaf-pea.png 画的叶子豌豆
+            doubleshooter: '<span class="leaf-pea"><i class="lp-leaf a"></i><i class="lp-leaf b"></i><i class="lp-leaf c"></i><i class="lp-head"></i><i class="lp-barrel"></i><i class="lp-brow l"></i><i class="lp-brow r"></i><i class="lp-eye l"></i><i class="lp-eye r"></i><i class="lp-stem"></i><i class="lp-foot l"></i><i class="lp-foot r"></i></span>',
             // 豌豆射手：照着 reference/plants/r1c1-crown-pea.png 画的戴皇冠豌豆
             peashooter: '<span class="crown-pea"><i class="cw-leaf"></i><i class="cw-head"></i><i class="cw-barrel"></i><i class="cw-eye"></i><i class="cw-crown"></i><i class="cw-stem"></i><i class="cw-foot l"></i><i class="cw-foot r"></i></span>',
-            iceshooter: '❄️', doubleshooter: '🌿', cherry: '🍒', potato: '🥔',
+            iceshooter: '<span class="ice-pea"><i class="ip-crystal a"></i><i class="ip-crystal b"></i><i class="ip-crystal c"></i><i class="ip-head"></i><i class="ip-barrel"></i><i class="ip-eye l"></i><i class="ip-eye r"></i><i class="ip-stem"></i><i class="ip-foot l"></i><i class="ip-foot r"></i></span>',  cherry: '🍒', potato: '🥔',
  glue: '🧿', obsidian: '🗿', gatling: '🔫', waterdrop: '💧',
             corncannon: '🌽', triplepea: '🌳',
             // 原始豌豆：照着 reference/plants/r1c5-skull-helmet-pea.png 画的兽骨盔豌豆

@@ -4159,3 +4159,141 @@ button:active {
   outline-offset: -4px;
   filter: drop-shadow(0 0 10px #66bb6a);
 }
+
+/* ---------- 双重射手（叶子豌豆） ---------- */
+
+/* 照着 reference/plants/r1c2-leaf-pea.png 画的：浅绿豆头，右边一根炮管，
+   脑后翘着一簇三片深绿叶子，两道粗眉毛加两只眼睛，细茎踩两片叶子脚。
+   尺寸全走 em，跟着字号缩放；结构和 .crown-pea 一套，配色也沿用。 */
+.leaf-pea {
+  position: relative;
+  display: inline-block;
+  width: 1.05em;
+  height: 1em;
+  vertical-align: middle;
+  line-height: 1;
+}
+
+/* 脑后那簇叶子：三片，从后脑往左上翘 */
+.leaf-pea .lp-leaf {
+  position: absolute;
+  background: linear-gradient(120deg, #7cb342, #33691e);
+  border-radius: 50% 0 50% 0;
+  border: 0.02em solid #2f5d15;
+}
+
+.leaf-pea .lp-leaf.a {
+  left: -0.04em; top: 0.10em;
+  width: 0.34em; height: 0.15em;
+  transform: rotate(-40deg);
+}
+
+.leaf-pea .lp-leaf.b {
+  left: -0.02em; top: 0.24em;
+  width: 0.32em; height: 0.15em;
+  transform: rotate(-12deg);
+}
+
+.leaf-pea .lp-leaf.c {
+  left: 0.03em; top: 0.37em;
+  width: 0.27em; height: 0.13em;
+  transform: rotate(18deg);
+}
+
+/* 豆头 */
+.leaf-pea .lp-head {
+  position: absolute;
+  left: 0.18em;
+  top: 0.24em;
+  width: 0.52em;
+  height: 0.48em;
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 26%, #e8ffb8, #9ada4e 45%, #5f9e2c 100%);
+  border: 0.03em solid #457a1f;
+}
+
+/* 右边炮管，口内发暗 */
+.leaf-pea .lp-barrel {
+  position: absolute;
+  right: 0.03em;
+  top: 0.33em;
+  width: 0.4em;      /* 往左伸进豆头里，避免和头之间留缝 */
+  height: 0.28em;
+  border-radius: 0.05em 0.15em 0.15em 0.05em;
+  background: linear-gradient(180deg, #cdf094, #86c93e 55%, #55932a);
+  border: 0.03em solid #457a1f;
+}
+
+.leaf-pea .lp-barrel::after {
+  content: "";
+  position: absolute;
+  right: 0.02em;
+  top: 50%;
+  width: 0.13em;
+  height: 0.19em;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 40% 40%, #3f6b1c, #10250a);
+}
+
+/* 两只眼睛 */
+.leaf-pea .lp-eye {
+  position: absolute;
+  top: 0.36em;
+  width: 0.11em;
+  height: 0.13em;
+  background: #fff;
+  border: 0.022em solid #2f3a1c;
+  border-radius: 50%;
+}
+
+.leaf-pea .lp-eye::after {
+  content: "";
+  position: absolute;
+  left: 36%;
+  top: 30%;
+  width: 44%;
+  height: 46%;
+  background: #1f2412;
+  border-radius: 50%;
+}
+
+.leaf-pea .lp-eye.l { left: 0.34em; }
+.leaf-pea .lp-eye.r { left: 0.5em; }
+
+/* 两道粗眉毛：压着眼睛，一脸较劲 */
+.leaf-pea .lp-brow {
+  position: absolute;
+  top: 0.3em;
+  width: 0.13em;
+  height: 0.045em;
+  background: #33691e;
+  border-radius: 0.02em;
+}
+
+.leaf-pea .lp-brow.l { left: 0.33em; transform: rotate(14deg); }
+.leaf-pea .lp-brow.r { left: 0.49em; transform: rotate(-10deg); }
+
+/* 茎 + 两片叶子脚 */
+.leaf-pea .lp-stem {
+  position: absolute;
+  left: 0.41em;
+  top: 0.68em;
+  width: 0.05em;
+  height: 0.2em;
+  background: linear-gradient(180deg, #7cb342, #558b2f);
+  border-radius: 0.02em;
+}
+
+.leaf-pea .lp-foot {
+  position: absolute;
+  bottom: 0.02em;
+  width: 0.24em;
+  height: 0.11em;
+  background: radial-gradient(ellipse at 40% 35%, #aed581, #689f38 70%);
+  border: 0.025em solid #4e7d24;
+  border-radius: 50%;
+}
+
+.leaf-pea .lp-foot.l { left: 0.19em; transform: rotate(-12deg); }
+.leaf-pea .lp-foot.r { left: 0.47em; transform: rotate(12deg); }
