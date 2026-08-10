@@ -31,15 +31,15 @@ export function setupEventListeners(game) {
         }
         if (e.code === 'KeyH') {
             game.zombieSpeedBoost = (game.zombieSpeedBoost || 1) / 3;
-            // 顺带把报纸将王放僵尸的速度也压下去
+            // 顺带把报纸将王低头的节奏也压慢
             game.bossSpawnRate = (game.bossSpawnRate || 1) / 3;
             game.showNotEnoughFeedback(
-                `🐢 僵尸减速 ×${game.zombieSpeedBoost.toFixed(3)} · 将王节奏 ×${game.bossSpawnRate.toFixed(3)}`);
+                `🐢 僵尸减速 ×${game.zombieSpeedBoost.toFixed(3)} · 将王低头 ×${game.bossSpawnRate.toFixed(3)}`);
         }
         if (e.code === 'KeyJ') {
             game.bossSpawnRate = (game.bossSpawnRate || 1) * 3;
             game.showNotEnoughFeedback(
-                `🤖 将王节奏 ×${game.bossSpawnRate}（放僵尸更密 · 低头更快）`);
+                `🤖 将王低头节奏 ×${game.bossSpawnRate}`);
         }
         if (e.code === 'Escape') {
             returnHeldPlant(game);   // 手里还攥着植物就先放回原处

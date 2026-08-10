@@ -163,13 +163,13 @@ export class Boss {
             return;
         }
 
-        // J / H 调的就是这个倍率：将王整套节奏都按它走 —— 放僵尸放得更密，
-        // 低头也来得更快（相应地，低头那 8 秒也过得更快）
+        // J / H 只调低头的节奏：低头来得更快 / 更慢。
+        // 放僵尸的间隔和吐出去的球都不跟着变。
         const rate = game.bossSpawnRate || 1;
         this.phaseTimer += dt * rate;
 
         if (this.phase === 'spawn') {
-            this.spawnTimer += dt * rate;
+            this.spawnTimer += dt;
             while (this.spawnTimer >= SPAWN_INTERVAL && this.spawnedInWave < this.lineup.length) {
                 this.spawnTimer -= SPAWN_INTERVAL;
                 this._releaseZombie(game);
@@ -178,7 +178,7 @@ export class Boss {
         } else {
             // 低头：张嘴吐球。红眼吐熔岩球，蓝眼吐寒冰球。
             // 每次低头只吐一个 —— 吐完就等下一次低头
-            this.spitTimer += dt * rate;
+            this.spitTimer += dt;
             if (!this.spatThisBow && this.spitTimer >= SPIT_MS) {
                 this.spatThisBow = true;
                 spitBall(game, this, this.eyes === 'blue' ? 'ice' : 'lava');
