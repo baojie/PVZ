@@ -28,9 +28,11 @@ export function spitBall(game, boss, kind) {
     game.bossBalls = game.bossBalls || [];
     game.bossBalls.push({ el, x: boss.x + 40, y, row, kind });
 
-    // 张嘴吐球的动作
+    // 张嘴吐球的动作。连发时后一颗要把前一颗的收嘴定时器顶掉，
+    // 否则嘴会在还在喷的时候提前合上
     boss.element?.classList.add('boss-spit');
-    setTimeout(() => boss.element?.classList.remove('boss-spit'), 520);
+    clearTimeout(boss._spitFxT);
+    boss._spitFxT = setTimeout(() => boss.element?.classList.remove('boss-spit'), 520);
     game.sound?.playExplosion();
 }
 
@@ -88,12 +90,16 @@ function crushRow(game, b) {
 }
 
 // 挡下来的那株闪一下，表示「这一下我接住了」
+// 球一多，这里就会被反复调用 —— 不能用 void offsetWidth 强制重排来重启动画
+// （那玩意儿把整帧拖到过 500ms）。改成一个开关：正在闪就不重复挂类。
 function guardFx(plant) {
-    if (!plant.element) return;
-    plant.element.classList.remove('ball-guard');
-    void plant.element.offsetWidth;
+    if (!plant.element || plant._guardFlashing) return;
+    plant._guardFlashing = true;
     plant.element.classList.add('ball-guard');
-    setTimeout(() => plant.element?.classList.remove('ball-guard'), 420);
+    setTimeout(() => {
+        plant._guardFlashing = false;
+        plant.element?.classList.remove('ball-guard');
+    }, 420);
 }
 
 

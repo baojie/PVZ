@@ -21,8 +21,11 @@ export const BOSS_SENTINEL_DAMAGE = 800;
 
 const SPAWN_PHASE_MS = 10000;                                  // 放僵尸阶段总时长
 const SPAWN_INTERVAL = SPAWN_PHASE_MS / ZOMBIES_PER_WAVE;      // 每 500ms 一只
-const BOW_MS = 8000;
-const SPIT_MS = 2200;          // 低头期间每隔多久吐一个球                                           // 低头（可攻击）时长
+const BOW_MS = 8000;           // 低头（可攻击）时长
+// 低头期间每隔多久吐一个球。原来是「整个低头只吐一颗」，太温吞了 ——
+// 现在按这个间隔连着吐，一次低头能喷出 BOW_MS / SPIT_MS ≈ 20 颗。
+const SPIT_MS = 400;
+const FIRST_SPIT_MS = 300;     // 一低头就开吐，不用先等半天
 
 // 机甲非常大：碰撞盒 480×640，实际画面还要再乘 .boss-scale 的放大倍数，
 // 上下略微探出棋盘（被画布裁掉一点），显得他把整个右半边塞满
@@ -60,7 +63,7 @@ export class Boss {
         this.frozenMs = 0;             // 被寒冰冻住还剩多久
         this.eyes = 'green';           // 没低头是绿眼；低头随机红 / 蓝
         this.spitTimer = 0;
-        this.spatThisBow = false;   // 这一次低头吐过球没有
+        this.spatThisBow = false;   // 这一次低头吐出第一颗了没有（第一颗来得更快）
         this.lineup = waveLineup(this.waveSize());
 
         this._buildDOM();
@@ -177,10 +180,13 @@ export class Boss {
             if (this.spawnedInWave >= this.lineup.length) this._startBow();
         } else {
             // 低头：张嘴吐球。红眼吐熔岩球，蓝眼吐寒冰球。
-            // 每次低头只吐一个 —— 吐完就等下一次低头
+            // 连发 —— 低头这段时间里一直按 SPIT_MS 的间隔往外喷
             this.spitTimer += dt;
-            if (!this.spatThisBow && this.spitTimer >= SPIT_MS) {
+            let gap = this.spatThisBow ? SPIT_MS : FIRST_SPIT_MS;
+            while (this.spitTimer >= gap) {
+                this.spitTimer -= gap;
                 this.spatThisBow = true;
+                gap = SPIT_MS;      // 第一颗之后就都按正常间隔
                 spitBall(game, this, this.eyes === 'blue' ? 'ice' : 'lava');
             }
             if (this.phaseTimer >= BOW_MS) this._startSpawn();
