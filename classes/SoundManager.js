@@ -1,6 +1,9 @@
 /**
- * SoundManager - Procedural audio using Web Audio API
- * No external files needed - all sounds generated programmatically
+ * SoundManager —— 用 Web Audio 现场合成的音效。
+ *
+ * 除了失败时那一声「No—！」用的是预先烘好的 sounds/no.wav（由
+ * tools/make-no-wav.py 生成，配方和 playNoSynth 一致），其余全部程序化生成，
+ * 不依赖任何外部素材。
  */
 export class SoundManager {
     constructor() {
@@ -37,6 +40,8 @@ export class SoundManager {
     ensure() {
         if (!this.ctx) this.init();
         if (this.ctx.state === 'suspended') this.ctx.resume();
+        // 顺手把失败音效预热了：等真死的时候再去 fetch 就赶不上这一嗓子
+        this.loadNo();
     }
 
     // --- Sound Effects ---
@@ -156,21 +161,114 @@ export class SoundManager {
         osc.stop(this.ctx.currentTime + 1.0);
     }
 
+    // 失败时喊的那声「No—！」。
+    //
+    // 优先播预先烘好的 sounds/no.wav（tools/make-no-wav.py 生成的，来路清楚、
+    // 每次都一样）；文件加载不出来就回落到 playNoSynth 现场合成。
+    // 两条路都接在 sfxGain 上，所以静音开关都管得住。
+    //
+    // 一开始试过浏览器语音合成 speechSynthesis，实测被直接拒掉
+    // （error: not-allowed —— 它要求可信的用户手势，各浏览器策略还不一样），
+    // 所以那条路已经弃用。
+    playNo() {
+        this.ensure();
+        if (this._noBuf) { this._playBuf(this._noBuf); return; }
+        if (this._noFailed) { this.playNoSynth(); return; }
+
+        // 还没加载完：这一次先用合成的顶上，别让它哑掉
+        this.playNoSynth();
+        this.loadNo();
+    }
+
+    loadNo() {
+        if (this._noLoading || this._noBuf || this._noFailed) return;
+        this._noLoading = true;
+        fetch('sounds/no.wav')
+            .then(r => { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
+            .then(b => this.ctx.decodeAudioData(b))
+            .then(buf => { this._noBuf = buf; })
+            .catch(() => { this._noFailed = true; })
+            .finally(() => { this._noLoading = false; });
+    }
+
+    _playBuf(buf) {
+        const src = this.ctx.createBufferSource();
+        src.buffer = buf;
+        src.connect(this.sfxGain);
+        src.start();
+    }
+
+    // 合成版的那一声，作为 wav 的兜底。
+    //
+    // 本来用的是浏览器语音合成（speechSynthesis），实测被浏览器直接拒掉
+    // （error: not-allowed —— 它要求可信的用户手势，各浏览器策略还不一样），
+    // 所以改成和游戏里其它音效同一套 Web Audio 现场合成：
+    //   声带  —— 一条锯齿波当基频，从 150Hz 慢慢滑到 100Hz，喊到最后垮下去
+    //   共振峰 —— 三个带通滤波器并联，模拟「n → o」这两个音的口型：
+    //             起手鼻音 n（低频闷住），随即张嘴成 o（F1 500 / F2 900）
+    // 走 sfxGain，所以静音开关天然管得住它。
+    playNoSynth(when = 0) {
+        this.ensure();
+        const t0 = this.ctx.currentTime + when;
+        const dur = 1.25;
+
+        // 声带基频：起手一顿，然后一路垮下去
+        const glottis = this.ctx.createOscillator();
+        glottis.type = 'sawtooth';
+        glottis.frequency.setValueAtTime(150, t0);
+        glottis.frequency.setValueAtTime(150, t0 + 0.35);
+        glottis.frequency.linearRampToValueAtTime(100, t0 + dur);
+
+        // 总音量包络：喊出来是「先冲一下，再拖长」
+        const env = this.ctx.createGain();
+        env.gain.setValueAtTime(0.0001, t0);
+        env.gain.exponentialRampToValueAtTime(0.85, t0 + 0.08);
+        env.gain.setValueAtTime(0.85, t0 + 0.75);
+        env.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+
+        // 三个共振峰。F1/F2 从鼻音 n 的位置滑到元音 o 的位置，
+        // 听感上就是「呢——哦——」，也就是一声 No。
+        const formants = [
+            { from: 320, to: 500, q: 9,  gain: 1.0 },   // F1
+            { from: 900, to: 900, q: 11, gain: 0.7 },   // F2
+            { from: 2400, to: 2500, q: 8, gain: 0.25 }, // F3，添点人声的亮度
+        ];
+        for (const f of formants) {
+            const bp = this.ctx.createBiquadFilter();
+            bp.type = 'bandpass';
+            bp.Q.value = f.q;
+            bp.frequency.setValueAtTime(f.from, t0);
+            bp.frequency.linearRampToValueAtTime(f.to, t0 + 0.22);   // 张嘴
+            const g = this.ctx.createGain();
+            g.gain.value = f.gain;
+            glottis.connect(bp);
+            bp.connect(g);
+            g.connect(env);
+        }
+
+        env.connect(this.sfxGain);
+        glottis.start(t0);
+        glottis.stop(t0 + dur + 0.05);
+    }
+
     playGameOver() {
         this.ensure();
         this.stopBGM();
+        this.playNo();
+        // 音阶往后挪 0.9 秒：和那一嗓子同时响会把它糊住
+        const NO_LEN = 0.9;
         const notes = [392, 349, 330, 262];
         notes.forEach((freq, i) => {
             const osc = this.ctx.createOscillator();
             const gain = this.ctx.createGain();
             osc.type = 'sine';
             osc.frequency.value = freq;
-            gain.gain.setValueAtTime(0.25, this.ctx.currentTime + i * 0.3);
-            gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + i * 0.3 + 0.3);
+            gain.gain.setValueAtTime(0.25, this.ctx.currentTime + NO_LEN + i * 0.3);
+            gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + NO_LEN + i * 0.3 + 0.3);
             osc.connect(gain);
             gain.connect(this.sfxGain);
-            osc.start(this.ctx.currentTime + i * 0.3);
-            osc.stop(this.ctx.currentTime + i * 0.3 + 0.35);
+            osc.start(this.ctx.currentTime + NO_LEN + i * 0.3);
+            osc.stop(this.ctx.currentTime + NO_LEN + i * 0.3 + 0.35);
         });
     }
 

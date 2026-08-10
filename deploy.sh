@@ -34,6 +34,13 @@ sed \
   index.html > docs/index.html
 echo "      → docs/index.html"
 
+# 音频素材：失败时那一声 No（tools/make-no-wav.py 生成）
+if [ -d sounds ]; then
+    mkdir -p docs/sounds
+    cp sounds/*.wav docs/sounds/
+    echo "      → docs/sounds/ ($(ls sounds/*.wav | wc -l) 个音频)"
+fi
+
 echo ""
 echo "构建完成 → docs/"
 echo ""
