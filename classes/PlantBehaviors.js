@@ -17,6 +17,7 @@ import { kernelLob, kernelButterVolley, kernelCherryVolley, KERNEL_INTERVAL } fr
 import { squashTick } from './Squash.js';
 import { nukeCherryTick } from './NukeCherry.js';
 import { trophyPultTick } from './TrophyPult.js';
+import { fumeAttack, fumeUltimate, FUME_INTERVAL } from './FumeShroom.js';
 import { houseTick } from './House.js';
 
 // 植物行为表：声明式描述每种植物每个 tick 该做什么。
@@ -303,6 +304,23 @@ function superpultTick(plant, game) {
     superLob(game, plant);
 }
 
+// 大喷菇：前方三排有僵尸就朝前喷一股紫雾（70 点）；
+// 绿叶素连喷 3 秒，每 0.3 秒熏一次、每次 100 点
+function fumeshroomTick(plant, game) {
+    if (plant.ultimateMs > 0) {
+        if (!plant._fumeUlt) {
+            plant._fumeUlt = true;
+            fumeUltimate(game, plant);
+        }
+        return;
+    }
+    plant._fumeUlt = false;
+
+    if (plant.timer < FUME_INTERVAL) return;
+    plant.timer = 0;
+    fumeAttack(game, plant);
+}
+
 function magnetshroomTick(plant, game) {
     if (plant.ultimateMs > 0) {
         if (!plant._magnetUlt) {
@@ -357,6 +375,7 @@ export const PLANT_BEHAVIORS = {
     squash:        { tick: squashTick },
     nukecherry:    { tick: nukeCherryTick },
     trophypult:    { tick: trophyPultTick },
+    fumeshroom:    { tick: fumeshroomTick },
     house:         { tick: houseTick },
     // 礼物盒自己什么也不干，等着被点开
 };

@@ -914,6 +914,131 @@ body {
 
 #card-picker .cp-go:hover { background: #8bc34a; }
 
+/* ---------- 大喷菇 ---------- */
+
+/* 紫色大烟壶 + 朝右的喷口，底下一张小绿脸 */
+.fume-shroom {
+  position: relative;
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  vertical-align: middle;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.35));
+}
+
+/* 壶身：上大下收的紫色球，带深紫斑点 */
+.fume-shroom .fs-bulb {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 0.66em;
+  height: 0.62em;
+  transform: translateX(-50%);
+  border-radius: 50% 50% 42% 42%;
+  background:
+    radial-gradient(circle at 26% 22%, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0) 40%),
+    radial-gradient(circle at 62% 34%, rgba(106, 27, 154, 0.55) 0 0.07em, transparent 0.08em),
+    radial-gradient(circle at 34% 58%, rgba(106, 27, 154, 0.5) 0 0.06em, transparent 0.07em),
+    radial-gradient(circle at 70% 66%, rgba(106, 27, 154, 0.45) 0 0.05em, transparent 0.06em),
+    linear-gradient(180deg, #e29ae8, #c964d6 45%, #9c3fb0 100%);
+  box-shadow: inset -0.05em -0.07em 0.1em rgba(0, 0, 0, 0.28);
+}
+
+/* 喷口：朝右探出来的一截 */
+.fume-shroom .fs-spout {
+  position: absolute;
+  right: 0.02em;
+  top: 0.2em;
+  width: 0.3em;
+  height: 0.22em;
+  border-radius: 0.06em 0.1em 0.1em 0.06em;
+  background: linear-gradient(180deg, #d78fe0, #a94cbb 60%, #7b2e8c);
+  box-shadow: inset -0.03em -0.03em 0.05em rgba(0, 0, 0, 0.3);
+}
+
+/* 底下那截浅绿的身子 */
+.fume-shroom .fs-base {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 0.5em;
+  height: 0.34em;
+  transform: translateX(-50%);
+  border-radius: 0.16em 0.16em 0.1em 0.1em;
+  background: linear-gradient(180deg, #e8f5c8, #c5d98f 60%, #9db56a);
+}
+
+.fume-shroom .fs-eye {
+  position: absolute;
+  bottom: 0.17em;
+  width: 0.07em;
+  height: 0.07em;
+  background: #3e4a2a;
+  border-radius: 50%;
+}
+
+.fume-shroom .fs-eye.l { left: 0.34em; }
+.fume-shroom .fs-eye.r { right: 0.34em; }
+
+.fume-shroom .fs-mouth {
+  position: absolute;
+  left: 50%;
+  bottom: 0.09em;
+  width: 0.12em;
+  height: 0.05em;
+  transform: translateX(-50%);
+  border-bottom: 0.03em solid #3e4a2a;
+  border-radius: 0 0 0.06em 0.06em;
+}
+
+/* 喷出去的紫雾：铺满这一行往右一整条 */
+.fume-cloud {
+  position: absolute;
+  height: 88px;
+  z-index: 23;
+  pointer-events: none;
+  border-radius: 44px;
+  background: linear-gradient(90deg,
+              rgba(186, 104, 200, 0.75) 0%,
+              rgba(156, 63, 176, 0.5) 45%,
+              rgba(106, 27, 154, 0) 100%);
+  filter: blur(2px);
+  animation: fume-puff 0.6s ease-out forwards;
+}
+
+@keyframes fume-puff {
+  0%   { opacity: 0;   transform: scaleX(0.15); transform-origin: 0 50%; }
+  25%  { opacity: 0.95; transform: scaleX(1);   transform-origin: 0 50%; }
+  100% { opacity: 0;   transform: scaleX(1.05); transform-origin: 0 50%; }
+}
+
+/* 大招那三秒：雾一直挂着翻滚 */
+.fume-cloud.big {
+  animation: fume-hold 3s linear forwards;
+  background: linear-gradient(90deg,
+              rgba(206, 147, 216, 0.9) 0%,
+              rgba(171, 71, 188, 0.7) 45%,
+              rgba(106, 27, 154, 0.1) 100%);
+}
+
+@keyframes fume-hold {
+  0%   { opacity: 0;    transform: scaleX(0.2); transform-origin: 0 50%; }
+  8%   { opacity: 0.95; transform: scaleX(1);   transform-origin: 0 50%; }
+  90%  { opacity: 0.95; }
+  100% { opacity: 0; }
+}
+
+/* 大招期间植株自己也在鼓 */
+.plant.fume-blasting .fume-shroom {
+  animation: fume-blast 0.3s ease-in-out infinite alternate;
+  filter: drop-shadow(0 0 10px #ce93d8) drop-shadow(0 0 20px rgba(156, 39, 176, 0.8));
+}
+
+@keyframes fume-blast {
+  from { transform: scale(1); }
+  to   { transform: scale(1.08, 0.94); }
+}
+
 /* ---------- 奖杯投手 ---------- */
 
 /* 一块木板上摆着一个奖杯 */
