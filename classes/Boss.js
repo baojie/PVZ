@@ -9,6 +9,7 @@
 // 他体型非常高大，站在棋盘最右侧，纵向几乎占满整片草坪，手里举着一张大报纸。
 
 import { Zombie } from './Zombie.js';
+import { spitBall, updateBossBalls } from './BossBall.js';
 
 export const BOSS_HP = 64000000;   // 6400 万（第 1 关；每过一关 ×关卡数）
 export const ZOMBIES_PER_WAVE = 20;
@@ -20,7 +21,8 @@ export const BOSS_SENTINEL_DAMAGE = 800;
 
 const SPAWN_PHASE_MS = 10000;                                  // 放僵尸阶段总时长
 const SPAWN_INTERVAL = SPAWN_PHASE_MS / ZOMBIES_PER_WAVE;      // 每 500ms 一只
-const BOW_MS = 8000;                                           // 低头（可攻击）时长
+const BOW_MS = 8000;
+const SPIT_MS = 2200;          // 低头期间每隔多久吐一个球                                           // 低头（可攻击）时长
 
 // 机甲非常大：碰撞盒 480×640，实际画面还要再乘 .boss-scale 的放大倍数，
 // 上下略微探出棋盘（被画布裁掉一点），显得他把整个右半边塞满
@@ -56,6 +58,9 @@ export class Boss {
         this.spawnedInWave = 0;
         this.wave = 1;
         this.frozenMs = 0;             // 被寒冰冻住还剩多久
+        this.eyes = 'green';           // 没低头是绿眼；低头随机红 / 蓝
+        this.spitTimer = 0;
+        this.spatThisBow = false;   // 这一次低头吐过球没有
         this.lineup = waveLineup(this.waveSize());
 
         this._buildDOM();
@@ -135,6 +140,9 @@ export class Boss {
         this.hpFill.style.width = `${ratio * 100}%`;
         this.hpText.textContent = `${Math.max(0, Math.round(this.health))} / ${this.maxHealth}`;
         this.element.classList.toggle('bowing', this.vulnerable);
+        this.element.classList.toggle('eyes-green', this.eyes === 'green');
+        this.element.classList.toggle('eyes-red', this.eyes === 'red');
+        this.element.classList.toggle('eyes-blue', this.eyes === 'blue');
         this.stateLabel.textContent = this.frozenMs > 0
             ? '❄️ 冻住了 — 快打他!'
             : (this.vulnerable ? '低头中 — 快打他!' : '无敌 · 放僵尸中');
@@ -167,9 +175,19 @@ export class Boss {
                 this._releaseZombie(game);
             }
             if (this.spawnedInWave >= this.lineup.length) this._startBow();
-        } else if (this.phaseTimer >= BOW_MS) {
-            this._startSpawn();
+        } else {
+            // 低头：张嘴吐球。红眼吐熔岩球，蓝眼吐寒冰球。
+            // 每次低头只吐一个 —— 吐完就等下一次低头
+            this.spitTimer += dt * rate;
+            if (!this.spatThisBow && this.spitTimer >= SPIT_MS) {
+                this.spatThisBow = true;
+                spitBall(game, this, this.eyes === 'blue' ? 'ice' : 'lava');
+            }
+            if (this.phaseTimer >= BOW_MS) this._startSpawn();
         }
+
+        // 吐出去的球一直在滚（不管他现在低不低头）
+        updateBossBalls(game, dt);
 
         this._render();
     }
@@ -187,12 +205,18 @@ export class Boss {
     }
 
     _startBow() {
+        // 低头：眼睛随机变红或变蓝 —— 红的吐熔岩球，蓝的吐寒冰球
+        this.eyes = Math.random() < 0.5 ? 'red' : 'blue';
+        this.spitTimer = 0;
+        this.spatThisBow = false;   // 这一次低头还没吐过
         this.phase = 'bow';
         this.phaseTimer = 0;
         this.game.sound?.playExplosion();
     }
 
     _startSpawn() {
+        this.eyes = 'green';   // 抬起头，眼睛变回绿色
+        this.spatThisBow = false;
         this.phase = 'spawn';
         this.phaseTimer = 0;
         this.spawnTimer = 0;

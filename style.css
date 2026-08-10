@@ -2834,6 +2834,135 @@ button:active {
   100% { opacity: 1; transform: translate(68px, -84px) rotate(-2deg); }
 }
 
+/* ---- 眼色 / 张嘴 / 吐出来的球 ---- */
+
+/* 没低头：绿眼 */
+.boss.eyes-green .bh-eye {
+  background: radial-gradient(ellipse at 38% 32%, #f1ffe6, #8bc34a 45%, #2e7d32 82%);
+  box-shadow: 0 0 18px rgba(139, 195, 74, 0.9);
+}
+
+/* 低头 · 红眼：要吐熔岩球 */
+.boss.eyes-red .bh-eye {
+  background: radial-gradient(ellipse at 38% 32%, #fff3e0, #ff5252 45%, #b71c1c 82%);
+  box-shadow: 0 0 20px rgba(255, 82, 82, 0.95);
+}
+
+/* 低头 · 蓝眼：要吐寒冰球 */
+.boss.eyes-blue .bh-eye {
+  background: radial-gradient(ellipse at 38% 32%, #e0ffff, #4fc3f7 45%, #01579b 82%);
+  box-shadow: 0 0 20px rgba(79, 195, 247, 0.95);
+}
+
+/* 低头时嘴张开，吐球的一瞬间张到最大 */
+.boss.bowing .bh-mouth { height: 66px; }
+
+.boss.boss-spit .bh-mouth {
+  height: 92px;
+  box-shadow: 0 0 24px rgba(255, 120, 40, 0.8);
+}
+
+/* 吐出来的球 */
+.boss-ball {
+  position: absolute;
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  z-index: 32;
+  pointer-events: none;
+  animation: boss-ball-spin 0.5s linear infinite;
+}
+
+.boss-ball.lava {
+  background: radial-gradient(circle at 36% 32%, #fff59d, #ff7043 45%, #d84315 72%, #7f0000);
+  box-shadow: 0 0 18px #ff7043, 0 0 34px rgba(216, 67, 21, 0.85);
+}
+
+.boss-ball.ice {
+  background: radial-gradient(circle at 36% 32%, #ffffff, #81d4fa 45%, #0288d1 72%, #01579b);
+  box-shadow: 0 0 18px #4fc3f7, 0 0 34px rgba(2, 136, 209, 0.85);
+}
+
+@keyframes boss-ball-spin {
+  from { transform: rotate(0deg)   scale(1); }
+  50%  { transform: rotate(180deg) scale(1.06); }
+  to   { transform: rotate(360deg) scale(1); }
+}
+
+/* 被挡住停在原地的寒冰球：不再自转，改成轻轻搏动，看得出它卡住了 */
+.boss-ball.stopped {
+  animation: boss-ball-stuck 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes boss-ball-stuck {
+  from { transform: scale(1);    filter: brightness(1); }
+  to   { transform: scale(1.06); filter: brightness(1.2); }
+}
+
+/* 被寒冰菇冻碎 */
+.boss-ball.popping {
+  animation: boss-ball-pop 0.32s ease-out forwards;
+}
+
+@keyframes boss-ball-pop {
+  from { opacity: 1; transform: scale(1); filter: brightness(1); }
+  to   { opacity: 0; transform: scale(1.8); filter: brightness(2.2) hue-rotate(160deg); }
+}
+
+/* 挡住球的那株：闪一圈护盾光 */
+.plant.ball-guard {
+  animation: ball-guard 0.42s ease-out;
+}
+
+@keyframes ball-guard {
+  0%   { filter: brightness(1); }
+  30%  { filter: brightness(2) drop-shadow(0 0 14px #fff) drop-shadow(0 0 26px #4fc3f7); }
+  100% { filter: brightness(1); }
+}
+
+/* 球撞碎在挡路植物身上 */
+.boss-ball-burst {
+  position: absolute;
+  width: 110px;
+  height: 110px;
+  margin: -55px 0 0 -55px;
+  z-index: 33;
+  pointer-events: none;
+  border-radius: 50%;
+  animation: boss-ball-burst 0.42s ease-out forwards;
+}
+
+.boss-ball-burst.lava {
+  background: radial-gradient(circle at 50% 50%, rgba(255, 241, 200, 0.95), rgba(255, 112, 67, 0.85) 45%, rgba(216, 67, 21, 0) 75%);
+}
+
+.boss-ball-burst.ice {
+  background: radial-gradient(circle at 50% 50%, rgba(235, 250, 255, 0.95), rgba(79, 195, 247, 0.85) 45%, rgba(2, 136, 209, 0) 75%);
+}
+
+@keyframes boss-ball-burst {
+  from { opacity: 1; transform: scale(0.4); }
+  to   { opacity: 0; transform: scale(1.6); }
+}
+
+/* 植物被压扁时那一下的印子 */
+.boss-ball-squash {
+  position: absolute;
+  width: 76px;
+  height: 24px;
+  margin: -12px 0 0 -38px;
+  z-index: 24;
+  pointer-events: none;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 50%, rgba(60, 40, 20, 0.75), rgba(60, 40, 20, 0));
+  animation: boss-ball-squash 0.42s ease-out forwards;
+}
+
+@keyframes boss-ball-squash {
+  from { opacity: 1; transform: scale(0.5); }
+  to   { opacity: 0; transform: scale(1.6); }
+}
+
 /* ---- 三个小反馈 ---- */
 
 /* 放僵尸：肩甲往外开一下 */

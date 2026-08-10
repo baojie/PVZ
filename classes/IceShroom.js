@@ -6,6 +6,8 @@
 // 绿叶素大招：冰暴。全屏冰雾，冻结时间翻倍，而且这一株的爆炸间隔永久缩短 1 秒
 //           （5 秒 → 4 秒 → 3 秒 …，最低 1 秒）。喂几次缩几次。
 
+import { clearBossBalls } from './BossBall.js';
+
 const BASE_INTERVAL = 5000;    // 起步 5 秒一次
 const MIN_INTERVAL = 1000;     // 再快也不低于 1 秒
 const SHORTEN_MS = 1000;       // 每次冰暴缩短 1 秒
@@ -60,6 +62,10 @@ export function iceBlast(game, plant, freezeMs = FREEZE_MS) {
         game.boss.freeze(freezeMs);
         hits++;
     }
+
+    // 顺手把将王吐出来的熔岩球 / 寒冰球全消掉
+    const popped = clearBossBalls(game);
+    if (popped) game.showNotEnoughFeedback(`❄️ 冻碎了 ${popped} 个球!`);
 
     ring(game, plant);
     game.sound.playIceShoot();
