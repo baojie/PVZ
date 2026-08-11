@@ -668,6 +668,259 @@ body {
 
 /* ---------- 超级机枪 ---------- */
 
+/* ---------- 寒冰射手 ---------- */
+
+/* 照着 reference/plants/r2c6-ice-pea.png 画的：淡蓝色的豌豆，脑袋后面支着
+   一簇冰晶，炮口是深色的。尺寸走 em，跟着字号缩放。 */
+.ice-pea {
+  position: relative;
+  display: inline-block;
+  width: 1.05em;
+  height: 1em;
+  vertical-align: middle;
+  line-height: 1;
+}
+
+/* 淡蓝豆头 */
+.ice-pea .ip-head {
+  position: absolute;
+  left: 0.22em;
+  top: 0.26em;
+  width: 0.5em;
+  height: 0.46em;
+  border-radius: 50%;
+  background: radial-gradient(circle at 34% 26%, #ffffff, #a5e6f5 40%, #4fc3e8 72%, #1f9ac4 100%);
+  border: 0.028em solid #1a7fa8;
+}
+
+/* 炮管 */
+.ice-pea .ip-barrel {
+  position: absolute;
+  right: 0.03em;
+  top: 0.34em;
+  width: 0.34em;
+  height: 0.28em;
+  border-radius: 0.05em 0.14em 0.14em 0.05em;
+  background: linear-gradient(180deg, #d8f6ff, #7fd6ee 55%, #2ba3cc);
+  border: 0.028em solid #1a7fa8;
+}
+
+.ice-pea .ip-barrel::after {
+  content: "";
+  position: absolute;
+  right: 0.02em;
+  top: 50%;
+  width: 0.13em;
+  height: 0.19em;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 40% 40%, #3b4a52, #0d1418);
+}
+
+/* 两只眼睛 */
+.ice-pea .ip-eye {
+  position: absolute;
+  top: 0.34em;
+  width: 0.08em;
+  height: 0.1em;
+  background: #1f2a2e;
+  border-radius: 50%;
+}
+
+.ice-pea .ip-eye::after {
+  content: "";
+  position: absolute;
+  left: 22%;
+  top: 16%;
+  width: 40%;
+  height: 36%;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+}
+
+.ice-pea .ip-eye.l { left: 0.46em; }
+.ice-pea .ip-eye.r { left: 0.58em; }
+
+/* 脑袋后面那一簇冰晶：三片长短不一的尖片 */
+.ice-pea .ip-crystal {
+  position: absolute;
+  background: linear-gradient(150deg, #ffffff, #bde9f7 45%, #6fc9e6 100%);
+  border: 0.022em solid #7fc9e0;
+  clip-path: polygon(50% 0, 100% 38%, 78% 100%, 22% 100%, 0 38%);
+}
+
+.ice-pea .ip-crystal.a { left: 0.02em; top: 0.16em; width: 0.2em; height: 0.3em; transform: rotate(-24deg); }
+.ice-pea .ip-crystal.b { left: 0.14em; top: 0.08em; width: 0.17em; height: 0.26em; transform: rotate(-6deg); }
+.ice-pea .ip-crystal.c { left: 0.0em;  top: 0.34em; width: 0.15em; height: 0.22em; transform: rotate(-46deg); }
+
+/* 茎和两片叶子脚 */
+.ice-pea .ip-stem {
+  position: absolute;
+  left: 0.44em;
+  top: 0.68em;
+  width: 0.05em;
+  height: 0.2em;
+  background: linear-gradient(180deg, #7cb342, #558b2f);
+  border-radius: 0.02em;
+}
+
+.ice-pea .ip-foot {
+  position: absolute;
+  bottom: 0.02em;
+  width: 0.24em;
+  height: 0.11em;
+  background: radial-gradient(ellipse at 40% 35%, #aed581, #689f38 70%);
+  border: 0.025em solid #4e7d24;
+  border-radius: 50%;
+}
+
+.ice-pea .ip-foot.l { left: 0.24em; transform: rotate(-12deg); }
+.ice-pea .ip-foot.r { left: 0.5em;  transform: rotate(12deg); }
+
+/* 水滴射手：和寒冰射手同一套身子，去掉冰晶，嘴上挂一滴水 */
+.ice-pea.drop .ip-crystal { display: none; }
+
+/* 挂在炮口的那滴水 */
+.ice-pea .ip-drop {
+  position: absolute;
+  right: 0.02em;
+  top: 0.52em;
+  width: 0.16em;
+  height: 0.2em;
+  background: radial-gradient(circle at 36% 30%, #ffffff, #9fe4fb 45%, #2ba3cc 100%);
+  border: 0.022em solid #1a7fa8;
+  border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%;
+  clip-path: polygon(50% 0, 88% 46%, 100% 74%, 76% 100%, 24% 100%, 0 74%, 12% 46%);
+}
+
+/* 快滴下来的那一小颗 */
+.ice-pea .ip-dribble {
+  position: absolute;
+  right: 0.08em;
+  top: 0.74em;
+  width: 0.07em;
+  height: 0.09em;
+  background: radial-gradient(circle at 36% 30%, #ffffff, #7fd6ee 55%, #2ba3cc);
+  border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%;
+  opacity: 0.9;
+}
+
+/* ---------- 三重豌豆 ---------- */
+
+/* 照着 reference/plants/r1c3-triple-pea.png 画的：三个豌豆头叠成品字，
+   左上、左下、右下各一个，共用一根茎和两片叶子脚。 */
+.triple-pea {
+  position: relative;
+  display: inline-block;
+  width: 1.05em;
+  height: 1em;
+  vertical-align: middle;
+  line-height: 1;
+}
+
+/* 一个头 = 豆身 + 炮管 + 眼睛 + 小叶子 */
+.triple-pea .tp-pea {
+  position: absolute;
+  width: 0.52em;
+  height: 0.4em;
+}
+
+.triple-pea .tp-pea.top { left: 0.08em; top: 0.02em; }
+.triple-pea .tp-pea.mid { left: 0;      top: 0.3em; }
+.triple-pea .tp-pea.bot { left: 0.34em; top: 0.34em; }
+
+.triple-pea .tp-ball {
+  position: absolute;
+  left: 0;
+  top: 0.02em;
+  width: 0.36em;
+  height: 0.34em;
+  border-radius: 50%;
+  background: radial-gradient(circle at 34% 28%, #e2ffae, #9ada4e 45%, #5f9e2c 100%);
+  border: 0.028em solid #457a1f;
+}
+
+.triple-pea .tp-barrel {
+  position: absolute;
+  left: 0.28em;
+  top: 0.08em;
+  width: 0.24em;
+  height: 0.2em;
+  border-radius: 0.04em 0.1em 0.1em 0.04em;
+  background: linear-gradient(180deg, #d5f59c, #93d148 55%, #5f9e2c);
+  border: 0.028em solid #457a1f;
+}
+
+.triple-pea .tp-barrel::after {
+  content: "";
+  position: absolute;
+  right: 0.015em;
+  top: 50%;
+  width: 0.09em;
+  height: 0.13em;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 40% 40%, #4a4a4a, #111);
+}
+
+.triple-pea .tp-eye {
+  position: absolute;
+  left: 0.2em;
+  top: 0.1em;
+  width: 0.09em;
+  height: 0.1em;
+  background: #fff;
+  border: 0.02em solid #2f3a1c;
+  border-radius: 50%;
+}
+
+.triple-pea .tp-eye::after {
+  content: "";
+  position: absolute;
+  left: 32%;
+  top: 30%;
+  width: 44%;
+  height: 46%;
+  background: #1f2412;
+  border-radius: 50%;
+}
+
+/* 每个头左上角那片小叶子 */
+.triple-pea .tp-leaf {
+  position: absolute;
+  left: -0.06em;
+  top: 0.02em;
+  width: 0.16em;
+  height: 0.09em;
+  background: linear-gradient(120deg, #8bc34a, #4e7d24);
+  border-radius: 50% 0 50% 0;
+  transform: rotate(-26deg);
+}
+
+/* 共用的茎和两片叶子脚 */
+.triple-pea .tp-stem {
+  position: absolute;
+  left: 0.36em;
+  top: 0.7em;
+  width: 0.05em;
+  height: 0.18em;
+  background: linear-gradient(180deg, #7cb342, #558b2f);
+  border-radius: 0.02em;
+}
+
+.triple-pea .tp-foot {
+  position: absolute;
+  bottom: 0.02em;
+  width: 0.24em;
+  height: 0.11em;
+  background: radial-gradient(ellipse at 40% 35%, #aed581, #689f38 70%);
+  border: 0.025em solid #4e7d24;
+  border-radius: 50%;
+}
+
+.triple-pea .tp-foot.l { left: 0.16em; transform: rotate(-12deg); }
+.triple-pea .tp-foot.r { left: 0.44em; transform: rotate(12deg); }
+
 /* ---------- 原始豌豆（兽骨盔版） ---------- */
 
 /* 照着 reference/plants/r1c5-skull-helmet-pea.png 画的：绿豌豆扣着一顶白骨头盔，
@@ -684,10 +937,10 @@ body {
 /* 豆头 */
 .skull-pea .sk-head {
   position: absolute;
-  left: 0.3em;
-  top: 0.32em;
-  width: 0.5em;
-  height: 0.46em;
+  left: 0.32em;
+  top: 0.38em;
+  width: 0.48em;
+  height: 0.44em;
   border-radius: 50%;
   background: radial-gradient(circle at 34% 28%, #e2ffae, #9ada4e 45%, #5f9e2c 100%);
   border: 0.03em solid #457a1f;
@@ -697,7 +950,7 @@ body {
 .skull-pea .sk-barrel {
   position: absolute;
   right: 0.02em;
-  top: 0.4em;
+  top: 0.46em;
   width: 0.34em;
   height: 0.28em;
   border-radius: 0.05em 0.14em 0.14em 0.05em;
@@ -719,8 +972,8 @@ body {
 
 .skull-pea .sk-eye {
   position: absolute;
-  left: 0.52em;
-  top: 0.44em;
+  left: 0.54em;
+  top: 0.5em;
   width: 0.11em;
   height: 0.13em;
   background: #fff;
@@ -742,10 +995,10 @@ body {
 /* 后面披着的骨质颈盾（那一大片） */
 .skull-pea .sk-frill {
   position: absolute;
-  left: 0.02em;
-  top: 0.16em;
-  width: 0.5em;
-  height: 0.48em;
+  left: 0.04em;
+  top: 0.14em;
+  width: 0.42em;
+  height: 0.38em;
   border-radius: 46% 30% 34% 44%;
   background: radial-gradient(circle at 40% 30%, #f5f1e4, #d8d2c0 55%, #b0a894 100%);
   border: 0.03em solid #8d8676;
@@ -766,10 +1019,10 @@ body {
 /* 扣在头上的白骨盔 */
 .skull-pea .sk-skull {
   position: absolute;
-  left: 0.24em;
-  top: 0.2em;
-  width: 0.46em;
-  height: 0.34em;
+  left: 0.26em;
+  top: 0.18em;
+  width: 0.4em;
+  height: 0.26em;
   border-radius: 50% 50% 36% 36%;
   background: linear-gradient(180deg, #fbf8ef, #e2dccb 55%, #c3bba6);
   border: 0.03em solid #8d8676;
@@ -779,8 +1032,8 @@ body {
 /* 盔上的眼窝 */
 .skull-pea .sk-socket {
   position: absolute;
-  left: 0.42em;
-  top: 0.3em;
+  left: 0.44em;
+  top: 0.26em;
   width: 0.1em;
   height: 0.08em;
   background: #6b6355;
@@ -796,8 +1049,8 @@ body {
 }
 
 .skull-pea .sk-horn.top {
-  left: 0.5em;
-  top: 0.12em;
+  left: 0.52em;
+  top: 0.08em;
   width: 0.2em;
   height: 0.14em;
   border-radius: 60% 20% 60% 20%;
@@ -805,8 +1058,8 @@ body {
 }
 
 .skull-pea .sk-horn.side {
-  left: 0.24em;
-  top: 0.14em;
+  left: 0.22em;
+  top: 0.1em;
   width: 0.13em;
   height: 0.1em;
   border-radius: 60% 20% 60% 20%;
@@ -816,8 +1069,8 @@ body {
 /* 脖子上那圈草裙 */
 .skull-pea .sk-collar {
   position: absolute;
-  left: 0.22em;
-  top: 0.7em;
+  left: 0.24em;
+  top: 0.76em;
   width: 0.56em;
   height: 0.14em;
   background:
@@ -1224,13 +1477,86 @@ body {
 /* ---------- 超级电能机枪豌豆 ---------- */
 
 /* 青色豌豆：整块转成青色再把钢盔转回来，钢盔保持原来的钢灰色 */
+/* 超级电能机枪豌豆：照着 reference/plants/r4c7-ghost-helmet-pea.png 画的
+   幽灵电能版 —— 整株半透明、发青绿冷光，钢盔是淡薄荷色配深青军衔，
+   还带一点点电流似的忽明忽暗。 */
 .elec-pea {
-  filter: hue-rotate(135deg) saturate(1.5) drop-shadow(0 0 6px #00e5ff);
+  filter: drop-shadow(0 0 6px #7cffdc) drop-shadow(0 0 16px rgba(0, 230, 190, 0.65));
+  animation: elec-flicker-body 1.6s ease-in-out infinite;
 }
 
-.elec-pea .hp-helmet {
-  filter: hue-rotate(-135deg) saturate(0.67) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.55));
+@keyframes elec-flicker-body {
+  0%, 100% { opacity: 0.96; }
+  45%      { opacity: 0.82; }
+  55%      { opacity: 1; }
 }
+
+/* 豆头 / 炮管：半透明的幽灵绿 */
+.elec-pea .hp-head,
+.elec-pea .hp-barrel {
+  background: radial-gradient(circle at 34% 28%, rgba(255, 255, 255, 0.95),
+              rgba(180, 255, 232, 0.8) 45%, rgba(64, 224, 190, 0.72) 100%);
+  border-color: #45c8a8;
+}
+
+/* 炮口改成发光的环，不是黑洞 */
+.elec-pea .hp-barrel::after {
+  background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.95) 0 30%,
+              rgba(124, 255, 220, 0.55) 55%, rgba(64, 224, 190, 0.15) 100%);
+  box-shadow: 0 0 0.06em rgba(124, 255, 220, 0.9);
+}
+
+/* 钢盔：淡薄荷色 */
+.elec-pea .hp-helmet {
+  background: linear-gradient(180deg, #d9fff3 0%, #a5efd9 55%, #6fd3ba 100%);
+  border-color: #3fae90;
+  box-shadow: inset 0 0.05em 0.05em rgba(255, 255, 255, 0.7);
+}
+
+.elec-pea .hp-helmet::after {
+  background: linear-gradient(180deg, #a5efd9, #4fbf9f);
+}
+
+/* 军衔改成深青色 */
+.elec-pea .hp-badge {
+  background:
+    radial-gradient(circle at 8% 60%,  #2f9d84 0 0.028em, transparent 0.03em),
+    radial-gradient(circle at 22% 45%, #2f9d84 0 0.028em, transparent 0.03em),
+    radial-gradient(circle at 36% 35%, #2f9d84 0 0.028em, transparent 0.03em);
+}
+
+.elec-pea .hp-badge::after { background: #2f9d84; }
+
+/* 下巴带 / 领子 / 茎 / 脚也一起变成幽灵色 */
+.elec-pea .hp-strap {
+  background: linear-gradient(180deg, #7fd8c2, #3fae90);
+}
+
+.elec-pea .hp-collar {
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(140, 255, 226, 0.85) 0 0.09em, transparent 0.1em),
+    radial-gradient(ellipse at 50% 40%, rgba(170, 255, 235, 0.9)  0 0.1em,  transparent 0.11em),
+    radial-gradient(ellipse at 80% 55%, rgba(140, 255, 226, 0.85) 0 0.09em, transparent 0.1em);
+}
+
+.elec-pea .hp-stem {
+  background: linear-gradient(180deg, rgba(160, 255, 230, 0.9), rgba(70, 200, 170, 0.9));
+}
+
+.elec-pea .hp-foot {
+  background: radial-gradient(ellipse at 40% 35%, rgba(220, 255, 245, 0.95), rgba(90, 214, 185, 0.85) 70%);
+  border-color: #45c8a8;
+}
+
+/* 眼睛和眉毛：发亮的青白 */
+.elec-pea .hp-eye {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: #2f9d84;
+}
+
+.elec-pea .hp-eye::after { background: #14584c; }
+
+.elec-pea .hp-brow { background: #2f9d84; }
 
 .elec-muzzle {
   position: absolute;

@@ -58,8 +58,10 @@ export class Plant extends Entity {
             iceshooter: '<span class="ice-pea"><i class="ip-crystal a"></i><i class="ip-crystal b"></i><i class="ip-crystal c"></i><i class="ip-head"></i><i class="ip-barrel"></i><i class="ip-eye l"></i><i class="ip-eye r"></i><i class="ip-stem"></i><i class="ip-foot l"></i><i class="ip-foot r"></i></span>',  cherry: '🍒',
             // 土豆地雷：埋在土堆里的土豆，装好后顶起引信杆和红球，见 .potato-mine
             potato: '<span class="potato-mine"><i class="pm-knob"></i><i class="pm-rod"></i><i class="pm-body"></i><i class="pm-eye l"></i><i class="pm-eye r"></i><i class="pm-mouth"></i><i class="pm-dirt"></i></span>',
- glue: '🧿', obsidian: '🗿', gatling: '🔫', waterdrop: '💧',
-            corncannon: '🌽', triplepea: '🌳',
+ glue: '🧿', obsidian: '🗿', gatling: '🔫', waterdrop: '<span class="ice-pea drop"><i class="ip-head"></i><i class="ip-barrel"></i><i class="ip-eye l"></i><i class="ip-eye r"></i><i class="ip-drop"></i><i class="ip-dribble"></i><i class="ip-stem"></i><i class="ip-foot l"></i><i class="ip-foot r"></i></span>',
+            corncannon: '🌽',
+            // 三重豌豆：照着 reference/plants/r1c3-triple-pea.png 画的三个头
+            triplepea: '<span class="triple-pea"><i class="tp-pea top"><i class="tp-leaf"></i><i class="tp-ball"></i><i class="tp-barrel"></i><i class="tp-eye"></i></i><i class="tp-pea mid"><i class="tp-leaf"></i><i class="tp-ball"></i><i class="tp-barrel"></i><i class="tp-eye"></i></i><i class="tp-pea bot"><i class="tp-leaf"></i><i class="tp-ball"></i><i class="tp-barrel"></i><i class="tp-eye"></i></i><i class="tp-stem"></i><i class="tp-foot l"></i><i class="tp-foot r"></i></span>',
             // 原始豌豆：照着 reference/plants/r1c5-skull-helmet-pea.png 画的兽骨盔豌豆
             primitivepea: '<span class="skull-pea"><i class="sk-head"></i><i class="sk-barrel"></i><i class="sk-eye"></i><i class="sk-skull"></i><i class="sk-frill"></i><i class="sk-horn top"></i><i class="sk-horn side"></i><i class="sk-socket"></i><i class="sk-collar"></i><i class="sk-foot l"></i><i class="sk-foot r"></i></span>',
             nutbowling: '🥥', magnetshroom: '🧲',
