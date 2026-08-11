@@ -121,22 +121,60 @@ function potatoTick(plant, game) {
         plant.armTimer += game.deltaTime;
         if (plant.armTimer >= 3000) {
             plant.armed = true;
-            if (plant.element) plant.element.querySelector('.plant-inner').textContent = '💣';
+            // 装好了：给 .potato-mine 加 armed，土豆升起来、探出红引信（见 style.css）
+            if (plant.element) plant.element.querySelector('.potato-mine')?.classList.add('armed');
         }
         return;
     }
     const myRow = Math.floor(plant.y / game.cellHeight);
     const myCol = Math.floor(plant.x / game.cellWidth);
+
+    // 出土之后，只要有僵尸踩到这一格就引爆
     for (const z of game.zombies) {
+        if (z.markedForDeletion) continue;
         const zCol = Math.floor((z.x + 40) / game.cellWidth);
         const zRow = Math.floor(z.y / game.cellHeight);
         if (zRow === myRow && zCol === myCol) {
-            z.health = 0;
-            z.remove();
-            plant.remove();
+            potatoBoom(game, plant, myRow, myCol);
             return;
         }
     }
+}
+
+// 炸 3×3 —— 以自己那一格为中心，周围八格连同自己，每只僵尸 1800 点。
+// 直接扣血，绕过报纸 / 铁门那套护盾判定。
+function potatoBoom(game, plant, row, col) {
+    const POTATO_DAMAGE = 1800;
+    let hit = 0;
+
+    for (const z of game.zombies) {
+        if (z.markedForDeletion) continue;
+        const zRow = Math.floor(z.y / game.cellHeight);
+        const zCol = Math.floor((z.x + 40) / game.cellWidth);
+        if (Math.abs(zRow - row) > 1 || Math.abs(zCol - col) > 1) continue;
+        z.health -= POTATO_DAMAGE;
+        if (z.health <= 0) {
+            z.remove();
+            game.sound?.playZombieDie();
+        } else {
+            z.draw();
+        }
+        hit++;
+    }
+
+    // 3×3 那片火光
+    const boom = document.createElement('div');
+    boom.className = 'potato-blast';
+    boom.style.left = `${(col - 1) * game.cellWidth}px`;
+    boom.style.top = `${(row - 1) * game.cellHeight}px`;
+    boom.style.width = `${3 * game.cellWidth}px`;
+    boom.style.height = `${3 * game.cellHeight}px`;
+    game.board.appendChild(boom);
+    setTimeout(() => boom.remove(), 520);
+
+    game.sound?.playExplosion();
+    if (hit) game.showNotEnoughFeedback(`🥔 3×3 爆炸! ${hit} 只吃了 ${POTATO_DAMAGE} 点`);
+    plant.remove();
 }
 
 function cabbagepultTick(plant, game) {

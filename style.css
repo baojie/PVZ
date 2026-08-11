@@ -1393,6 +1393,25 @@ body {
 
 #card-picker .cp-go:hover { background: #8bc34a; }
 
+/* 土豆地雷炸开的那 3×3 片火光 */
+.potato-blast {
+  position: absolute;
+  z-index: 28;
+  pointer-events: none;
+  border-radius: 26%;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255, 249, 220, 0.95) 0 18%,
+                    rgba(255, 167, 38, 0.85) 42%,
+                    rgba(216, 67, 21, 0.55) 66%,
+                    rgba(120, 40, 10, 0) 100%);
+  animation: potato-blast 0.52s ease-out forwards;
+}
+
+@keyframes potato-blast {
+  from { opacity: 1; transform: scale(0.35); }
+  to   { opacity: 0; transform: scale(1.15); }
+}
+
 /* ---------- 大喷菇 ---------- */
 
 /* 紫色大烟壶 + 朝右的喷口，底下一张小绿脸 */
@@ -4311,3 +4330,138 @@ button:active {
 
 .leaf-pea .lp-foot.l { left: 0.19em; transform: rotate(-12deg); }
 .leaf-pea .lp-foot.r { left: 0.47em; transform: rotate(12deg); }
+
+/* ---------- 土豆地雷 ---------- */
+
+/* 照着 reference/plants/potato-mine.png 画的：一颗埋在土堆里的土豆，
+   顶上插一根引信杆、杆头一颗红球。刚种下是 .potato-mine（土豆缩在土里、
+   眯着眼、没引信），3 秒后 PlantBehaviors 给它加 .armed，才升起来、
+   睁眼、探出红球。 */
+.potato-mine {
+  position: relative;
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  vertical-align: middle;
+  line-height: 1;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.35));
+}
+
+/* 土豆本体：扁圆的一坨，带深色麻点 */
+.potato-mine .pm-body {
+  position: absolute;
+  left: 50%;
+  bottom: 0.16em;
+  width: 0.72em;
+  height: 0.52em;
+  transform: translate(-50%, 0.08em);
+  border-radius: 50% 50% 46% 46%;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0) 45%),
+    radial-gradient(circle at 24% 46%, rgba(120, 78, 38, 0.5) 0 0.035em, transparent 0.04em),
+    radial-gradient(circle at 46% 30%, rgba(120, 78, 38, 0.45) 0 0.03em, transparent 0.035em),
+    radial-gradient(circle at 64% 52%, rgba(120, 78, 38, 0.5) 0 0.04em, transparent 0.045em),
+    radial-gradient(circle at 78% 34%, rgba(120, 78, 38, 0.4) 0 0.03em, transparent 0.035em),
+    linear-gradient(180deg, #f0d29a, #d8ac66 55%, #b3813f 100%);
+  border: 0.028em solid #8a5c28;
+  box-shadow: inset -0.05em -0.06em 0.1em rgba(90, 55, 20, 0.35);
+  transition: transform 0.25s ease-out;
+}
+
+.potato-mine.armed .pm-body { transform: translate(-50%, 0); }
+
+/* 两只小眼睛 */
+.potato-mine .pm-eye {
+  position: absolute;
+  bottom: 0.42em;
+  width: 0.08em;
+  height: 0.09em;
+  background: #3a2410;
+  border-radius: 50%;
+  transform: translateY(0.08em);
+  transition: transform 0.25s ease-out;
+}
+
+/* 没引信的时候眯成一条缝 */
+.potato-mine:not(.armed) .pm-eye { height: 0.03em; border-radius: 0.02em; }
+
+.potato-mine.armed .pm-eye { transform: translateY(0); }
+
+.potato-mine .pm-eye.l { left: 0.3em; }
+.potato-mine .pm-eye.r { left: 0.56em; }
+
+/* 咧开的小嘴 */
+.potato-mine .pm-mouth {
+  position: absolute;
+  left: 50%;
+  bottom: 0.33em;
+  width: 0.18em;
+  height: 0.09em;
+  transform: translate(-50%, 0.08em);
+  border-radius: 0 0 0.09em 0.09em;
+  background: #5b3312;
+  transition: transform 0.25s ease-out;
+}
+
+.potato-mine.armed .pm-mouth { transform: translate(-50%, 0); }
+
+/* 插在头顶的引信杆 */
+.potato-mine .pm-rod {
+  position: absolute;
+  left: 50%;
+  top: 0.18em;
+  width: 0.05em;
+  height: 0.26em;
+  transform: translateX(-50%);
+  border-radius: 0.02em;
+  background: linear-gradient(90deg, #9e9e9e, #eceff1 40%, #757575);
+  opacity: 0;
+  transition: opacity 0.2s ease-out;
+}
+
+/* 杆头那颗红球 */
+.potato-mine .pm-knob {
+  position: absolute;
+  left: 50%;
+  top: 0.02em;
+  width: 0.26em;
+  height: 0.26em;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 34% 28%, #ff8a80, #e53935 50%, #a01818 100%);
+  border: 0.025em solid #7f1414;
+  opacity: 0;
+  transition: opacity 0.2s ease-out;
+}
+
+.potato-mine.armed .pm-rod,
+.potato-mine.armed .pm-knob { opacity: 1; }
+
+/* 装好了红球一鼓一鼓地闪，提示踩上去就炸 */
+.potato-mine.armed .pm-knob { animation: pm-blink 1.1s ease-in-out infinite; }
+
+@keyframes pm-blink {
+  0%, 100% { filter: none; }
+  50%      { filter: brightness(1.45) drop-shadow(0 0 0.12em rgba(255, 60, 40, 0.8)); }
+}
+
+/* 底下围着的一圈土块 */
+.potato-mine .pm-dirt {
+  position: absolute;
+  left: 50%;
+  bottom: 0.02em;
+  width: 0.94em;
+  height: 0.3em;
+  transform: translateX(-50%);
+  border-radius: 50% 50% 40% 40%;
+  background:
+    radial-gradient(circle at 12% 60%, #a9793f 0 0.09em, transparent 0.095em),
+    radial-gradient(circle at 30% 44%, #8d6230 0 0.1em, transparent 0.105em),
+    radial-gradient(circle at 50% 56%, #a9793f 0 0.11em, transparent 0.115em),
+    radial-gradient(circle at 70% 44%, #8d6230 0 0.1em, transparent 0.105em),
+    radial-gradient(circle at 88% 60%, #a9793f 0 0.09em, transparent 0.095em),
+    linear-gradient(180deg, #9c6c36, #6f4a22);
+}
+
+/* 种子卡里画的是装好的样子，但别在那儿一直闪 */
+.seed-icon .potato-mine.armed .pm-knob { animation: none; }

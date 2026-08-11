@@ -55,7 +55,9 @@ export class Plant extends Entity {
             doubleshooter: '<span class="leaf-pea"><i class="lp-leaf a"></i><i class="lp-leaf b"></i><i class="lp-leaf c"></i><i class="lp-head"></i><i class="lp-barrel"></i><i class="lp-brow l"></i><i class="lp-brow r"></i><i class="lp-eye l"></i><i class="lp-eye r"></i><i class="lp-stem"></i><i class="lp-foot l"></i><i class="lp-foot r"></i></span>',
             // 豌豆射手：照着 reference/plants/r1c1-crown-pea.png 画的戴皇冠豌豆
             peashooter: '<span class="crown-pea"><i class="cw-leaf"></i><i class="cw-head"></i><i class="cw-barrel"></i><i class="cw-eye"></i><i class="cw-crown"></i><i class="cw-stem"></i><i class="cw-foot l"></i><i class="cw-foot r"></i></span>',
-            iceshooter: '<span class="ice-pea"><i class="ip-crystal a"></i><i class="ip-crystal b"></i><i class="ip-crystal c"></i><i class="ip-head"></i><i class="ip-barrel"></i><i class="ip-eye l"></i><i class="ip-eye r"></i><i class="ip-stem"></i><i class="ip-foot l"></i><i class="ip-foot r"></i></span>',  cherry: '🍒', potato: '🥔',
+            iceshooter: '<span class="ice-pea"><i class="ip-crystal a"></i><i class="ip-crystal b"></i><i class="ip-crystal c"></i><i class="ip-head"></i><i class="ip-barrel"></i><i class="ip-eye l"></i><i class="ip-eye r"></i><i class="ip-stem"></i><i class="ip-foot l"></i><i class="ip-foot r"></i></span>',  cherry: '🍒',
+            // 土豆地雷：埋在土堆里的土豆，装好后顶起引信杆和红球，见 .potato-mine
+            potato: '<span class="potato-mine"><i class="pm-knob"></i><i class="pm-rod"></i><i class="pm-body"></i><i class="pm-eye l"></i><i class="pm-eye r"></i><i class="pm-mouth"></i><i class="pm-dirt"></i></span>',
  glue: '🧿', obsidian: '🗿', gatling: '🔫', waterdrop: '💧',
             corncannon: '🌽', triplepea: '🌳',
             // 原始豌豆：照着 reference/plants/r1c5-skull-helmet-pea.png 画的兽骨盔豌豆
