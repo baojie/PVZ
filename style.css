@@ -2217,6 +2217,20 @@ body {
 
 /* 小红樱桃子弹：两颗小红果 + 一根绿梗 */
 /* 小红樱桃：直接用樱桃炸弹那颗 🍒，不再自己画红球 */
+/* 双重射手大招的巨型豌豆 */
+.projectile.giantpea {
+  background: radial-gradient(circle at 34% 28%, #eaffc0, #8bc34a 45%, #33691e 100%);
+  border: 4px solid #2e5c14;
+  border-radius: 50%;
+  box-shadow: 0 0 18px #9ccc65, 0 0 34px rgba(104, 159, 56, 0.85);
+  animation: giantpea-spin 0.9s linear infinite;
+}
+
+@keyframes giantpea-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
 .projectile.redcherry {
   width: 20px;
   height: 20px;

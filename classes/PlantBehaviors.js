@@ -15,6 +15,7 @@ import { melonLob, melonSniper, melonCherryVolley, MELON_INTERVAL } from './Melo
 import { superLob, superVolley, SUPER_INTERVAL } from './SuperPult.js';
 import { kernelLob, kernelButterVolley, kernelCherryVolley, KERNEL_INTERVAL } from './KernelPult.js';
 import { squashTick } from './Squash.js';
+import { shooterVolley, giantPea } from './ShooterUlt.js';
 import { nukeCherryTick } from './NukeCherry.js';
 import { trophyPultTick } from './TrophyPult.js';
 import { fumeAttack, fumeUltimate, FUME_INTERVAL } from './FumeShroom.js';
@@ -344,10 +345,14 @@ function nutbowlingTick(plant, game) {
 }
 
 export const PLANT_BEHAVIORS = {
-    peashooter:    { interval: 100,  kind: 'row',         shots: [['normal', 20]] },
+    peashooter:    { interval: 100,  kind: 'row',         shots: [['normal', 20]],
+                     ult: (p, g) => g.showNotEnoughFeedback(`🌱 ${shooterVolley(g, p, 'normal')} 颗豌豆齐发!`) },
     glue:          { interval: 500,  kind: 'row',         shots: [['glue', 20]] },
-    iceshooter:    { interval: 100,  kind: 'row',         shots: [['ice', 20]] },
-    doubleshooter: { interval: 100,  kind: 'row',         shots: [['normal', 15], ['normal', 35]] },
+    iceshooter:    { interval: 100,  kind: 'row',         shots: [['ice', 20]],
+                     ult: (p, g) => g.showNotEnoughFeedback(`❄️ ${shooterVolley(g, p, 'ice')} 颗寒冰弹齐发!`) },
+    doubleshooter: { interval: 100,  kind: 'row',         shots: [['normal', 15], ['normal', 35]],
+                     ult: (p, g) => { const n = shooterVolley(g, p, 'normal'); giantPea(g, p);
+                         g.showNotEnoughFeedback(`🌿 ${n} 颗豌豆 + 一枚巨型豌豆（贯穿 200/只）!`); } },
     waterdrop:     { interval: 1000, kind: 'row',         shots: [['waterdrop', 20]] },
     primitivepea:  { interval: 100,  kind: 'row',         shots: [['primitivepea', 20]] },
     triplepea:     { interval: 100,  kind: 'tri',         shots: [['normal', 20]] },
@@ -383,6 +388,16 @@ export const PLANT_BEHAVIORS = {
 export function runPlantBehavior(plant, game) {
     const b = PLANT_BEHAVIORS[plant.type];
     if (!b) return;
+
+    // 声明式植物的绿叶素大招：写在行为表的 ult 里，一次绿叶素只放一次
+    if (b.ult) {
+        if (plant.ultimateMs > 0) {
+            if (!plant._ultFired) { plant._ultFired = true; b.ult(plant, game); }
+        } else {
+            plant._ultFired = false;
+        }
+    }
+
     if (b.tick) { b.tick(plant, game); return; }
     if (plant.timer < b.interval) return;
     plant.timer = 0;

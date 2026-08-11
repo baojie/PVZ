@@ -32,6 +32,11 @@ const PROJECTILE_TYPES = {
     elecscatter:  { speed: 7,  damage: Infinity, cssClass: 'projectile elecscatter',
                     piercing: true, bossDamage: 1800, width: 12, height: 12 },
 
+    // 双重射手大招的巨型豌豆：和一格植物一样大，无限贯穿，
+    // 每只僵尸只吃一次 200（hitOnce）
+    giantpea:     { speed: 5,  damage: 200, cssClass: 'projectile giantpea',
+                    piercing: true, hitOnce: true, width: 80, height: 80 },
+
     // 红叶素期间，植物打出来的一律换成小红樱桃，每颗 1000 点伤害。
     // 长相直接用樱桃炸弹那颗 🍒 —— 两颗连梗的樱桃，不是一颗光秃秃的红球。
     redcherry:    { speed: 7,  damage: 1000, cssClass: 'projectile redcherry',
@@ -47,6 +52,7 @@ export class Projectile extends Entity {
         this.damage = cfg.damage;
         this.piercing = !!cfg.piercing;
         if (cfg.bossDamage) this.bossDamage = cfg.bossDamage;
+        if (cfg.hitOnce) { this.hitOnce = true; this._hitSet = new Set(); }
         if (cfg.stunMs) this.stunMs = cfg.stunMs;
         if (cfg.width) this.width = cfg.width;
         if (cfg.height) this.height = cfg.height;
@@ -145,6 +151,11 @@ export class Projectile extends Entity {
                 this.y < zombie.y + zombie.height &&
                 this.y + this.height > zombie.y
             ) {
+                // 贯穿弹里有些是「一只只打一次」的（巨型豌豆），别每帧重复结算
+                if (this.hitOnce) {
+                    if (this._hitSet.has(zombie)) continue;
+                    this._hitSet.add(zombie);
+                }
                 const absorbed = zombie.takeDamage(this.damage);
                 // 元始豌豆：眩晕 + 击退，不论是否被护盾吸收都生效
                 if (this.type === 'primitivepea') {
