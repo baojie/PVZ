@@ -3,3 +3,6 @@ private/
 
 # 画新植物时的参考图：网上找的合集图，带水印、授权不明，只留在本地
 reference/plants/
+
+# Claude Code 开分支干活时用的临时 worktree，不进仓库
+.claude/worktrees/
